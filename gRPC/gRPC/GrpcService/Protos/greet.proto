@@ -10,6 +10,17 @@ service Greeter {
   rpc SayHello (HelloRequest) returns (HelloReply);
 
   rpc SayHello2 (HelloRequest) returns (HelloReply);
+  
+  rpc UnaryCall (ExampleRequest) returns (ExampleResponse);
+
+  // Server streaming
+  rpc StreamingFromServer (ExampleRequest) returns (stream ExampleResponse);
+
+  // Client streaming
+  rpc StreamingFromClient (stream ExampleRequest) returns (ExampleResponse);
+
+  // Bi-directional streaming
+  rpc StreamingBothWays (stream ExampleRequest) returns (stream ExampleResponse);
 }
 
 // The request message containing the user's name.
@@ -20,4 +31,12 @@ message HelloRequest {
 // The response message containing the greetings.
 message HelloReply {
   string message = 1;
+}
+
+message  ExampleRequest{
+  string requestId = 1;
+}
+
+message  ExampleResponse{
+  string requestId = 1;
 }
