@@ -11,10 +11,10 @@ namespace RB.PublisherConsole
         {
             var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
             {
-                cfg.Host("localhost", "/", h =>
+                cfg.Host("172.16.29.35", "NPD", h =>
                 {
-                    h.Username("rabbitmq");
-                    h.Password("rabbitmq");
+                    h.Username("bulat");
+                    h.Password("123qweASD");
                 });
 
                 cfg.ReceiveEndpoint("event-listener", e =>
@@ -32,6 +32,7 @@ namespace RB.PublisherConsole
 
             var source = new CancellationTokenSource(TimeSpan.FromSeconds(10));
             await busControl.StartAsync(source.Token);
+           
             try
             {
                 do
