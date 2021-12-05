@@ -10,60 +10,46 @@ namespace ConsoleApp1
             Console.WriteLine("Hello World!");
 
 
-            var relationship = new Relationship();
-            var machine = new RelationshipStateMachine();
-
-            machine.RaiseEvent(relationship, machine.Hello);
-
-            var person = new Person { Name = "Joe" };
-            machine.RaiseEvent(relationship, machine.Introduce, person);
-           
-
             Console.ReadKey();
         }
     }
+
+    public interface SubmitOrder
+    {
+        Guid OrderId { get; }
+    }
+
+    public interface OrderAccepted
+    {
+        Guid OrderId { get; }    
+    }
     
-    class Relationship
+    public class OrderState :
+        SagaStateMachineInstance
     {
-        public State CurrentState { get; set; }
-        public string Name { get; set; }
+        public Guid CorrelationId { get; set; }
+        public int CurrentState { get; set; }
     }
 
-    class RelationshipStateMachine :
-        AutomatonymousStateMachine<Relationship>
+    public class OrderStateMachine :
+        MassTransitStateMachine<OrderState>
     {
-        public RelationshipStateMachine()
+        public State Submitted { get; private set; }
+        public State Accepted { get; private set; }
+
+        public Event<SubmitOrder> SubmitOrder { get; private set; }
+
+        public Event<OrderAccepted> OrderAccepted { get; private set; }
+        
+        public OrderStateMachine()
         {
-            // Explicit definition of the events.
-            Event(() => Hello);
-            Event(() => PissOff);
-            Event(() => Introduce);
+            InstanceState(x => x.CurrentState, Submitted, Accepted);
 
-            // Explicit definition of the states.
-            State(() => Friend);
-            State(() => Enemy);
-
+            Event(() => SubmitOrder, x => x.CorrelateById(context => context.Message.OrderId));
+            
             Initially(
-                When(Hello)
-                    .TransitionTo(Friend),
-                When(PissOff)
-                    .TransitionTo(Enemy),
-                When(Introduce)
-                    .Then(ctx => ctx.Instance.Name = ctx.Data.Name)
-                    .TransitionTo(Friend)                   
-            );
+                When(SubmitOrder)
+                    .TransitionTo(Submitted));
         }
-
-        public State Friend { get; private set; }
-        public State Enemy { get; private set; }
-
-        public Event Hello { get; private set; }
-        public Event PissOff { get; private set; }
-        public Event<Person> Introduce { get; private set; }
-    }
-
-    class Person
-    {
-        public string Name { get; set; }
     }
 }

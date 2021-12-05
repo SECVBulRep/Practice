@@ -10,10 +10,10 @@ namespace RB.Publisher
         {
             var bus = Bus.Factory.CreateUsingRabbitMq(sbc =>
             {
-                sbc.Host("localhost", "/", h =>
+                sbc.Host("172.16.29.35", "/Payouts", h =>
                 {
-                    h.Username("rabbitmq");
-                    h.Password("rabbitmq");
+                    h.Username("bulat");
+                    h.Password("123qweASD");
                 });
 
 
