@@ -1,8 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saga.Service", "Saga.Service\Saga.Service.csproj", "{62FA2188-0572-432D-A5C6-64C9309178F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{62FA2188-0572-432D-A5C6-64C9309178F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62FA2188-0572-432D-A5C6-64C9309178F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62FA2188-0572-432D-A5C6-64C9309178F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62FA2188-0572-432D-A5C6-64C9309178F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
