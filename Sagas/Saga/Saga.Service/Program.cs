@@ -26,6 +26,14 @@ try
         });
         if ("quit".Equals(value, StringComparison.OrdinalIgnoreCase))
             break;
+
+        if ("1".Equals(value, StringComparison.OrdinalIgnoreCase))
+        {
+            
+        }
+
+
+
     } while (true);
 }
 finally
@@ -44,8 +52,15 @@ namespace Saga.Service
         public Guid CorrelationId { get; set; }
         public int CurrentState { get; set; }
         public DateTime? OrderDate { get; set; }
+        public string OrderNumber { get; set; }
+        public int ReadyEventStatus { get; set; }
     }
 
+    public interface OrderCanceled :
+        CorrelatedBy<Guid>
+    {    
+    }
+    
     public interface SubmitOrder
     {
         Guid OrderId { get; }
@@ -56,28 +71,105 @@ namespace Saga.Service
     {
         Guid OrderId { get; }
     }
+    
+    public interface ExternalOrderSubmitted
+    {    
+        string OrderNumber { get; }
+    }
 
+    public interface OrderCompleted
+    {    
+        Guid OrderId { get; }
+    }
+    
     public class OrderStateMachine :
         MassTransitStateMachine<OrderState>
     {
         public State Submitted { get; private set; }
         public State Accepted { get; private set; }
+        
+        public State Canceled { get; private set; }
         public Event<SubmitOrder> SubmitOrder { get; private set; }
         public Event<OrderAccepted> OrderAccepted { get; private set; }
+        public Event<OrderCanceled> OrderCanceled { get;  private set; }
+        public Event<ExternalOrderSubmitted> ExternalOrderSubmitted { get; private set; }
+        
+        public Event<RequestOrderCancellation> OrderCancellationRequested { get; private set; }
+        
+        public Event<OrderCompleted> OrderCompleted { get; private set; }
+        
+        public Event OrderReady { get; private set; }
+        
+        public interface OrderSubmitted
+        {
+            Guid OrderId { get; }    
+        }
 
+        public interface RequestOrderCancellation
+        {    
+            Guid OrderId { get; }
+        }
+
+        public interface OrderNotFound
+        {
+            Guid OrderId { get; }
+        }
+        
+        
         public OrderStateMachine()
         {
             InstanceState(x => x.CurrentState, Submitted, Accepted);
 
-            Event(() => SubmitOrder, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderAccepted, x => x.CorrelateById(context => context.Message.OrderId));
+            
+            Event(() => SubmitOrder, e => 
+            {
+                e.CorrelateById(context => context.Message.OrderId);
 
+                e.InsertOnInitial = true;
+                e.SetSagaFactory(context => new OrderState
+                {
+                    CorrelationId = context.Message.OrderId
+                });
+            });
+
+            Event(() => OrderAccepted, x => x.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderCanceled); // not required, as it is the default convention
+            
+            Event(() => ExternalOrderSubmitted, e =>
+            {
+                e.CorrelateBy(i => i.OrderNumber, x => x.Message.OrderNumber);
+                e.SelectId(x => NewId.NextGuid());
+
+                e.InsertOnInitial = true;
+                e.SetSagaFactory(context => new OrderState
+                {
+                    CorrelationId = context.CorrelationId ?? NewId.NextGuid(),
+                    OrderNumber = context.Message.OrderNumber,
+                });
+            });
+            
+            Event(() => OrderCompleted, x => x.CorrelateById(context => context.Message.OrderId));
+
+            Event(() => OrderCancellationRequested, e =>
+            {
+                e.CorrelateById(context => context.Message.OrderId);
+
+                e.OnMissingInstance(m =>
+                {
+                    return m.ExecuteAsync(x => x.RespondAsync<OrderNotFound>(new { x.Message.OrderId }));
+                });
+            });
+            
+          
             Initially(
                 When(SubmitOrder)
-                    .Then(x => x.Instance.OrderDate = x.Data.OrderDate)
-                    .TransitionTo(Submitted),
-                When(OrderAccepted)
-                    .TransitionTo(Accepted));
+                    .PublishAsync(context => context.Init<OrderSubmitted>(new { OrderId = context.Instance.CorrelationId }))
+                    .TransitionTo(Submitted));
+            
+            DuringAny(
+                When(OrderCancellationRequested)
+                    .RespondAsync(context => context.Init<OrderCanceled>(new { OrderId = context.Instance.CorrelationId }))
+                    .TransitionTo(Canceled));
 
             During(Submitted,
                 When(OrderAccepted)
@@ -86,6 +178,19 @@ namespace Saga.Service
             During(Accepted,
                 When(SubmitOrder)
                     .Then(x => x.Instance.OrderDate = x.Data.OrderDate));
+            
+            CompositeEvent(() => OrderReady, x => x.ReadyEventStatus, SubmitOrder, OrderAccepted);
+
+            DuringAny(
+                When(OrderReady)
+                    .Then(context => Console.WriteLine("Order Ready: {0}", context.Instance.CorrelationId)));
+            
+            DuringAny(
+                When(OrderCompleted)
+                    .Finalize());
+            SetCompletedWhenFinalized();
         }
+
+        
     }
 }
