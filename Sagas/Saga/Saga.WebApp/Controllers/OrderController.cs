@@ -15,8 +15,9 @@ public class OrderController :  ControllerBase
     private IBusControl _busControl;
     
     public OrderController(
-        IOrderDataAccess dataAccess, 
-        ISendEndpointProvider sendEndpointProvider, IBusControl busControl)
+         IOrderDataAccess dataAccess, 
+         ISendEndpointProvider sendEndpointProvider,
+         IBusControl busControl)
     {
         _dataAccess = dataAccess;
         _sendEndpointProvider = sendEndpointProvider;
