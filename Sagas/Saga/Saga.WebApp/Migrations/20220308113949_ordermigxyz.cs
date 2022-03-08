@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Saga.WebApp.Migrations
 {
-    public partial class orderdbmig1 : Migration
+    public partial class ordermigxyz : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

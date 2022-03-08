@@ -10,7 +10,18 @@ public class CardValidateEvent: ICardValidatorEvent
         this.orderSagaState = orderStateData;
     }
 
-    public Guid OrderId => orderSagaState.OrderId;
-    public string PaymentCardNumber => orderSagaState.PaymentCardNumber;
-    public string ProductName => orderSagaState.ProductName;
+    public Guid OrderId
+    {
+        get { return orderSagaState.OrderId; }
+    }
+
+    public string PaymentCardNumber
+    {
+        get { return orderSagaState.PaymentCardNumber; }
+    }
+
+    public string ProductName
+    {
+        get { return orderSagaState.ProductName; }
+    }
 }

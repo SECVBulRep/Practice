@@ -12,8 +12,8 @@ using Saga.WebApp.Infra;
 namespace Saga.WebApp.Migrations
 {
     [DbContext(typeof(OrderDbContext))]
-    [Migration("20220108174200_orderdbmig1")]
-    partial class orderdbmig1
+    [Migration("20220308113949_ordermigxyz")]
+    partial class ordermigxyz
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

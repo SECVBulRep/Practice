@@ -8,16 +8,16 @@ namespace Saga.WebApp.Controllers;
 
 [ApiController]
 [Route("api/order")]
-public class OrderController :  ControllerBase
+public class OrderController : ControllerBase
 {
     private IOrderDataAccess _dataAccess;
     private ISendEndpointProvider _sendEndpointProvider;
     private IBusControl _busControl;
-    
+
     public OrderController(
-         IOrderDataAccess dataAccess, 
-         ISendEndpointProvider sendEndpointProvider,
-         IBusControl busControl)
+        IOrderDataAccess dataAccess,
+        ISendEndpointProvider sendEndpointProvider,
+        IBusControl busControl)
     {
         _dataAccess = dataAccess;
         _sendEndpointProvider = sendEndpointProvider;
@@ -29,22 +29,38 @@ public class OrderController :  ControllerBase
     {
         return Ok(_dataAccess.GetAllOrder());
     }
-    
+
     [HttpPost("create")]
     public async Task<ActionResult> Create(OrderModel model)
     {
-        //var endPoint  = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:"+))
-
-        await _busControl.Publish<IOrderMessage>(new
+        model.OrderId = Guid.NewGuid();
+        _dataAccess.SaveOrder(model);
+        
+        
+        var sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:order-listener"));
+        await sendEndpoint.Send<IOrderMessage>(new
         {
             OrderId = model.OrderId,
             ProductName = model.ProductName,
-            CardNumber= model.CardNumber
+            CardNumber = model.CardNumber
         });
-        
-        
-        _dataAccess.SaveOrder(model);
+
+
         return Ok(model);
+    }
+
+    [HttpPost("create-using-state-machine")]
+    public async Task<ActionResult> CreateOrderUsingStateMachine([FromBody] OrderModel model)
+    {
+        model.OrderId = Guid.NewGuid();
+        var sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:saga-bus-queue"));
+        await sendEndpoint.Send<IOrderStartEvent>(new
+        {
+            OrderId = model.OrderId,
+            ProductName = model.ProductName,
+            CardNumber = model.CardNumber
+        });
+        return Ok("success");
     }
 
 

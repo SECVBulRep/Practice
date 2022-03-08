@@ -1,7 +1,10 @@
 using MassTransit;
+using MassTransit.Saga;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
 using Saga.WebApp.Infra;
 using Saga.WebApp.RB.Consumers;
+using Saga.WebApp.Saga.StateMachine;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,10 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<OrderDbContext>(o => { o.UseSqlServer(); });
 builder.Services.AddScoped<IOrderDataAccess, OrderDataAccess>();
 
+var saga = new OrderStateMachine();
+var repo = new InMemorySagaRepository<OrderStateData>();
+
+
 builder.Services.AddMassTransit(x =>
 {
     x.SetKebabCaseEndpointNameFormatter();
@@ -25,13 +32,20 @@ builder.Services.AddMassTransit(x =>
             h.Password("123qweASD");
         });
         
-        cfg.ReceiveEndpoint("order-listener", e =>
+        cfg.ReceiveEndpoint("validate-order-queue", e =>
         {
             e.Consumer<CardNumberValidateConsumer>();
         });
-        
+
+        cfg.ReceiveEndpoint("saga-bus-queue", e =>
+        {
+            e.StateMachineSaga(saga,repo);
+        });
+
         cfg.ConfigureEndpoints(context);
     });
+    
+    
 
 });
 builder.Services.AddMassTransitHostedService();
