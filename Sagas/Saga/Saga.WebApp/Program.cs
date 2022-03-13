@@ -20,7 +20,6 @@ builder.Services.AddScoped<IOrderDataAccess, OrderDataAccess>();
 var saga = new OrderStateMachine();
 var repo = new InMemorySagaRepository<OrderStateData>();
 
-
 builder.Services.AddMassTransit(x =>
 {
     x.SetKebabCaseEndpointNameFormatter();
@@ -45,7 +44,7 @@ builder.Services.AddMassTransit(x =>
         cfg.ConfigureEndpoints(context);
     });
     
-    
+    x.AddConsumer<CancelOrderConsumer>();
 
 });
 builder.Services.AddMassTransitHostedService();

@@ -8,12 +8,15 @@ public class OrderStateMachine : MassTransitStateMachine<OrderStateData>
     public State Validation { get; private set; }
 
     public Event<IOrderStartEvent> StartOrderProcess { get; private set; }
+    
+    public Event<IOrderCancelEvent> OrderCanceled { get; private set; }
 
     public OrderStateMachine()
     {
         InstanceState(s => s.CurrentState);
 
         Event(() => StartOrderProcess, x => x.CorrelateById(m => m.Message.OrderId));
+        Event(() => OrderCanceled, x => x.CorrelateById(m => m.Message.OrderId));
 
         Initially(
             When(StartOrderProcess)
@@ -27,6 +30,16 @@ public class OrderStateMachine : MassTransitStateMachine<OrderStateData>
                 .Publish(context => new CardValidateEvent(context.Instance))
                 .Finalize()
         );
+        
+        During(Validation,
+            When(OrderCanceled)
+                .Then(contex =>
+                {
+                    contex.Instance.OrderCancelDateTime =DateTime.Now;
+                    contex.Instance.OrderId = contex.Data.OrderId;
+                })
+                .Finalize()
+            );
 
         SetCompletedWhenFinalized();
     }

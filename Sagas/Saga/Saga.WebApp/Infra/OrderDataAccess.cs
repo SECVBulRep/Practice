@@ -19,4 +19,31 @@ public class OrderDataAccess : IOrderDataAccess
             context.SaveChanges();
         }
     }
+
+    public OrderModel GetOrder(Guid orderId)
+    {
+        using (var context = new OrderDbContext())
+        {
+            return context.OrderData.SingleOrDefault(x => x.OrderId == orderId);
+        }
+    }
+
+    public bool DeleteOrder(Guid orderId)
+    {
+        using (var context = new OrderDbContext())
+        {
+           var order =  context.OrderData.SingleOrDefault(x => x.OrderId == orderId);
+
+           if (order != null)
+           {
+               context.Remove(order);
+               context.SaveChanges();
+               return true;
+           }
+           else
+           {
+               return false;
+           }
+        }
+    }
 }

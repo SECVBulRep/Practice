@@ -53,6 +53,8 @@ public class OrderController : ControllerBase
     public async Task<ActionResult> CreateOrderUsingStateMachine([FromBody] OrderModel model)
     {
         model.OrderId = Guid.NewGuid();
+        _dataAccess.SaveOrder(model);
+        
         var sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:saga-bus-queue"));
         await sendEndpoint.Send<IOrderStartEvent>(new
         {
@@ -63,5 +65,17 @@ public class OrderController : ControllerBase
         return Ok("success");
     }
 
-
+    [HttpGet("get-order")]
+    public async Task<IActionResult> GetOrder(Guid orderId)
+    {
+        return Ok(_dataAccess.GetOrder(orderId));
+    }
+    
+    
+    [HttpDelete("delete-order")]
+    public async Task<IActionResult>  DeleteOrder(Guid orderId)
+    {
+        return Ok(_dataAccess.DeleteOrder(orderId));
+    }
+    
 }
