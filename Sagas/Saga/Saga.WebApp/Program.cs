@@ -6,7 +6,7 @@ using Saga.WebApp.Infra;
 using Saga.WebApp.RB.Consumers;
 using Saga.WebApp.Saga.StateMachine;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
