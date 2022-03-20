@@ -4,6 +4,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saga.Service", "Saga.Servic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saga.WebApp", "Saga.WebApp\Saga.WebApp.csproj", "{1CA92529-1562-45AB-A178-3CE940B9DD7F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SagaSample", "SagaSample", "{CE55F156-9741-44F3-8646-FEA82F9BE680}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SagaPresentation.WebApp", "SagaPresentation.WebApp\SagaPresentation.WebApp.csproj", "{5FC6A648-BDAA-4C14-BAA2-42CE028725F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SagaPresentation.ServiceApp", "SagaPresentation.ServiceApp\SagaPresentation.ServiceApp.csproj", "{3480493E-E5B5-45F1-BF02-CC58D0B69FFD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +24,17 @@ Global
 		{1CA92529-1562-45AB-A178-3CE940B9DD7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CA92529-1562-45AB-A178-3CE940B9DD7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CA92529-1562-45AB-A178-3CE940B9DD7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FC6A648-BDAA-4C14-BAA2-42CE028725F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FC6A648-BDAA-4C14-BAA2-42CE028725F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FC6A648-BDAA-4C14-BAA2-42CE028725F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FC6A648-BDAA-4C14-BAA2-42CE028725F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3480493E-E5B5-45F1-BF02-CC58D0B69FFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3480493E-E5B5-45F1-BF02-CC58D0B69FFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3480493E-E5B5-45F1-BF02-CC58D0B69FFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3480493E-E5B5-45F1-BF02-CC58D0B69FFD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5FC6A648-BDAA-4C14-BAA2-42CE028725F9} = {CE55F156-9741-44F3-8646-FEA82F9BE680}
+		{3480493E-E5B5-45F1-BF02-CC58D0B69FFD} = {CE55F156-9741-44F3-8646-FEA82F9BE680}
 	EndGlobalSection
 EndGlobal
