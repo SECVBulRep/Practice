@@ -1,0 +1,3 @@
+Install-Package MassTransit.AspNetCore -Version 7.3.1
+
+ 
