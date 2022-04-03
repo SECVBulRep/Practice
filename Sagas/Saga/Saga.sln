@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SagaPresentation.WebApp", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SagaPresentation.ServiceApp", "SagaPresentation.ServiceApp\SagaPresentation.ServiceApp.csproj", "{3480493E-E5B5-45F1-BF02-CC58D0B69FFD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SagaPresentation.Components", "SagaPresentation.Components\SagaPresentation.Components.csproj", "{1B536723-8244-4EF6-A962-C53B8500DDC5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,9 +34,14 @@ Global
 		{3480493E-E5B5-45F1-BF02-CC58D0B69FFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3480493E-E5B5-45F1-BF02-CC58D0B69FFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3480493E-E5B5-45F1-BF02-CC58D0B69FFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B536723-8244-4EF6-A962-C53B8500DDC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B536723-8244-4EF6-A962-C53B8500DDC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B536723-8244-4EF6-A962-C53B8500DDC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B536723-8244-4EF6-A962-C53B8500DDC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5FC6A648-BDAA-4C14-BAA2-42CE028725F9} = {CE55F156-9741-44F3-8646-FEA82F9BE680}
 		{3480493E-E5B5-45F1-BF02-CC58D0B69FFD} = {CE55F156-9741-44F3-8646-FEA82F9BE680}
+		{1B536723-8244-4EF6-A962-C53B8500DDC5} = {CE55F156-9741-44F3-8646-FEA82F9BE680}
 	EndGlobalSection
 EndGlobal
