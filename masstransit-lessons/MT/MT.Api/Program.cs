@@ -1,7 +1,5 @@
 using MassTransit;
-using MT.SampleComponents.Consumers;
 using MT.SampleContracts;
-using MassTransit.Mediator;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,17 +9,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Host.ConfigureAppConfiguration((hostingConext, config) => { config.AddJsonFile("appsettings.json", true); });
 
-/*builder.Services.AddMediator(cfg =>
+builder.Host.ConfigureLogging((hostingContext, logging) =>
 {
-    cfg.AddConsumer<SubmitOrderConsumer>();
-    cfg.AddRequestClient<ISubmitOrder>();
+    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+    logging.AddConsole();
 });
-*/
-
 
 builder.Services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
-
 //для не медиаторов юзать это  метод
 builder.Services.AddMassTransit(cfg =>
 {
@@ -36,11 +32,15 @@ builder.Services.AddMassTransit(cfg =>
             });
         });
     });
-    
+
+    //cfg.AddRequestClient<ISubmitOrder>(new Uri($"queue:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}")); // так нельзя делать!!!
+    // cfg.AddRequestClient<ISubmitOrder>(new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}")); // так нельзя делать!!!
     cfg.AddRequestClient<ISubmitOrder>();
 });
 
+
 var app = builder.Build();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
