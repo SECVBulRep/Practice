@@ -11,14 +11,18 @@ public class OrderController : ControllerBase
 {
     private readonly ILogger<OrderController> _logger;
     private IRequestClient<ISubmitOrder> _requestClient;
+    private ISendEndpointProvider _sendEndpointProvider;
+
 
 
     public OrderController(
         ILogger<OrderController> logger,
-        IRequestClient<ISubmitOrder> requestClient)
+        IRequestClient<ISubmitOrder> requestClient, 
+        ISendEndpointProvider sendEndpointProvider)
     {
         _logger = logger;
         _requestClient = requestClient;
+        _sendEndpointProvider = sendEndpointProvider;
     }
 
     [HttpPost]
@@ -42,4 +46,22 @@ public class OrderController : ControllerBase
             return BadRequest((await rejected).Message);
         }
     }
+    
+    [HttpPut]
+    public async Task<IActionResult> Put(Guid id, string customerId)
+    {
+
+        var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("exchange:submit-order"));
+        
+        await endpoint.Send<ISubmitOrder>(new
+        {
+            OrderId = id,
+            TimeStamp = DateTime.Now,
+            CustomerNumber = customerId
+        });
+
+
+        return Accepted();
+    }
+    
 }

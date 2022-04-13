@@ -1,6 +1,7 @@
 using MassTransit;
 using MT.SampleContracts;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MT.SampleComponents.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,8 +35,10 @@ builder.Services.AddMassTransit(cfg =>
     });
 
     //cfg.AddRequestClient<ISubmitOrder>(new Uri($"queue:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}")); // так нельзя делать!!!
-    // cfg.AddRequestClient<ISubmitOrder>(new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}")); // так нельзя делать!!!
-    cfg.AddRequestClient<ISubmitOrder>();
+    cfg.AddRequestClient<ISubmitOrder>(
+        new Uri(
+            $"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}")); // так нельзя делать!!!
+    //cfg.AddRequestClient<ISubmitOrder>();
 });
 
 

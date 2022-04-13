@@ -1,3 +1,8 @@
 Install-Package MassTransit.AspNetCore -Version 7.3.1
 
+
+тестирование 
+
+autocannon -c 10 -d 10 -m POST https://localhost:7206/Order?id=EE4899D6-A56C-4F5C-A955-251E8CD0EA69"&"customerId=fsfsdf
+
  
