@@ -19,6 +19,11 @@ public class SubmitOrderConsumer
     {
         _logger.Log(LogLevel.Debug, "SubmitOrderConsumer: {CustomerNumber}", context.Message.CustomerNumber);
 
+        if (context.Message.CustomerNumber.Contains("error"))
+        {
+            throw new InvalidOperationException("Error from SubmitOrderConsumer");
+        }
+
         if (context.Message.CustomerNumber.Contains("Test"))
         {
             if (context.ResponseAddress != null)
@@ -39,5 +44,14 @@ public class SubmitOrderConsumer
                 TimeStamp = context.Message.TimeStamp,
                 CustomerNumber = context.Message.CustomerNumber,
             });
+    }
+}
+
+public class SubmitOrderDefinition : ConsumerDefinition<SubmitOrderConsumer>
+{
+    protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<SubmitOrderConsumer> consumerConfigurator)
+    {
+        base.ConfigureConsumer(endpointConfigurator, consumerConfigurator);
+        endpointConfigurator.PublishFaults = true;
     }
 }
