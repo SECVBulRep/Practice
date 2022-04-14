@@ -33,10 +33,10 @@ IBusControl ConfigureBus(IBusRegistrationContext serviceProvider)
 {
     return Bus.Factory.CreateUsingRabbitMq(cfg =>
     {
-        cfg.Host("172.16.29.35", "masstransit-test", h =>
+        cfg.Host("localhost", "work", h =>
         {
-            h.Username("bulat");
-            h.Password("123qweASD");
+            h.Username("guest");
+            h.Password("guest");
         });
         cfg.ConfigureEndpoints(serviceProvider);
     });
