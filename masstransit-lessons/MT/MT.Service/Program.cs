@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -16,11 +17,36 @@ await Host.CreateDefaultBuilder(args)
         services.AddMassTransit(cfg =>
         {
             cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
-            cfg.AddConsumer<SubmitOrderConsumer,SubmitOrderDefinition>();
+
+            cfg.AddConsumer<SubmitOrderConsumer, SubmitOrderDefinition>();
             cfg.AddConsumer<AnyFaultConsumer>();
             cfg.AddConsumer<SubmitOrderFaultConsumer>();
-            
-            cfg.AddBus(ConfigureBus);
+
+
+            //cfg.AddBus(ConfigureBus); перепишем по другому 
+            cfg.UsingRabbitMq((context, config) =>
+            {
+                config.Host("localhost", "work", h =>
+                {
+                    h.Username("guest");
+                    h.Password("guest");
+                });
+
+                // для всех
+                config.UseMessageRetry(r => r.Immediate(5));
+
+
+                /*
+                // для конкретного
+                config.ReceiveEndpoint($"{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}", e =>
+                {
+                    e.UseMessageRetry(r => r.Immediate(5));
+                    e.ConfigureConsumer<SubmitOrderConsumer>(context);
+                });
+                */
+
+                config.ConfigureEndpoints(context);
+            });
         });
     })
     .ConfigureLogging((hostingContext, logging) =>
@@ -40,6 +66,9 @@ IBusControl ConfigureBus(IBusRegistrationContext serviceProvider)
             h.Username("guest");
             h.Password("guest");
         });
+
+        cfg.UseMessageRetry(r => r.Immediate(5));
+
         cfg.ConfigureEndpoints(serviceProvider);
     });
 }
