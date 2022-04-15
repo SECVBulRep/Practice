@@ -15,16 +15,13 @@ await Host.CreateDefaultBuilder(args)
 
         services.AddMassTransit(cfg =>
         {
-            //cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
-            
+            cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
             cfg.AddConsumer<SubmitOrderConsumer,SubmitOrderDefinition>();
             cfg.AddConsumer<AnyFaultConsumer>();
             cfg.AddConsumer<SubmitOrderFaultConsumer>();
             
             cfg.AddBus(ConfigureBus);
         });
-
-        services.AddMassTransitHostedService(); // убрать абсолет
     })
     .ConfigureLogging((hostingContext, logging) =>
     {
