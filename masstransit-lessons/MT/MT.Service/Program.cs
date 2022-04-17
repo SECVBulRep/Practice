@@ -32,21 +32,36 @@ await Host.CreateDefaultBuilder(args)
                 });
 
                 // для всех
-                config.UseMessageRetry(r =>
+                /*config.UseMessageRetry(r =>
                 {
                     r.Handle<DataException>();
                     // пример игнора
                     //r.Ignore<DataException>(x=>x.Message=="SQL");
                     r.Immediate(3);
                 });
+                */
 
                 // для конкретного
-                /*config.ReceiveEndpoint($"{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}", e =>
+                config.ReceiveEndpoint($"{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}", e =>
                 {
-                    e.UseMessageRetry(r => r.Immediate(5));
-                    e.ConfigureConsumer<SubmitOrderConsumer>(context);
+                    e.UseMessageRetry(r =>
+                    {
+                        r.Handle<DataException>();
+                        // пример игнора
+                        r.Ignore<DataException>(x=>x.Message=="SQL");
+                        r.Immediate(5);
+                    });
+                    
+                    e.ConfigureConsumer<SubmitOrderConsumer>(context, c =>
+                    {
+                        c.UseMessageRetry(r =>
+                        {
+                            r.Ignore<DataException>();
+                            r.Immediate(5);
+                        });
+                    });
                 });
-               */
+               
 
                 config.ConfigureEndpoints(context);
             });
