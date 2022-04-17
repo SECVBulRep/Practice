@@ -1,6 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using System.Data;
+﻿using System.Data;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -34,40 +32,21 @@ await Host.CreateDefaultBuilder(args)
                 });
 
                 // для всех
-                
-                /*
-                 None	No retry
-                 Immediate	Retry immediately, up to the retry limit
-                 Interval	Retry after a fixed delay, up to the retry limit
-                 Intervals	Retry after a delay, for each interval specified
-                 Exponential	Retry after an exponentially increasing delay, up to the retry limit
-                 Incremental	Retry after a steadily increasing delay, up to the retry limit
-                 * 
-                 */
-
-                //config.UseMessageRetry(r => r.Immediate(5));
-                
-                
-                // для конкретного
-                config.ReceiveEndpoint($"{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}", e =>
+                config.UseMessageRetry(r =>
                 {
-                    /*фильтр для всего ендпойнта*/
-                    e.UseMessageRetry(r =>
-                    {
-                        r.Immediate(5);
-                        r.Handle<DataException>(x=>x.Message.Contains("SQL"));
-                    });
-                    
-                   
-                    /*фильтр для конкретного консюмера*/
-                    /*e.ConfigureConsumer<SubmitOrderConsumer>(context,c=>c.UseMessageRetry(r =>
-                    {
-                        r.Interval(10, TimeSpan.FromMilliseconds(200));
-                        r.Ignore<ArgumentException>();
-                        r.Ignore<DataException>(x=>x.Message.Contains("SQL"));
-                    }));*/
+                    r.Handle<DataException>();
+                    // пример игнора
+                    //r.Ignore<DataException>(x=>x.Message=="SQL");
+                    r.Immediate(3);
                 });
-               
+
+                // для конкретного
+                /*config.ReceiveEndpoint($"{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}", e =>
+                {
+                    e.UseMessageRetry(r => r.Immediate(5));
+                    e.ConfigureConsumer<SubmitOrderConsumer>(context);
+                });
+               */
 
                 config.ConfigureEndpoints(context);
             });
