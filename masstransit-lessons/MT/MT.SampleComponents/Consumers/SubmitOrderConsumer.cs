@@ -1,4 +1,5 @@
-﻿using System.Net.Mail;
+﻿using System.Data;
+using System.Net.Mail;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using MT.SampleContracts;
@@ -19,6 +20,12 @@ public class SubmitOrderConsumer
     {
         _logger.Log(LogLevel.Debug, "SubmitOrderConsumer: {CustomerNumber}", context.Message.CustomerNumber);
 
+        if (context.Message.CustomerNumber.Contains("data_error"))
+        {
+            throw new DataException("SQL");
+        }
+        
+        
         if (context.Message.CustomerNumber.Contains("error"))
         {
             throw new InvalidOperationException("Error from SubmitOrderConsumer");
