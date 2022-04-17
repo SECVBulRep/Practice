@@ -32,17 +32,18 @@ await Host.CreateDefaultBuilder(args)
                 });
 
                 // для всех
-                /*config.UseMessageRetry(r =>
+                config.UseDelayedRedelivery(r=>r.Intervals(TimeSpan.FromSeconds(15)));
+                config.UseMessageRetry(r =>
                 {
                     r.Handle<DataException>();
                     // пример игнора
                     //r.Ignore<DataException>(x=>x.Message=="SQL");
                     r.Immediate(3);
                 });
-                */
+               
 
                 // для конкретного
-                config.ReceiveEndpoint($"{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}", e =>
+               /* config.ReceiveEndpoint($"{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}", e =>
                 {
                     e.UseMessageRetry(r =>
                     {
@@ -60,7 +61,7 @@ await Host.CreateDefaultBuilder(args)
                             r.Immediate(5);
                         });
                     });
-                });
+                });*/
                
 
                 config.ConfigureEndpoints(context);
