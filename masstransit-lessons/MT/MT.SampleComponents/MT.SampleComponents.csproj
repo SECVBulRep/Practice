@@ -7,8 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MassTransit" Version="8.0.2-develop.421" />
-      <PackageReference Include="MassTransit.Analyzers" Version="8.0.1" />
+      <PackageReference Include="MassTransit" Version="8.0.2-develop.435" />
+      <PackageReference Include="MassTransit.Analyzers" Version="8.0.2-develop.435" />
+      <PackageReference Include="MassTransit.Redis" Version="8.0.2-develop.435" />
     </ItemGroup>
 
     <ItemGroup>

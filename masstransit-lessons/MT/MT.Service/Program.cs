@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MT.SampleComponents.Consumers;
+using MT.SampleComponents.StateMachine;
+using StackExchange.Redis;
 
 await Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostingConext, config) => { config.AddJsonFile("appsettings.json", true); })
@@ -20,9 +22,11 @@ await Host.CreateDefaultBuilder(args)
             cfg.AddConsumer<SubmitOrderConsumer, SubmitOrderDefinition>();
             cfg.AddConsumer<AnyFaultConsumer>();
             cfg.AddConsumer<SubmitOrderFaultConsumer>();
+            cfg.AddSagaStateMachine<OrerStateMachine, OrderState>()
+                .RedisRepository();
+                //возможность настроек 
+                //.RedisRepository(c=>c.DatabaseConfiguration(new ConfigurationOptions{Password = "sfsdf"}));
 
-
-            //cfg.AddBus(ConfigureBus); перепишем по другому 
             cfg.UsingRabbitMq((context, config) =>
             {
                 config.Host("localhost", "work", h =>
@@ -30,40 +34,6 @@ await Host.CreateDefaultBuilder(args)
                     h.Username("guest");
                     h.Password("guest");
                 });
-
-                // для всех
-                config.UseDelayedRedelivery(r=>r.Intervals(TimeSpan.FromSeconds(15)));
-                config.UseMessageRetry(r =>
-                {
-                    r.Handle<DataException>();
-                    // пример игнора
-                    //r.Ignore<DataException>(x=>x.Message=="SQL");
-                    r.Immediate(3);
-                });
-               
-
-                // для конкретного
-               /* config.ReceiveEndpoint($"{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}", e =>
-                {
-                    e.UseMessageRetry(r =>
-                    {
-                        r.Handle<DataException>();
-                        // пример игнора
-                        r.Ignore<DataException>(x=>x.Message=="SQL");
-                        r.Immediate(5);
-                    });
-                    
-                    e.ConfigureConsumer<SubmitOrderConsumer>(context, c =>
-                    {
-                        c.UseMessageRetry(r =>
-                        {
-                            r.Ignore<DataException>();
-                            r.Immediate(5);
-                        });
-                    });
-                });*/
-               
-
                 config.ConfigureEndpoints(context);
             });
         });
@@ -76,18 +46,4 @@ await Host.CreateDefaultBuilder(args)
     .Build()
     .RunAsync();
 
-IBusControl ConfigureBus(IBusRegistrationContext serviceProvider)
-{
-    return Bus.Factory.CreateUsingRabbitMq(cfg =>
-    {
-        cfg.Host("localhost", "work", h =>
-        {
-            h.Username("guest");
-            h.Password("guest");
-        });
 
-        cfg.UseMessageRetry(r => r.Immediate(5));
-
-        cfg.ConfigureEndpoints(serviceProvider);
-    });
-}

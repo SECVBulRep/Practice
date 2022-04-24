@@ -16,6 +16,7 @@ public class SubmitOrderConsumer
         _logger = logger;
     }
 
+
     public async Task Consume(ConsumeContext<ISubmitOrder> context)
     {
         _logger.Log(LogLevel.Debug, "SubmitOrderConsumer: {CustomerNumber}", context.Message.CustomerNumber);
@@ -24,8 +25,7 @@ public class SubmitOrderConsumer
         {
             throw new DataException("SQL");
         }
-        
-        
+
         if (context.Message.CustomerNumber.Contains("error"))
         {
             throw new InvalidOperationException("Error from SubmitOrderConsumer");
@@ -44,6 +44,13 @@ public class SubmitOrderConsumer
             return;
         }
 
+        await context.Publish<IOrderSubmitted>(new
+        {
+            OrderId = context.Message.OrderId,
+            TimeStamp = context.Message.TimeStamp,
+            CustomerNumber = context.Message.CustomerNumber,
+        });
+
         if (context.ResponseAddress != null)
             await context.RespondAsync<IOrderSubmissionAccepted>(new
             {
@@ -56,7 +63,8 @@ public class SubmitOrderConsumer
 
 public class SubmitOrderDefinition : ConsumerDefinition<SubmitOrderConsumer>
 {
-    protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<SubmitOrderConsumer> consumerConfigurator)
+    protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
+        IConsumerConfigurator<SubmitOrderConsumer> consumerConfigurator)
     {
         base.ConfigureConsumer(endpointConfigurator, consumerConfigurator);
         endpointConfigurator.PublishFaults = true;
