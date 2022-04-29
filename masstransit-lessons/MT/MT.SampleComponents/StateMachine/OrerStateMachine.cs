@@ -14,8 +14,31 @@ public class OrerStateMachine : MassTransitStateMachine<OrderState>
 
         Initially(
             When(OrderSubmitted)
+                .Then(context =>
+                    {
+                        context.Saga.SubmitDate =context.Message.TimeStamp;
+                        context.Saga.CustomerNumber = context.Message.CustomerNumber;
+                        context.Saga.Updated = DateTime.UtcNow;
+                    }
+                )
                 .TransitionTo(Submitted)
         );
+
+        //для идемпотенности
+        During(Submitted,
+            Ignore(OrderSubmitted));
+        
+        
+        // если мы хотим как то дополнить даные потом 
+        DuringAny(
+            When(OrderSubmitted)
+                .Then(context =>
+                {
+                    context.Saga.SubmitDate ??=context.Message.TimeStamp;
+                    context.Saga.CustomerNumber ??= context.Message.CustomerNumber;
+                })
+        );
+
     }
 
     public State Submitted { get; set; }
@@ -25,6 +48,9 @@ public class OrerStateMachine : MassTransitStateMachine<OrderState>
 public class OrderState : SagaStateMachineInstance, ISagaVersion
 {
     public Guid CorrelationId { get; set; }
-    public string CurrentState { get; set; }
     public int Version { get; set; }
+    public string CurrentState { get; set; }
+    public string CustomerNumber { get; set; }
+    public DateTime? SubmitDate { get; set; }
+    public DateTime? Updated { get; set; }
 }

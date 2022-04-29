@@ -1,7 +1,7 @@
 version: "3"
 services:
   rabbitmq:
-    container_name: twitch-rabbitmq
+    container_name: iq-rabbitmq
     hostname: rabbit
     image: rabbitmq:3-management
     ports:
@@ -9,6 +9,6 @@ services:
      - "15672:15672"
   redis:
     image: redis
-    container_name: twitch-redis
+    container_name: iq-redis
     ports:
       - "6379:6379"
