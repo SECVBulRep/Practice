@@ -38,6 +38,9 @@ builder.Services.AddMassTransit(cfg =>
     cfg.AddRequestClient<ISubmitOrder>(
         new Uri(
             $"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}")); // так нельзя делать!!!
+    
+    cfg.AddRequestClient<ICheckOrder>();
+    
     //cfg.AddRequestClient<ISubmitOrder>();
 });
 

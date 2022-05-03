@@ -12,17 +12,33 @@ public class OrderController : ControllerBase
     private readonly ILogger<OrderController> _logger;
     private IRequestClient<ISubmitOrder> _requestClient;
     private ISendEndpointProvider _sendEndpointProvider;
+    private IRequestClient<ICheckOrder> _checkOrderRequestClient;
 
 
 
     public OrderController(
         ILogger<OrderController> logger,
         IRequestClient<ISubmitOrder> requestClient, 
-        ISendEndpointProvider sendEndpointProvider)
+        ISendEndpointProvider sendEndpointProvider,
+        IRequestClient<ICheckOrder> checkOrderRequestClient)
     {
         _logger = logger;
         _requestClient = requestClient;
         _sendEndpointProvider = sendEndpointProvider;
+        _checkOrderRequestClient = checkOrderRequestClient;
+    }
+
+
+
+    [HttpGet]
+    public async Task<ActionResult> Get(Guid id)
+    {
+        //перезапусти райдер если тупит
+        var response = await _checkOrderRequestClient.GetResponse<IOrderStatus>(new 
+        {
+            OrderId = id
+        });
+        return Ok(response.Message);
     }
 
     [HttpPost]

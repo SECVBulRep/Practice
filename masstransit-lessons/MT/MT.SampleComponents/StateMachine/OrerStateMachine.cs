@@ -9,7 +9,10 @@ public class OrerStateMachine : MassTransitStateMachine<OrderState>
     public OrerStateMachine()
     {
         Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
-
+        //можешь  это пропустить и расказать что надо пистаь для каждого
+        Event(() => OrderStatusRequested, x => x.CorrelateById(m => m.Message.OrderId));
+        
+        
         InstanceState(x => x.CurrentState);
 
         Initially(
@@ -38,11 +41,25 @@ public class OrerStateMachine : MassTransitStateMachine<OrderState>
                     context.Saga.CustomerNumber ??= context.Message.CustomerNumber;
                 })
         );
-
+        
+        // возврат состяония саги
+        DuringAny(
+            When(OrderStatusRequested)
+                .RespondAsync(x =>
+                {
+                    var res = x.Init<IOrderStatus>(new
+                    {
+                        OrderId = x.Saga.CorrelationId,
+                        State = x.Saga.CurrentState
+                        
+                    });
+                    return res;
+                }));
     }
 
     public State Submitted { get; set; }
     public Event<IOrderSubmitted> OrderSubmitted { set; get; }
+    public Event<ICheckOrder> OrderStatusRequested { get; set; }
 }
 
 public class OrderState : SagaStateMachineInstance, ISagaVersion
