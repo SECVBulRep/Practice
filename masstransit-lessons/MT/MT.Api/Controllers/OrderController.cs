@@ -34,11 +34,21 @@ public class OrderController : ControllerBase
     public async Task<ActionResult> Get(Guid id)
     {
         //перезапусти райдер если тупит
-        var response = await _checkOrderRequestClient.GetResponse<IOrderStatus>(new 
+        var (status, notFound) = await _checkOrderRequestClient.GetResponse<IOrderStatus, IOrderNotFound>(new 
         {
             OrderId = id
         });
-        return Ok(response.Message);
+
+        var tasks = new List<Task>
+        {
+            status,
+            notFound
+        };
+
+        int index = Task.WaitAny(tasks.ToArray());
+        if (index == 0)
+            return Ok(status.Result);
+        return NotFound(notFound.Result);
     }
 
     [HttpPost]
