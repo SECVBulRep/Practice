@@ -76,13 +76,3 @@ public class OrerStateMachine : MassTransitStateMachine<OrderState>
     public Event<IOrderSubmitted> OrderSubmitted { set; get; }
     public Event<ICheckOrder> OrderStatusRequested { get; set; }
 }
-
-public class OrderState : SagaStateMachineInstance, ISagaVersion
-{
-    public Guid CorrelationId { get; set; }
-    public int Version { get; set; }
-    public string CurrentState { get; set; }
-    public string CustomerNumber { get; set; }
-    public DateTime? SubmitDate { get; set; }
-    public DateTime? Updated { get; set; }
-}

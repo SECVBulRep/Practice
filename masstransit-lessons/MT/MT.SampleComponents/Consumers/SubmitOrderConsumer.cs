@@ -68,5 +68,6 @@ public class SubmitOrderDefinition : ConsumerDefinition<SubmitOrderConsumer>
     {
         base.ConfigureConsumer(endpointConfigurator, consumerConfigurator);
         endpointConfigurator.PublishFaults = true;
+        endpointConfigurator.UseMessageRetry(r=>r.Interval(3,1000));
     }
 }
