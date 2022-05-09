@@ -9,12 +9,10 @@ public class OrerStateMachine : MassTransitStateMachine<OrderState>
     public OrerStateMachine()
     {
         Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
-        //можешь  это пропустить и расказать что надо пистаь для каждого
+        
         Event(() => OrderStatusRequested, x =>
             {
                 x.CorrelateById(m => m.Message.OrderId);
-                
-                //инлайн функция для ввозврата при ненахождении
                 x.OnMissingInstance(m => m.ExecuteAsync(async context =>
                 {
                     if (context.RequestId.HasValue)

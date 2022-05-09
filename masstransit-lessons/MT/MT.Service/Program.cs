@@ -18,21 +18,11 @@ await Host.CreateDefaultBuilder(args)
         services.AddMassTransit(cfg =>
         {
             cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
-
             cfg.AddConsumer<SubmitOrderConsumer, SubmitOrderDefinition>();
             cfg.AddConsumer<AnyFaultConsumer>();
             cfg.AddConsumer<SubmitOrderFaultConsumer>();
             cfg.AddSagaStateMachine<OrerStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
                 .RedisRepository();
-                //возможность настроек 
-               /*.RedisRepository(c =>
-                    {
-                        c.DatabaseConfiguration(new ConfigurationOptions { Password = "sfsdf" });
-                        c.ConcurrencyMode = ConcurrencyMode.Optimistic;
-
-                    }
-                )*/
-                ;
 
             cfg.UsingRabbitMq((context, config) =>
             {
@@ -52,5 +42,3 @@ await Host.CreateDefaultBuilder(args)
     })
     .Build()
     .RunAsync();
-
-

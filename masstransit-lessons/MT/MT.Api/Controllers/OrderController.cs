@@ -14,8 +14,6 @@ public class OrderController : ControllerBase
     private ISendEndpointProvider _sendEndpointProvider;
     private IRequestClient<ICheckOrder> _checkOrderRequestClient;
 
-
-
     public OrderController(
         ILogger<OrderController> logger,
         IRequestClient<ISubmitOrder> requestClient, 
@@ -38,14 +36,8 @@ public class OrderController : ControllerBase
         {
             OrderId = id
         });
-
-        var tasks = new List<Task>
-        {
-            status,
-            notFound
-        };
-
-        int index = Task.WaitAny(tasks.ToArray());
+        
+        var index = Task.WaitAny(status, notFound);
         if (index == 0)
             return Ok(status.Result);
         return NotFound(notFound.Result);
@@ -61,16 +53,10 @@ public class OrderController : ControllerBase
                 TimeStamp = DateTime.Now,
                 CustomerNumber = customerId
             });
-
-
-        if (accepted.IsCompletedSuccessfully)
-        {
+        var index = Task.WaitAny(accepted, rejected);
+        if(index==0)
             return Ok((await accepted).Message);
-        }
-        else
-        {
-            return BadRequest((await rejected).Message);
-        }
+        return BadRequest((await rejected).Message);
     }
     
     [HttpPut]
@@ -78,15 +64,12 @@ public class OrderController : ControllerBase
     {
 
         var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("exchange:submit-order"));
-        
         await endpoint.Send<ISubmitOrder>(new
         {
             OrderId = id,
             TimeStamp = DateTime.Now,
             CustomerNumber = customerId
         });
-
-
         return Accepted();
     }
     
