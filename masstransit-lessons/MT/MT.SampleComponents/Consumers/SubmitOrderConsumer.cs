@@ -16,10 +16,14 @@ public class SubmitOrderConsumer
         _logger = logger;
     }
 
+    public SubmitOrderConsumer()
+    {
+    }
+    
 
     public async Task Consume(ConsumeContext<ISubmitOrder> context)
     {
-        _logger.Log(LogLevel.Debug, "SubmitOrderConsumer: {CustomerNumber}", context.Message.CustomerNumber);
+        _logger?.Log(LogLevel.Debug, "SubmitOrderConsumer: {CustomerNumber}", context.Message.CustomerNumber);
 
         if (context.Message.CustomerNumber.Contains("data_error"))
         {
