@@ -12,3 +12,8 @@ services:
     container_name: iq-redis
     ports:
       - "6379:6379"
+  mongo:
+    image: "mongo"
+    container_name: iq-mongo
+    ports:
+      - '27017-27019:27017-27019'

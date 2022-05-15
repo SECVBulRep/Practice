@@ -9,7 +9,7 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
     public OrderStateMachine()
     {
         Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
-        
+
         Event(() => OrderStatusRequested, x =>
             {
                 x.CorrelateById(m => m.Message.OrderId);
@@ -26,6 +26,11 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
             }
         );
 
+        Event(() => AccountClosed,
+            x => x.CorrelateBy(
+                (saga, context) => saga.CustomerNumber == context.Message.CustomerNumber
+            )
+        );
 
         InstanceState(x => x.CurrentState);
 
@@ -43,7 +48,10 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
 
         //для идемпотенности
         During(Submitted,
-            Ignore(OrderSubmitted));
+            Ignore(OrderSubmitted),
+            When(AccountClosed)
+                .TransitionTo(Canceled)
+        );
 
 
         // если мы хотим как то дополнить даные потом 
@@ -71,6 +79,8 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
     }
 
     public State Submitted { get; set; }
+    public State Canceled { get; set; }
     public Event<IOrderSubmitted> OrderSubmitted { set; get; }
     public Event<ICheckOrder> OrderStatusRequested { get; set; }
+    public Event<ICustomerAccountClosed> AccountClosed { get; set; }
 }
