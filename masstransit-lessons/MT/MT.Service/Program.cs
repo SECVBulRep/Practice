@@ -21,7 +21,7 @@ await Host.CreateDefaultBuilder(args)
             cfg.AddConsumer<SubmitOrderConsumer, SubmitOrderDefinition>();
             cfg.AddConsumer<AnyFaultConsumer>();
             cfg.AddConsumer<SubmitOrderFaultConsumer>();
-            cfg.AddSagaStateMachine<OrerStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
+            cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
                 .RedisRepository();
 
             cfg.UsingRabbitMq((context, config) =>

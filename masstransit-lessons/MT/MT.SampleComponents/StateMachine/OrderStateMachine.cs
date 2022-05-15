@@ -4,9 +4,9 @@ using MT.SampleContracts;
 
 namespace MT.SampleComponents.StateMachine;
 
-public class OrerStateMachine : MassTransitStateMachine<OrderState>
+public class OrderStateMachine : MassTransitStateMachine<OrderState>
 {
-    public OrerStateMachine()
+    public OrderStateMachine()
     {
         Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
         
