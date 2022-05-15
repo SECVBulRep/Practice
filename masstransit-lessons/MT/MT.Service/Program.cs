@@ -22,7 +22,11 @@ await Host.CreateDefaultBuilder(args)
             cfg.AddConsumer<AnyFaultConsumer>();
             cfg.AddConsumer<SubmitOrderFaultConsumer>();
             cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
-                .RedisRepository(); 
+                .MongoDbRepository(r =>
+                {
+                    r.Connection = "mongodb://127.0.0.1";
+                    r.DatabaseName = "orderdb";
+                });
                 
 
             cfg.UsingRabbitMq((context, config) =>
