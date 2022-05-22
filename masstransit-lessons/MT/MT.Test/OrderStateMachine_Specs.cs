@@ -1,4 +1,7 @@
-﻿using MassTransit.Testing;
+﻿using MassTransit.Configuration;
+using MassTransit.SagaStateMachine;
+using MassTransit.Testing;
+using MassTransit.Visualizer;
 using MT.SampleComponents.Consumers;
 using MT.SampleComponents.StateMachine;
 using MT.SampleContracts;
@@ -198,5 +201,17 @@ public class Submitting_an_order
         {
             await harness.Stop();
         }
+    }
+
+    [Test]
+    public void Show_me_a_state_machine()
+    {
+        var orderStateMachine = new OrderStateMachine();
+        var graph =  orderStateMachine.GetGraph();
+        var generator = new StateMachineGraphvizGenerator(graph);
+
+        string dots = generator.CreateDotFile();
+        Console.WriteLine(dots);
+
     }
 }
