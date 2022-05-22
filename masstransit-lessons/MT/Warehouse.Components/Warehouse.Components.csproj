@@ -7,13 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MassTransit" Version="8.0.3-develop.448" />
-      <PackageReference Include="MassTransit.Analyzers" Version="8.0.3-develop.448" />
-      <PackageReference Include="MassTransit.Redis" Version="8.0.3-develop.448" />
+      <PackageReference Include="MassTransit" Version="8.0.3-develop.456" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MT.SampleContracts\MT.SampleContracts.csproj" />
       <ProjectReference Include="..\Warehouse.Contracts\Warehouse.Contracts.csproj" />
     </ItemGroup>
 

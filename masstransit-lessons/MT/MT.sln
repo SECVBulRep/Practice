@@ -2,11 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MT.Api", "MT.Api\MT.Api.csproj", "{EF7BDDCE-3C01-4D2A-ACE8-0CE21B3915CC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E75EB02A-78AD-44B7-AC66-450E730D677E}"
-	ProjectSection(SolutionItems) = preProject
-		docs\masstransit_with_mediator.txt = docs\masstransit_with_mediator.txt
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MT.SampleContracts", "MT.SampleContracts\MT.SampleContracts.csproj", "{9FE7AF49-1E2B-46A0-95D6-8C592DEDC6AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MT.SampleComponents", "MT.SampleComponents\MT.SampleComponents.csproj", "{9CD54930-2F6A-4E84-9CD9-97F24BA76632}"
@@ -19,6 +14,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{2C2399
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MT.Test", "MT.Test\MT.Test.csproj", "{452FB1A6-865B-4E7B-B90D-7610E21E90C1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Warehouse", "Warehouse", "{CCE6CABB-1DA3-4DD8-9BF7-0D9B5699937B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse.Contracts", "Warehouse.Contracts\Warehouse.Contracts.csproj", "{44750DEF-F0B1-427A-8D3C-D88FAAE43FDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse.Service", "Warehouse.Service\Warehouse.Service.csproj", "{76DDED31-D938-401A-97A0-89BEEDDC4DCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse.Components", "Warehouse.Components\Warehouse.Components.csproj", "{78736BDB-AA44-4DB2-B243-E3D962F871CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,5 +49,22 @@ Global
 		{452FB1A6-865B-4E7B-B90D-7610E21E90C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{452FB1A6-865B-4E7B-B90D-7610E21E90C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{452FB1A6-865B-4E7B-B90D-7610E21E90C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44750DEF-F0B1-427A-8D3C-D88FAAE43FDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44750DEF-F0B1-427A-8D3C-D88FAAE43FDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44750DEF-F0B1-427A-8D3C-D88FAAE43FDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44750DEF-F0B1-427A-8D3C-D88FAAE43FDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76DDED31-D938-401A-97A0-89BEEDDC4DCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76DDED31-D938-401A-97A0-89BEEDDC4DCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76DDED31-D938-401A-97A0-89BEEDDC4DCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76DDED31-D938-401A-97A0-89BEEDDC4DCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78736BDB-AA44-4DB2-B243-E3D962F871CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78736BDB-AA44-4DB2-B243-E3D962F871CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78736BDB-AA44-4DB2-B243-E3D962F871CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78736BDB-AA44-4DB2-B243-E3D962F871CF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{44750DEF-F0B1-427A-8D3C-D88FAAE43FDB} = {CCE6CABB-1DA3-4DD8-9BF7-0D9B5699937B}
+		{76DDED31-D938-401A-97A0-89BEEDDC4DCE} = {CCE6CABB-1DA3-4DD8-9BF7-0D9B5699937B}
+		{78736BDB-AA44-4DB2-B243-E3D962F871CF} = {CCE6CABB-1DA3-4DD8-9BF7-0D9B5699937B}
 	EndGlobalSection
 EndGlobal
