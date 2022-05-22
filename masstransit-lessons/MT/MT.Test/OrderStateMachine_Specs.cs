@@ -98,8 +98,6 @@ public class Submitting_an_order
         }
     }
     
-    
-    
     [Test]
     public async Task Should_cancel_when_account_closed()
     {
@@ -134,6 +132,67 @@ public class Submitting_an_order
             
             
             Assert.That(response.Message.State,Is.EqualTo(orderStateMachine.Submitted.Name));
+            
+            await harness.Bus.Publish<ICustomerAccountClosed>(new
+            {
+                CustomerNumber = customerId,
+                CustomerId = default(Guid),
+                Stamp = DateTime.Now
+            });
+
+            var instance_canceled = saga.Exists(orderId, x => x.Canceled);
+            Assert.That(instance_canceled,Is.Not.Null);
+        }
+        finally
+        {
+            await harness.Stop();
+        }
+    }
+    
+    
+    [Test]
+    public async Task Should_accept_when_order_accepted()
+    {
+        var orderStateMachine = new OrderStateMachine();
+        var harness = new InMemoryTestHarness();
+        var saga = harness.StateMachineSaga<OrderState, OrderStateMachine>(orderStateMachine);
+
+        await harness.Start();
+        try
+        {
+            var orderId = Guid.NewGuid();
+            var stamp = DateTime.UtcNow;
+            var customerId = "Bob";
+
+            await harness.Bus.Publish<IOrderSubmitted>(new
+            {
+                OrderId = orderId,
+                TimeStamp = stamp,
+                CustomerNumber = customerId
+            });
+
+            Assert.That(saga.Created.Select(x => x.CorrelationId == orderId).Any(), Is.True);
+            await saga.Exists(orderId, x => x.Submitted);
+
+            var instance = saga.Created.Contains(orderId);
+            Assert.That(instance, Is.Not.Null);
+            Assert.That(instance.CurrentState, Is.EqualTo(orderStateMachine.Submitted.Name));
+            Assert.That(instance.CustomerNumber, Is.EqualTo(customerId));
+
+            var requestClient = await harness.ConnectRequestClient<ICheckOrder>();
+            var response = await requestClient.GetResponse<IOrderStatus>(new {OrderId = orderId});
+            
+            
+            Assert.That(response.Message.State,Is.EqualTo(orderStateMachine.Submitted.Name));
+            
+            await harness.Bus.Publish<IOrderAccepted>(new
+            {
+                OrderId = orderId,
+                TimeStamp = DateTime.Now
+            });
+
+            var instance_accepted = saga.Exists(orderId, x => x.Accepted);
+            Assert.That(instance_accepted,Is.Not.Null);
         }
         finally
         {

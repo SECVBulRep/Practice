@@ -1,5 +1,7 @@
-﻿using System.Net.Mail;
+﻿using System.Diagnostics;
+using System.Net.Mail;
 using MassTransit;
+using MT.SampleComponents.StateMachine.OrderStateMachineActivities;
 using MT.SampleContracts;
 
 namespace MT.SampleComponents.StateMachine;
@@ -32,6 +34,8 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
             )
         );
 
+        Event(() => OrderAccepted, x => x.CorrelateById(m => m.Message.OrderId));
+
         InstanceState(x => x.CurrentState);
 
         Initially(
@@ -50,7 +54,10 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
         During(Submitted,
             Ignore(OrderSubmitted),
             When(AccountClosed)
-                .TransitionTo(Canceled)
+                .TransitionTo(Canceled),
+            When(OrderAccepted)
+                .Activity(x => x.OfType<OrderAcceptActivity>()
+                    .TransitionTo(Accepted))
         );
 
 
@@ -80,6 +87,8 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
 
     public State Submitted { get; set; }
     public State Canceled { get; set; }
+    public State Accepted { get; set; }
+    public Event<IOrderAccepted> OrderAccepted { get; set; }
     public Event<IOrderSubmitted> OrderSubmitted { set; get; }
     public Event<ICheckOrder> OrderStatusRequested { get; set; }
     public Event<ICustomerAccountClosed> AccountClosed { get; set; }
