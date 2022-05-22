@@ -26,6 +26,8 @@ public class OrderAcceptActivity :
 
     public async Task Execute(BehaviorContext<OrderState, IOrderAccepted> context, IBehavior<OrderState, IOrderAccepted> next)
     {
+        
+        //context.Publish<Somme>()
         Console.WriteLine($"OrderAcceptActivity. OrderId {context.Message.OrderId}");
         
         // do something later
