@@ -3,9 +3,9 @@ using Warehouse.Contracts;
 
 namespace Warehouse.Components.Consumers;
 
-public class AllocateInventoryConsumer : IConsumer<IInventoryAllocated>
+public class AllocateInventoryConsumer : IConsumer<IAllocateInventory>
 {
-    public async Task Consume(ConsumeContext<IInventoryAllocated> context)
+    public async Task Consume(ConsumeContext<IAllocateInventory> context)
     {
         await Task.Delay(500);
         await context.RespondAsync<IInventoryAllocated>(new
