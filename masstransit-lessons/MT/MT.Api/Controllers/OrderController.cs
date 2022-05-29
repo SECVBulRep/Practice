@@ -13,17 +13,22 @@ public class OrderController : ControllerBase
     private IRequestClient<ISubmitOrder> _requestClient;
     private ISendEndpointProvider _sendEndpointProvider;
     private IRequestClient<ICheckOrder> _checkOrderRequestClient;
+    private readonly IPublishEndpoint _publishEndpoint;
 
     public OrderController(
         ILogger<OrderController> logger,
         IRequestClient<ISubmitOrder> requestClient, 
         ISendEndpointProvider sendEndpointProvider,
-        IRequestClient<ICheckOrder> checkOrderRequestClient)
+        IRequestClient<ICheckOrder> checkOrderRequestClient,
+        IPublishEndpoint publishEndpoint
+        
+        )
     {
         _logger = logger;
         _requestClient = requestClient;
         _sendEndpointProvider = sendEndpointProvider;
         _checkOrderRequestClient = checkOrderRequestClient;
+        _publishEndpoint = publishEndpoint;
     }
 
 
@@ -71,6 +76,19 @@ public class OrderController : ControllerBase
             CustomerNumber = customerId
         });
         return Accepted();
+    }
+    
+    
+    [HttpPatch]
+    public async Task<IActionResult> Patch(Guid id)
+    {
+        await _publishEndpoint.Publish<IOrderAccepted>(new
+        {
+            OrderId = id,
+            TimeStamp = DateTime.Now,
+        });
+        return Accepted();
+        
     }
     
 }

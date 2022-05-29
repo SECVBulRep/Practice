@@ -29,6 +29,14 @@ public class OrderAcceptActivity :
         
         //context.Publish<Somme>()
         Console.WriteLine($"OrderAcceptActivity. OrderId {context.Message.OrderId}");
+
+        var consumeContext = context.GetPayload<ConsumeContext>();
+        var sendPoint = await consumeContext.GetSendEndpoint(new Uri("exchange:fulfill-order"));
+
+        await sendPoint.Send<IFulfillOrder>(new
+        {
+            OrderId = context.Message.OrderId
+        });
         
         // do something later
         await next.Execute(context).ConfigureAwait(false);

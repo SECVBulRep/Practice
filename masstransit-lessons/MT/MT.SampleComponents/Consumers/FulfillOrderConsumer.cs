@@ -9,7 +9,7 @@ public class FulfillOrderConsumer: IConsumer<IFulfillOrder>
     {
         var builder = new RoutingSlipBuilder(Guid.NewGuid());
         // обрати внимание на нижнее подчеркивание в наименовании!!!
-        builder.AddActivity("AllocateInventory",new Uri("queue: allocate-inventory_execute"),new
+        builder.AddActivity("AllocateInventory",new Uri("queue:allocate-inventory_execute"),new
         {
             ItemNumber = "ITEM123",
             Quantity = 10.0m
