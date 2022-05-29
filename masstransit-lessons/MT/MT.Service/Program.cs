@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MT.SampleComponents.Consumers;
+using MT.SampleComponents.CourierAcitivities;
 using MT.SampleComponents.StateMachine;
 using StackExchange.Redis;
 
@@ -18,6 +19,9 @@ await Host.CreateDefaultBuilder(args)
         services.AddMassTransit(cfg =>
         {
             cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
+            cfg.AddActivitiesFromNamespaceContaining<AllocateInventoryActivity>();
+            
+            
             cfg.AddConsumer<SubmitOrderConsumer, SubmitOrderDefinition>();
             cfg.AddConsumer<AnyFaultConsumer>();
             cfg.AddConsumer<SubmitOrderFaultConsumer>();
