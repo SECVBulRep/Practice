@@ -1,19 +1,35 @@
 version: "3"
+
+networks:
+  webmoney:
+
 services:
   rabbitmq:
     container_name: iq-rabbitmq
     hostname: rabbit
     image: rabbitmq:3-management
+    networks:
+      - webmoney
     ports:
      - "5672:5672"
      - "15672:15672"
   redis:
     image: redis
+    networks:
+      - webmoney
     container_name: iq-redis
     ports:
       - "6379:6379"
   mongo:
     image: "mongo"
+    networks:
+      - webmoney
     container_name: iq-mongo
     ports:
       - '27017-27019:27017-27019'
+  sqlserver:
+    image: masstransit/sqlserver-quartz:latest
+    networks:
+      - webmoney
+    ports:
+      - 1433:1433
