@@ -31,10 +31,9 @@ public class AllocateInventoryActivity : IActivity<IAllocateInventoryArguments, 
             Quantity = quantity
         });
 
-
         return context.Completed(new
         {
-            AlocationId = allocationId
+            AllocationId = allocationId
         });
     }
 
@@ -42,7 +41,7 @@ public class AllocateInventoryActivity : IActivity<IAllocateInventoryArguments, 
     {
         await context.Publish<IAllocationReleaseRequested>(new
         {
-            AlocationId = context.Log.AllocationId,
+            AllocationId = context.Log.AllocationId,
             Reason = "order faulted"
         });
 

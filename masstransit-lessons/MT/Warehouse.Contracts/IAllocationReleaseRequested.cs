@@ -2,6 +2,6 @@
 
 public interface IAllocationReleaseRequested
 {
-    Guid AlocationId { get; set; }
+    Guid AllocationId { get; set; }
     string Reason { get; set; }
 }

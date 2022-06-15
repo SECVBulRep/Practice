@@ -9,13 +9,20 @@ public class FulfillOrderConsumer: IConsumer<IFulfillOrder>
     {
         var builder = new RoutingSlipBuilder(Guid.NewGuid());
         // обрати внимание на нижнее подчеркивание в наименовании!!!
+        
+        builder.AddVariable("OrderId",context.Message.OrderId);
+        
         builder.AddActivity("AllocateInventory",new Uri("queue:allocate-inventory_execute"),new
         {
             ItemNumber = "ITEM123",
             Quantity = 10.0m
         });
         
-        builder.AddVariable("OrderId",context.Message.OrderId);
+     
+        
+        builder.AddActivity("InformAllocateInventory",new Uri("queue:inform-allocate-inventory_execute"),new
+        {
+        });
 
         var routingSlip = builder.Build();
 
