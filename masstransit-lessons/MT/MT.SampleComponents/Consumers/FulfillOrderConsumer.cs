@@ -17,13 +17,6 @@ public class FulfillOrderConsumer: IConsumer<IFulfillOrder>
             ItemNumber = "ITEM123",
             Quantity = 10.0m
         });
-        
-     
-        
-        builder.AddActivity("InformAllocateInventory",new Uri("queue:inform-allocate-inventory_execute"),new
-        {
-        });
-
         var routingSlip = builder.Build();
 
         await context.Execute(routingSlip);
