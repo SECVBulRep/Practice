@@ -30,6 +30,8 @@ public class AllocateInventoryActivity : IActivity<IAllocateInventoryArguments, 
             ItemNumber = itemNumber,
             Quantity = quantity
         });
+
+
         return context.Completed(new
         {
             AlocationId = allocationId

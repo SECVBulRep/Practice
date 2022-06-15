@@ -11,6 +11,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{2C23996A-0F6F-4ED1-8415-E6993869FF9F}"
 	ProjectSection(SolutionItems) = preProject
 		Docker\docker-compose.yml = Docker\docker-compose.yml
+		Docker\quartz.sql = Docker\quartz.sql
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MT.Test", "MT.Test\MT.Test.csproj", "{452FB1A6-865B-4E7B-B90D-7610E21E90C1}"

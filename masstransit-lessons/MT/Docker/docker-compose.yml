@@ -11,8 +11,8 @@ services:
     networks:
       - webmoney
     ports:
-     - "5672:5672"
-     - "15672:15672"
+      - "5672:5672"
+      - "15672:15672"
   redis:
     image: redis
     networks:
@@ -28,8 +28,11 @@ services:
     ports:
       - '27017-27019:27017-27019'
   sqlserver:
-    image: masstransit/sqlserver-quartz:latest
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
     networks:
       - webmoney
     ports:
-      - 1433:1433
+      - '1401:1433'
+    environment:
+      SA_PASSWORD: "WTmrFXm2mT9876IS"
+      ACCEPT_EULA: "Y"
