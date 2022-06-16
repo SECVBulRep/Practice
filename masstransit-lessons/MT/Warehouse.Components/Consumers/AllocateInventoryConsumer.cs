@@ -8,6 +8,13 @@ public class AllocateInventoryConsumer : IConsumer<IAllocateInventory>
     public async Task Consume(ConsumeContext<IAllocateInventory> context)
     {
         await Task.Delay(500);
+
+        await context.Publish<IAllocationCreated>(new
+        {
+            AllocationId = context.Message.AllocationId,
+            HoldDuration = TimeSpan.FromSeconds(30)
+        });
+
         await context.RespondAsync<IInventoryAllocated>(new
         {
             AllocationId = context.Message.AllocationId,

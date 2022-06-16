@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Quartz;
 using Quartz.Impl;
 using Warehouse.Components.Consumers;
+using Warehouse.Components.StateMachines;
 
 await Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostingConext, config) => { config.AddJsonFile("appsettings.json", true); })
@@ -20,10 +21,16 @@ await Host.CreateDefaultBuilder(args)
             .Instance); // позже напиши. kebab case лучше чем snake _ kase
 
         services.Configure<QuartzConfig>(hostContext.Configuration.GetSection("Quartz"));
-        
+
         services.AddMassTransit(cfg =>
         {
             cfg.AddConsumersFromNamespaceContaining<AllocateInventoryConsumer>();
+            cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>()
+                .MongoDbRepository(r =>
+                {
+                    r.Connection = "mongodb://127.0.0.1";
+                    r.DatabaseName = "allocation-db";
+                });
 
             cfg.UsingRabbitMq((context, config) =>
             {
@@ -32,13 +39,21 @@ await Host.CreateDefaultBuilder(args)
                     h.Username("guest");
                     h.Password("guest");
                 });
-
-                config.UseInMemoryScheduler(x =>
+                
+                
+                config.UseMessageScheduler(new Uri("queue:quartz"));
+                
+               /* Uri schedulerEndpoint = new Uri("queue:scheduler");
+                config.UseMessageScheduler(schedulerEndpoint);
+                */
+               
+               
+               /* config.UseInMemoryScheduler(x =>
                 {
                     x.SchedulerFactory = new StdSchedulerFactory(context.GetService<IOptions<QuartzConfig>>().Value
                         .ToNameValueCollection());
                 });
-                
+*/
                 config.ConfigureEndpoints(context);
             });
         });
