@@ -10,7 +10,7 @@ public class AllocateInventoryConsumer : IConsumer<IAllocateInventory>
         await Task.Delay(500);
         await context.RespondAsync<IInventoryAllocated>(new
         {
-            AlocationId = context.Message.AlocationId,
+            AllocationId = context.Message.AllocationId,
             ItemNumber = context.Message.ItemNumber,
             Quantity = context.Message.Quantity,
         });

@@ -2,7 +2,7 @@
 
 public interface IAllocateInventory
 {
-    Guid AlocationId { get; set; }
+    Guid AllocationId { get; set; }
     string ItemNumber { get; set; }
     decimal Quantity { get; set; }
 }

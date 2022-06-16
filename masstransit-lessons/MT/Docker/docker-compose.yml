@@ -32,7 +32,7 @@ services:
     networks:
       - webmoney
     ports:
-      - '1401:1433'
+      - '14333:1433'
     environment:
       SA_PASSWORD: "WTmrFXm2mT9876IS"
       ACCEPT_EULA: "Y"

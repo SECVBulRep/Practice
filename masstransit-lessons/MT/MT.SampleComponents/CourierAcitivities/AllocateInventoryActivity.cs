@@ -26,7 +26,7 @@ public class AllocateInventoryActivity : IActivity<IAllocateInventoryArguments, 
 
         var response = await _requestClient.GetResponse<IInventoryAllocated>(new
         {
-            AlocationId = allocationId,
+            AllocationId = allocationId,
             ItemNumber = itemNumber,
             Quantity = quantity
         });
