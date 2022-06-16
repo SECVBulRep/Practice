@@ -3,9 +3,13 @@
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Configuration;
+using Microsoft.Extensions.Options;
+using Quartz;
+using Quartz.Impl;
 using Warehouse.Components.Consumers;
 
 await Host.CreateDefaultBuilder(args)
@@ -15,6 +19,8 @@ await Host.CreateDefaultBuilder(args)
         services.TryAddSingleton(KebabCaseEndpointNameFormatter
             .Instance); // позже напиши. kebab case лучше чем snake _ kase
 
+        services.Configure<QuartzConfig>(hostContext.Configuration.GetSection("Quartz"));
+        
         services.AddMassTransit(cfg =>
         {
             cfg.AddConsumersFromNamespaceContaining<AllocateInventoryConsumer>();
@@ -26,6 +32,13 @@ await Host.CreateDefaultBuilder(args)
                     h.Username("guest");
                     h.Password("guest");
                 });
+
+                config.UseInMemoryScheduler(x =>
+                {
+                    x.SchedulerFactory = new StdSchedulerFactory(context.GetService<IOptions<QuartzConfig>>().Value
+                        .ToNameValueCollection());
+                });
+                
                 config.ConfigureEndpoints(context);
             });
         });

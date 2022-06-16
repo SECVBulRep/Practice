@@ -28,7 +28,7 @@ services:
     ports:
       - '27017-27019:27017-27019'
   sqlserver:
-    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    image: "masstransit/sqlserver-quartz"
     networks:
       - webmoney
     ports:
