@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Configuration;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.Extensions.Options;
 using Quartz;
 using Quartz.Impl;
+using Quartz.Spi;
 using Warehouse.Components.Consumers;
 using Warehouse.Components.StateMachines;
 
@@ -20,7 +22,26 @@ await Host.CreateDefaultBuilder(args)
         services.TryAddSingleton(KebabCaseEndpointNameFormatter
             .Instance); // позже напиши. kebab case лучше чем snake _ kase
 
-        services.Configure<QuartzConfig>(hostContext.Configuration.GetSection("Quartz"));
+
+        services.Configure<QuartzOptions>(hostContext.Configuration.GetSection("Quartz"));
+
+
+        services.Configure<QuartzOptions>(options =>
+        {
+            options.Scheduling.IgnoreDuplicates = true;
+            options.Scheduling.OverWriteExistingData = true;
+        });
+
+        services.AddQuartz(q =>
+        {
+            q.SchedulerId = "Scheduler-Core";
+            q.UseMicrosoftDependencyInjectionJobFactory();
+        });
+
+        services.AddQuartzHostedService(options => { options.WaitForJobsToComplete = true; });
+
+        const string schedulerQueueName = "scheduler";
+        var schedulerUri = new Uri($"queue:{schedulerQueueName}");
 
         services.AddMassTransit(cfg =>
         {
@@ -39,21 +60,16 @@ await Host.CreateDefaultBuilder(args)
                     h.Username("guest");
                     h.Password("guest");
                 });
-                
-                
-                config.UseMessageScheduler(new Uri("queue:quartz"));
-                
-               /* Uri schedulerEndpoint = new Uri("queue:scheduler");
-                config.UseMessageScheduler(schedulerEndpoint);
-                */
-               
-               
-               /* config.UseInMemoryScheduler(x =>
+
+
+                config.UseInMemoryScheduler(schedulerCfg =>
                 {
-                    x.SchedulerFactory = new StdSchedulerFactory(context.GetService<IOptions<QuartzConfig>>().Value
-                        .ToNameValueCollection());
+                    schedulerCfg.QueueName = schedulerQueueName;
+                    schedulerCfg.SchedulerFactory = context.GetRequiredService<ISchedulerFactory>();
+                    schedulerCfg.StartScheduler = false;
                 });
-*/
+
+
                 config.ConfigureEndpoints(context);
             });
         });

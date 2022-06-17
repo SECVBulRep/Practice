@@ -12,7 +12,7 @@ public class AllocateInventoryConsumer : IConsumer<IAllocateInventory>
         await context.Publish<IAllocationCreated>(new
         {
             AllocationId = context.Message.AllocationId,
-            HoldDuration = TimeSpan.FromSeconds(30)
+            HoldDuration = TimeSpan.FromSeconds(10)
         });
 
         await context.RespondAsync<IInventoryAllocated>(new

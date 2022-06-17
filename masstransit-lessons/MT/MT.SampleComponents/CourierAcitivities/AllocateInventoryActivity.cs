@@ -18,8 +18,8 @@ public class AllocateInventoryActivity : IActivity<IAllocateInventoryArguments, 
         var itemNumber = context.Arguments.ItemNumber;
         if (string.IsNullOrEmpty(itemNumber))
             throw new ArgumentException(nameof(itemNumber));
-        var quantity = context.Arguments.Quantity;
-        if (string.IsNullOrEmpty(quantity))
+        int quantity = context.Arguments.Quantity;
+        if (quantity<1)
             throw new ArgumentException(nameof(quantity));
 
         var allocationId = Guid.NewGuid();

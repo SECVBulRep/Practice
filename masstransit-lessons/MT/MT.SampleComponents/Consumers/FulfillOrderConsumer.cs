@@ -15,7 +15,7 @@ public class FulfillOrderConsumer: IConsumer<IFulfillOrder>
         builder.AddActivity("AllocateInventory",new Uri("queue:allocate-inventory_execute"),new
         {
             ItemNumber = "ITEM123",
-            Quantity = "10"
+            Quantity = 10
         });
         var routingSlip = builder.Build();
 

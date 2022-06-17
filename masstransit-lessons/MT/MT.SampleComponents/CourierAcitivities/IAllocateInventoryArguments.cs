@@ -4,5 +4,5 @@ public interface IAllocateInventoryArguments
 {
     Guid OrderId { get; set; }
     string ItemNumber { get; set; }
-    string Quantity { get; set; }
+    int Quantity { get; set; }
 }
