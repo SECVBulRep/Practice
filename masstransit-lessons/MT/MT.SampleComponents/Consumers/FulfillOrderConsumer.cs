@@ -20,7 +20,7 @@ public class FulfillOrderConsumer: IConsumer<IFulfillOrder>
         
         builder.AddActivity("PaymentActivity",new Uri("queue:payment_execute"),new
         {
-            CardNumber = "4000",
+            CardNumber = "5999-1111-1111-1111",
             Amount = 10m
         });
         

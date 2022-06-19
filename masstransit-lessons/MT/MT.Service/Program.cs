@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using MT.SampleComponents.Consumers;
 using MT.SampleComponents.CourierAcitivities;
 using MT.SampleComponents.StateMachine;
@@ -46,8 +47,12 @@ await Host.CreateDefaultBuilder(args)
     })
     .ConfigureLogging((hostingContext, logging) =>
     {
+        
         logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-        logging.AddConsole();
+        logging.AddConsole(x =>
+        {
+            
+        });
     })
     .Build()
     .RunAsync();

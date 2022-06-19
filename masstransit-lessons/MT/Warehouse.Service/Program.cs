@@ -49,7 +49,7 @@ await Host.CreateDefaultBuilder(args)
             cfg.AddMessageScheduler(schedulerUri);
 
             cfg.AddConsumersFromNamespaceContaining<AllocateInventoryConsumer>();
-            cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>()
+            cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>(typeof(AllocateStateMachineDefinition))
                 .MongoDbRepository(r =>
                 {
                     r.Connection = "mongodb://127.0.0.1";
