@@ -45,6 +45,9 @@ await Host.CreateDefaultBuilder(args)
 
         services.AddMassTransit(cfg =>
         {
+            
+            cfg.AddMessageScheduler(schedulerUri);
+
             cfg.AddConsumersFromNamespaceContaining<AllocateInventoryConsumer>();
             cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>()
                 .MongoDbRepository(r =>

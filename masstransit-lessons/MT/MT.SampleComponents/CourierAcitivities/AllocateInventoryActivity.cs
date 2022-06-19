@@ -3,7 +3,7 @@ using Warehouse.Contracts;
 
 namespace MT.SampleComponents.CourierAcitivities;
 
-public class AllocateInventoryActivity : IActivity<IAllocateInventoryArguments, AllocateInventoryLog>
+public class AllocateInventoryActivity : IActivity<IAllocateInventoryArguments, IAllocateInventoryLog>
 {
     private readonly IRequestClient<IAllocateInventory> _requestClient;
 
@@ -37,7 +37,7 @@ public class AllocateInventoryActivity : IActivity<IAllocateInventoryArguments, 
         });
     }
 
-    public async Task<CompensationResult> Compensate(CompensateContext<AllocateInventoryLog> context)
+    public async Task<CompensationResult> Compensate(CompensateContext<IAllocateInventoryLog> context)
     {
         await context.Publish<IAllocationReleaseRequested>(new
         {

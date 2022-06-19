@@ -2,7 +2,7 @@
 using MassTransit.Courier.Contracts;
 using Microsoft.Extensions.Logging;
 
-namespace Warehouse.Components.Consumers
+namespace MT.SampleComponents.Consumers
 {
     public class RoutingSlipEventConsumer : 
         IConsumer<RoutingSlipCompleted>, 

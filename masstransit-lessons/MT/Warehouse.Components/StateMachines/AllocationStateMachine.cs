@@ -27,7 +27,7 @@ public class AllocationStateMachine :
 
         Initially(
             When(AllocationCreated)
-                .Then(x => { _logger.LogInformation($" {DateTime.Now} AllocationCreated !!! "); })
+                .Then(x => { _logger.LogInformation($" !!!!!!!!!! {DateTime.Now} AllocationCreated !!!!!!!! "); })
                 .Schedule(
                     // сам шедуллер
                     HoldExpiration,
@@ -45,7 +45,7 @@ public class AllocationStateMachine :
             When(HoldExpiration.Received)
                 .Then(x =>
                 {
-                    _logger.LogInformation($" {DateTime.Now} HoldExpiration.Received !!!");
+                    _logger.LogInformation($" !!!!!!!!! {DateTime.Now} HoldExpiration.Received !!!!!! ");
                 })
                 .Finalize()
         );

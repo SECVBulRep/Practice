@@ -1,6 +1,6 @@
 ﻿namespace MT.SampleComponents.CourierAcitivities;
 
-public interface AllocateInventoryLog
+public interface IAllocateInventoryLog
 {
     Guid AllocationId { get; set; }
 }

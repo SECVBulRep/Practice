@@ -17,6 +17,14 @@ public class FulfillOrderConsumer: IConsumer<IFulfillOrder>
             ItemNumber = "ITEM123",
             Quantity = 10
         });
+        
+        builder.AddActivity("PaymentActivity",new Uri("queue:payment_execute"),new
+        {
+            CardNumber = "4000",
+            Amount = 10m
+        });
+        
+        
         var routingSlip = builder.Build();
 
         await context.Execute(routingSlip);
