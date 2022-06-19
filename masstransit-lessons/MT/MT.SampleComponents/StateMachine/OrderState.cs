@@ -10,4 +10,5 @@ public class OrderState : SagaStateMachineInstance, ISagaVersion
     public string CustomerNumber { get; set; }
     public DateTime? SubmitDate { get; set; }
     public DateTime? Updated { get; set; }
+    public string FaultReason { get; set; }
 }

@@ -11,6 +11,7 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
     public OrderStateMachine()
     {
         Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
+        Event(() => FulfillmentFaulted, x => x.CorrelateById(m => m.Message.OrderId));
 
         Event(() => OrderStatusRequested, x =>
             {
@@ -60,6 +61,10 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
                     .TransitionTo(Accepted))
         );
 
+        During(Accepted,
+            When(FulfillmentFaulted)
+                .TransitionTo(Faulted));
+
 
         // если мы хотим как то дополнить даные потом 
         DuringAny(
@@ -88,8 +93,10 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
     public State Submitted { get; set; }
     public State Canceled { get; set; }
     public State Accepted { get; set; }
+    public State Faulted { get; set; }
     public Event<IOrderAccepted> OrderAccepted { get; set; }
     public Event<IOrderSubmitted> OrderSubmitted { set; get; }
     public Event<ICheckOrder> OrderStatusRequested { get; set; }
     public Event<ICustomerAccountClosed> AccountClosed { get; set; }
+    public Event<IOrderFulfilmentFaulted> FulfillmentFaulted { get; set; }
 }
