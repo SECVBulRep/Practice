@@ -80,6 +80,7 @@ public class AllocationStateMachine :
                 })
                 .Finalize(),
             When(ReleaseRequested)
+                .Unschedule(HoldExpiration)
                 .Then(x =>
                 {
                     _logger.LogInformation(

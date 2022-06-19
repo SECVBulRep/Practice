@@ -9,6 +9,9 @@ public class PaymentActivity :
     {
         string cardNumber = context.Arguments.CardNumber;
 
+        //что бы запустился шедуллер
+        await Task.Delay(1500);
+        
         if (string.IsNullOrEmpty(cardNumber))
             throw new ArgumentNullException(nameof(cardNumber));
 
@@ -28,16 +31,4 @@ public class PaymentActivity :
         await Task.Delay(500);
         return context.Compensated();
     }
-}
-
-public interface IPaymentArguments
-{
-    Guid OrderId { get; set; }
-    decimal Amount { get; set; }
-    string CardNumber { get; set; }
-}
-
-public interface IPaymentLog
-{
-    string AuthorizationCode { get; set; }
 }
