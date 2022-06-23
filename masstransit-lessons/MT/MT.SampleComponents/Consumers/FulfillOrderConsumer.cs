@@ -21,17 +21,25 @@ public class FulfillOrderConsumer : IConsumer<IFulfillOrder>
 
         builder.AddActivity("PaymentActivity", new Uri("queue:payment_execute"), new
         {
-            CardNumber = "5999-1111-1111-1111",
+            CardNumber = context.Message.PaymentCardNumber ?? "5999-1111-1111-1111",
             Amount = 10m
         });
 
-        await builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.Faulted, RoutingSlipEventContents.None,
+        await builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.Faulted | RoutingSlipEvents.Supplemental,
+            RoutingSlipEventContents.None,
             x => x.Send<IOrderFulfilmentFaulted>(new
             {
                 OrderId = context.Message.OrderId
             }));
 
-
+        await builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.Completed | RoutingSlipEvents.Supplemental,
+            RoutingSlipEventContents.None,
+            x => x.Send<IOrderFulfilmentCompleted>(new
+            {
+                OrderId = context.Message.OrderId
+            }));
+        
+        
         var routingSlip = builder.Build();
 
         await context.Execute(routingSlip);

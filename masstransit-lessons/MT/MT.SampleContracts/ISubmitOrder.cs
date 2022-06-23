@@ -5,4 +5,5 @@ public interface ISubmitOrder
     Guid OrderId { get; set; }
     DateTime TimeStamp { get; set; }
     string CustomerNumber { get; set; }
+    string PaymentCardNumber { get; set; }
 }

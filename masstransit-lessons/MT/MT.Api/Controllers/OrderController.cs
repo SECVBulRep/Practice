@@ -49,14 +49,15 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(Guid id, string customerId)
+    public async Task<IActionResult> Post(Guid id, string customerId,string paymentCardNumber)
     {
         var (accepted, rejected) = await _requestClient.GetResponse<IOrderSubmissionAccepted, IOrderSubmissionRejected>(
             new
             {
                 OrderId = id,
                 TimeStamp = DateTime.Now,
-                CustomerNumber = customerId
+                CustomerNumber = customerId,
+                PaymentCardNumber = paymentCardNumber
             });
         var index = Task.WaitAny(accepted, rejected);
         if(index==0)

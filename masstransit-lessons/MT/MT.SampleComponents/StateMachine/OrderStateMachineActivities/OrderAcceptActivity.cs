@@ -35,7 +35,9 @@ public class OrderAcceptActivity :
 
         await sendPoint.Send<IFulfillOrder>(new
         {
-            OrderId = context.Message.OrderId
+            OrderId = context.Message.OrderId,
+            PaymentCardNumber = context.Saga.PaymentCardNumber,
+            CustomerNumber = context.Saga.CustomerNumber
         });
         
         // do something later

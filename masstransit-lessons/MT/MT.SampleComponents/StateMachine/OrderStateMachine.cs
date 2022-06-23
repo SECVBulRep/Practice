@@ -12,6 +12,7 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
     {
         Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
         Event(() => FulfillmentFaulted, x => x.CorrelateById(m => m.Message.OrderId));
+        Event(() => FulfillmentCompleted, x => x.CorrelateById(m => m.Message.OrderId));
 
         Event(() => OrderStatusRequested, x =>
             {
@@ -46,6 +47,7 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
                         context.Saga.SubmitDate = context.Message.TimeStamp;
                         context.Saga.CustomerNumber = context.Message.CustomerNumber;
                         context.Saga.Updated = DateTime.UtcNow;
+                        context.Saga.PaymentCardNumber = context.Message.PaymentCardNumber;
                     }
                 )
                 .TransitionTo(Submitted)
@@ -63,7 +65,10 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
 
         During(Accepted,
             When(FulfillmentFaulted)
-                .TransitionTo(Faulted));
+                .TransitionTo(Faulted),
+            When(FulfillmentCompleted)
+                .TransitionTo(Completed)
+        );
 
 
         // если мы хотим как то дополнить даные потом 
@@ -90,6 +95,8 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
                 }));
     }
 
+    public State Completed { get; set; }
+
     public State Submitted { get; set; }
     public State Canceled { get; set; }
     public State Accepted { get; set; }
@@ -99,4 +106,7 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
     public Event<ICheckOrder> OrderStatusRequested { get; set; }
     public Event<ICustomerAccountClosed> AccountClosed { get; set; }
     public Event<IOrderFulfilmentFaulted> FulfillmentFaulted { get; set; }
+    public Event<IOrderFulfilmentCompleted> FulfillmentCompleted { get; set; }
+    
+    
 }

@@ -11,4 +11,5 @@ public class OrderState : SagaStateMachineInstance, ISagaVersion
     public DateTime? SubmitDate { get; set; }
     public DateTime? Updated { get; set; }
     public string FaultReason { get; set; }
+    public string PaymentCardNumber { get; set; }
 }
