@@ -71,7 +71,7 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
 
         During(Accepted,
             When(FulfillOrderFaulted)
-                .Then(x => { _logger.LogInformation($" !!!!!!!!!! {DateTime.Now} FulfillOrderFaulted !!!!!!!!  {x.Message.Exceptions.FirstOrDefault()?.Message}"); })
+                .Then(x => { _logger?.LogInformation($" !!!!!!!!!! {DateTime.Now} FulfillOrderFaulted !!!!!!!!  {x.Message.Exceptions.FirstOrDefault()?.Message}"); })
                 .TransitionTo(Faulted),
             When(FulfillmentFaulted)
                 .TransitionTo(Faulted),

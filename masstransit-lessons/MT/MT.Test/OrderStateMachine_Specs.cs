@@ -15,7 +15,7 @@ public class Submitting_an_order
     [Test]
     public async Task Should_create_an_instance()
     {
-        var orderStateMachine = new OrderStateMachine();
+        var orderStateMachine = new OrderStateMachine(null);
         var harness = new InMemoryTestHarness();
         var saga = harness.StateMachineSaga<OrderState, OrderStateMachine>(orderStateMachine);
 
@@ -55,7 +55,7 @@ public class Submitting_an_order
     [Test]
     public async Task Should_response_to_status_check()
     {
-        var orderStateMachine = new OrderStateMachine();
+        var orderStateMachine = new OrderStateMachine(null);
         var harness = new InMemoryTestHarness();
         var saga = harness.StateMachineSaga<OrderState, OrderStateMachine>(orderStateMachine);
 
@@ -104,7 +104,7 @@ public class Submitting_an_order
     [Test]
     public async Task Should_cancel_when_account_closed()
     {
-        var orderStateMachine = new OrderStateMachine();
+        var orderStateMachine = new OrderStateMachine(null);
         var harness = new InMemoryTestHarness();
         var saga = harness.StateMachineSaga<OrderState, OrderStateMachine>(orderStateMachine);
 
@@ -156,7 +156,7 @@ public class Submitting_an_order
     [Test]
     public async Task Should_accept_when_order_accepted()
     {
-        var orderStateMachine = new OrderStateMachine();
+        var orderStateMachine = new OrderStateMachine(null);
         var harness = new InMemoryTestHarness();
         var saga = harness.StateMachineSaga<OrderState, OrderStateMachine>(orderStateMachine);
 
@@ -206,7 +206,7 @@ public class Submitting_an_order
     [Test]
     public void Show_me_a_state_machine()
     {
-        var orderStateMachine = new OrderStateMachine();
+        var orderStateMachine = new OrderStateMachine(null);
         var graph =  orderStateMachine.GetGraph();
         var generator = new StateMachineGraphvizGenerator(graph);
 
