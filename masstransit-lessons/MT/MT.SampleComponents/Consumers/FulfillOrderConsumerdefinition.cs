@@ -14,5 +14,8 @@ public class FulfillOrderConsumerdefinition : ConsumerDefinition<FulfillOrderCon
             r.Ignore<InvalidOperationException>();
             r.Interval(3, 1000);
         });
+        
+        // не рекомендую. Но есть возможность дискардить все.
+        endpointConfigurator.DiscardFaultedMessages();
     }
 }
