@@ -8,6 +8,11 @@ public class FulfillOrderConsumer : IConsumer<IFulfillOrder>
 {
     public async Task Consume(ConsumeContext<IFulfillOrder> context)
     {
+        if (context.Message.CustomerNumber == "INVALID")
+        {
+            throw new InvalidOperationException("We tried, but customer is invalid");
+        }
+        
         var builder = new RoutingSlipBuilder(Guid.NewGuid());
         // обрати внимание на нижнее подчеркивание в наименовании!!!
 

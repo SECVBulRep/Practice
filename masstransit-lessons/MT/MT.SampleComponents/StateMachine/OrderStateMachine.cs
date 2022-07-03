@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net.Mail;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 using MT.SampleComponents.StateMachine.OrderStateMachineActivities;
 using MT.SampleContracts;
 
@@ -8,12 +9,17 @@ namespace MT.SampleComponents.StateMachine;
 
 public class OrderStateMachine : MassTransitStateMachine<OrderState>
 {
-    public OrderStateMachine()
+    
+    private ILogger<OrderStateMachine> _logger;
+    
+    public OrderStateMachine(ILogger<OrderStateMachine> logger)
     {
+        _logger = logger;
+        
         Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
         Event(() => FulfillmentFaulted, x => x.CorrelateById(m => m.Message.OrderId));
+        Event(() => FulfillOrderFaulted, x => x.CorrelateById(m => m.Message.Message.OrderId));
         Event(() => FulfillmentCompleted, x => x.CorrelateById(m => m.Message.OrderId));
-
         Event(() => OrderStatusRequested, x =>
             {
                 x.CorrelateById(m => m.Message.OrderId);
@@ -64,6 +70,9 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
         );
 
         During(Accepted,
+            When(FulfillOrderFaulted)
+                .Then(x => { _logger.LogInformation($" !!!!!!!!!! {DateTime.Now} FulfillOrderFaulted !!!!!!!!  {x.Message.Exceptions.FirstOrDefault()?.Message}"); })
+                .TransitionTo(Faulted),
             When(FulfillmentFaulted)
                 .TransitionTo(Faulted),
             When(FulfillmentCompleted)
@@ -96,7 +105,6 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
     }
 
     public State Completed { get; set; }
-
     public State Submitted { get; set; }
     public State Canceled { get; set; }
     public State Accepted { get; set; }
@@ -107,6 +115,6 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
     public Event<ICustomerAccountClosed> AccountClosed { get; set; }
     public Event<IOrderFulfilmentFaulted> FulfillmentFaulted { get; set; }
     public Event<IOrderFulfilmentCompleted> FulfillmentCompleted { get; set; }
-    
-    
+    public Event<Fault<IFulfillOrder>> FulfillOrderFaulted { get; set; }
+
 }
