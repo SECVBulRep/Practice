@@ -13,6 +13,14 @@ public class FulfillOrderConsumer : IConsumer<IFulfillOrder>
             throw new InvalidOperationException("We tried, but customer is invalid");
         }
         
+        //для message retry
+        if (context.Message.CustomerNumber == "MAYBE")
+        {
+            if(new Random().Next(100)>50)
+                throw new ApplicationException("Randomly exploded ");
+        }
+        
+        
         var builder = new RoutingSlipBuilder(Guid.NewGuid());
         // обрати внимание на нижнее подчеркивание в наименовании!!!
 
