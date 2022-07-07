@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text;
+using MT.SampleContracts.DTO;
 using Newtonsoft.Json;
 
 namespace MT.Client.Console;
@@ -41,9 +42,8 @@ internal class Program
                     var order = new OrderModel
                     {
                         Id = Guid.NewGuid(),
-                        CustomerNumber = $"CUSTOMER{i}",
+                        CustomerId = $"CUSTOMER{i}",
                         PaymentCardNumber = i % 4 == 0 ? "5999" : "4000-1234",
-                        Notes = new string('*', 1000 * (i + 1))
                     };
 
                     tasks.Add(Execute(order));
@@ -69,18 +69,21 @@ internal class Program
             var json = JsonConvert.SerializeObject(order);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var responseMessage = await _client.PostAsync($"http://localhost:5000/Order", data);
+
+            string host = "https://localhost:7206";
+            
+            var responseMessage = await _client.PostAsync($"{host}/Order", data);
 
             responseMessage.EnsureSuccessStatusCode();
 
             var result = await responseMessage.Content.ReadAsStringAsync();
 
-            if (responseMessage.StatusCode == HttpStatusCode.Accepted)
+            if (responseMessage.StatusCode == HttpStatusCode.OK)
             {
                 await Task.Delay(2000);
                 await Task.Delay(_random.Next(6000));
 
-                var orderAddress = $"http://localhost:5000/Order?id={order.Id:D}";
+                var orderAddress = $"{host}/Order?id={order.Id:D}";
 
                 var patchResponse = await _client.PatchAsync(orderAddress, data);
 
@@ -110,16 +113,3 @@ internal class Program
     }
 }
 
-public class OrderModel
-{
-    public Guid Id { get; set; }
-    public string CustomerNumber { get; set; }
-    public string PaymentCardNumber { get; set; }
-    public string Notes { get; set; }
-}
-
-public class OrderStatusModel
-{
-    public Guid OrderId { get; set; }
-    public string State { get; set; }
-}

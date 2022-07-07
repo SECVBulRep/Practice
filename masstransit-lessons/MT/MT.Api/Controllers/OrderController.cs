@@ -2,6 +2,7 @@ using System.Net;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using MT.SampleContracts;
+using MT.SampleContracts.DTO;
 
 namespace MT.Api.Controllers;
 
@@ -44,20 +45,24 @@ public class OrderController : ControllerBase
         
         var index = Task.WaitAny(status, notFound);
         if (index == 0)
-            return Ok(status.Result);
+        {
+            var ret = new OrderStatusModel();
+            ret.State = status.Result.Message.State;
+            return Ok(ret);
+        }
         return NotFound(notFound.Result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(Guid id, string customerId,string paymentCardNumber)
+    public async Task<IActionResult> Post(OrderModel model)
     {
         var (accepted, rejected) = await _requestClient.GetResponse<IOrderSubmissionAccepted, IOrderSubmissionRejected>(
             new
             {
-                OrderId = id,
+                OrderId = model.Id,
                 TimeStamp = DateTime.Now,
-                CustomerNumber = customerId,
-                PaymentCardNumber = paymentCardNumber
+                CustomerNumber = model.CustomerId,
+                PaymentCardNumber = model.PaymentCardNumber
             });
         var index = Task.WaitAny(accepted, rejected);
         if(index==0)
