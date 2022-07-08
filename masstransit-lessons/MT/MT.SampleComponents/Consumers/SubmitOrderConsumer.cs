@@ -61,7 +61,9 @@ public class SubmitOrderConsumer
             OrderId = context.Message.OrderId,
             TimeStamp = context.Message.TimeStamp,
             CustomerNumber = context.Message.CustomerNumber,
-            PaymentCardNumber = context.Message.PaymentCardNumber
+            PaymentCardNumber = context.Message.PaymentCardNumber,
+            Notes = context.Message.Notes
+            
         });
 
         if (context.ResponseAddress != null)

@@ -1,4 +1,6 @@
-﻿namespace MT.SampleContracts;
+﻿using MassTransit;
+
+namespace MT.SampleContracts;
 
 public interface IOrderSubmitted
 {
@@ -6,4 +8,5 @@ public interface IOrderSubmitted
     DateTime TimeStamp { get; set; }
     string CustomerNumber { get; set; }
     string PaymentCardNumber { get; set; }
+    MessageData<string> Notes { get; set; }
 }
