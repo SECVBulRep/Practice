@@ -48,6 +48,14 @@ public class SubmitOrderConsumer
             return;
         }
 
+        var notes = context.Message.Notes;
+        if (notes.HasValue)
+        {
+            string notesValue = await notes.Value;
+            _logger.LogInformation($"!!!!!!!!!!!!!!!!!!!!!! NOTES {notesValue}");
+        }
+
+
         await context.Publish<IOrderSubmitted>(new
         {
             OrderId = context.Message.OrderId,

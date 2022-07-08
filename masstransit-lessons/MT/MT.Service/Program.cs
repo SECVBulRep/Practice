@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using MassTransit;
 using MassTransit.Courier.Contracts;
+using MassTransit.MongoDbIntegration.MessageData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -45,6 +46,8 @@ await Host.CreateDefaultBuilder(args)
                     h.Password("guest");
                 });
 
+
+                config.UseMessageData(new MongoDbMessageDataRepository("mongodb://127.0.0.1","msgs"));
                 config.ConfigureEndpoints(context);
             });
         });

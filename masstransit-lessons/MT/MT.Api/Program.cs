@@ -1,4 +1,5 @@
 using MassTransit;
+using MassTransit.MongoDbIntegration.MessageData;
 using MT.SampleContracts;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MT.SampleComponents.Consumers;
@@ -31,6 +32,9 @@ builder.Services.AddMassTransit(cfg =>
                 h.Username("guest");
                 h.Password("guest");
             });
+           // MessageDataDefaults.Threshold = 5;
+            cfg.UseMessageData(new MongoDbMessageDataRepository("mongodb://127.0.0.1","msgs"));
+            
         });
     });
 

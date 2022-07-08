@@ -62,7 +62,8 @@ public class OrderController : ControllerBase
                 OrderId = model.Id,
                 TimeStamp = DateTime.Now,
                 CustomerNumber = model.CustomerId,
-                PaymentCardNumber = model.PaymentCardNumber
+                PaymentCardNumber = model.PaymentCardNumber,
+                Notes = model.Notes
             });
         var index = Task.WaitAny(accepted, rejected);
         if(index==0)

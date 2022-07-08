@@ -44,6 +44,7 @@ internal class Program
                         Id = Guid.NewGuid(),
                         CustomerId = $"CUSTOMER{i}",
                         PaymentCardNumber = i % 4 == 0 ? "5999" : "4000-1234",
+                        Notes = new string('*',1000*(i+1))
                     };
 
                     tasks.Add(Execute(order));
