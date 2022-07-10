@@ -8,12 +8,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MT.SampleComponents", "MT.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MT.Service", "MT.Service\MT.Service.csproj", "{A1AAD6AC-B9B4-4DAD-A609-E4AF83111E6F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{2C23996A-0F6F-4ED1-8415-E6993869FF9F}"
-	ProjectSection(SolutionItems) = preProject
-		Docker\docker-compose.yml = Docker\docker-compose.yml
-		Docker\quartz.sql = Docker\quartz.sql
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MT.Test", "MT.Test\MT.Test.csproj", "{452FB1A6-865B-4E7B-B90D-7610E21E90C1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Warehouse", "Warehouse", "{CCE6CABB-1DA3-4DD8-9BF7-0D9B5699937B}"
@@ -27,6 +21,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{7EBCC372-FDB3-46D0-89E8-CCB8F7EAEE56}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MT.Client.Console", "MT.Client.Console\MT.Client.Console.csproj", "{4F7D5E7A-DE34-4280-A731-DCD3B0A9EF4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse.Startup", "Warehouse.Startup\Warehouse.Startup.csproj", "{F5A58BBB-7ED3-4FBC-80D4-9957C1532778}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{0320AF2C-C464-4E19-B6D1-3E2AF3154DD2}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		docker-compose.yml = docker-compose.yml
+		Dockerfile-warehouse = Dockerfile-warehouse
+		docs\command.txt = docs\command.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,11 +74,16 @@ Global
 		{4F7D5E7A-DE34-4280-A731-DCD3B0A9EF4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F7D5E7A-DE34-4280-A731-DCD3B0A9EF4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F7D5E7A-DE34-4280-A731-DCD3B0A9EF4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5A58BBB-7ED3-4FBC-80D4-9957C1532778}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5A58BBB-7ED3-4FBC-80D4-9957C1532778}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5A58BBB-7ED3-4FBC-80D4-9957C1532778}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5A58BBB-7ED3-4FBC-80D4-9957C1532778}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{44750DEF-F0B1-427A-8D3C-D88FAAE43FDB} = {CCE6CABB-1DA3-4DD8-9BF7-0D9B5699937B}
 		{76DDED31-D938-401A-97A0-89BEEDDC4DCE} = {CCE6CABB-1DA3-4DD8-9BF7-0D9B5699937B}
 		{78736BDB-AA44-4DB2-B243-E3D962F871CF} = {CCE6CABB-1DA3-4DD8-9BF7-0D9B5699937B}
 		{4F7D5E7A-DE34-4280-A731-DCD3B0A9EF4C} = {7EBCC372-FDB3-46D0-89E8-CCB8F7EAEE56}
+		{F5A58BBB-7ED3-4FBC-80D4-9957C1532778} = {CCE6CABB-1DA3-4DD8-9BF7-0D9B5699937B}
 	EndGlobalSection
 EndGlobal

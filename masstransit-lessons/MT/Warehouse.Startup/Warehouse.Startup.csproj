@@ -7,7 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MassTransit.Analyzers" Version="8.0.4" />
+      <PackageReference Include="MassTransit.Platform.Abstractions" Version="7.2.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Warehouse.Components\Warehouse.Components.csproj" />
     </ItemGroup>
 
 </Project>
