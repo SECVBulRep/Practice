@@ -32,6 +32,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{0320AF
 		grafana\datasources.yml = grafana\datasources.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{E6DBC371-49E7-4B23-8FA7-40BAB34DD7B8}"
+	ProjectSection(SolutionItems) = preProject
+		docs\command.txt = docs\command.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
