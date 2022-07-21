@@ -45,6 +45,15 @@ namespace Components
 
 internal class Program
 {
+    class MyFormatter: IEntityNameFormatter
+    {
+        public string FormatEntityName<T>()
+        {
+            return typeof(T).Name;
+        }
+    }
+    
+    
     static async Task Main(string[] args)
     {
         var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
@@ -54,8 +63,10 @@ internal class Program
                 h.Username("guest");
                 h.Password("guest");
             });
-            
-            cfg.Message<IUpdateAccount>(m=>m.SetEntityName("update-account"));
+
+
+            cfg.MessageTopology.SetEntityNameFormatter(new MyFormatter());
+            //cfg.Message<IUpdateAccount>(m=>m.SetEntityName("update-account"));
 
             cfg.ReceiveEndpoint("account-service", e =>
             {
