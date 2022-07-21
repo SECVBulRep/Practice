@@ -64,6 +64,8 @@ internal class Program
                 // e.ConsumerPriority
                 // e.ExchangeType  тип экчейнджа / по умолчанию fanout/  обсудим позже
 
+                e.Bind<IUpdateAccount>();
+                
                 e.PrefetchCount = 20; // ОЧЕНЬ важный параметр! Сколько  можем одновременно принять сообщении.
                 e.Consumer<AccountConsumer>();
             });
