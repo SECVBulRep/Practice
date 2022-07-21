@@ -8,7 +8,7 @@ namespace Contracts
 {
     public interface IUpdateAccount
     {
-        
+        string AccountNumber { get; set; }
     }
 }
 
@@ -18,6 +18,8 @@ namespace Components
     {
         public Task Consume(ConsumeContext<IUpdateAccount> context)
         {
+            Console.WriteLine($"command recived: {context.Message.AccountNumber}");
+
             return Task.CompletedTask;
         }
     }
@@ -35,7 +37,7 @@ internal class Program
                 h.Username("guest");
                 h.Password("guest");
             });
-            
+
             cfg.ReceiveEndpoint("account-service", e =>
             {
                 //нужно рассказать про каждый параметр
@@ -50,17 +52,26 @@ internal class Program
                 e.PrefetchCount = 20; // ОЧЕНЬ важный параметр! Сколько  можем одновременно принять сообщении.
                 e.Consumer<AccountConsumer>();
             });
-            
         });
 
 
         var cancelationToken = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-        
+
         // для задержки запуска 
         await busControl.StartAsync(cancelationToken.Token);
 
         try
         {
+            Console.WriteLine("bus started");
+
+            var endpoind = await busControl.GetSendEndpoint(new Uri("exchange:account-service"));
+
+            endpoind.Send<IUpdateAccount>(new
+            {
+                AccountNumber ="12345"
+            });
+
+            await Task.Run(() => { Console.ReadKey(); });
         }
         catch (Exception e)
         {
