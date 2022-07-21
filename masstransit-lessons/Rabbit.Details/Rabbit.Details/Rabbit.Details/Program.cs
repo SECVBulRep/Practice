@@ -3,6 +3,7 @@
 using Components;
 using Contracts;
 using MassTransit;
+using MassTransit.Transports.Fabric;
 
 namespace Contracts
 {
@@ -22,7 +23,7 @@ namespace Components
     {
         public Task Consume(ConsumeContext<IUpdateAccount> context)
         {
-            Console.WriteLine($"command recived: {context.Message.AccountNumber}");
+            Console.WriteLine($"command recived: {context.Message.AccountNumber} on {context.ReceiveContext.InputAddress}");
 
             return Task.CompletedTask;
         }
@@ -54,20 +55,41 @@ internal class Program
                 h.Username("guest");
                 h.Password("guest");
             });
-            cfg.ReceiveEndpoint("account-service", e =>
+
+            cfg.Publish<IUpdateAccount>(m=>m.ExchangeType = ExchangeType.Direct.ToString().ToLower());
+            
+            cfg.ReceiveEndpoint("account-service-a", e =>
             {
-                //нужно рассказать про каждый параметр
-                //e.Durable true по умолчанию
-                //e.Exclusive один процесс одноврменно имеет доступ к ендпойинту
+                e.ConfigureConsumeTopology = false;
+                
+                e.Bind<IUpdateAccount>(b =>
+                    {
+                        b.ExchangeType = ExchangeType.Direct.ToString().ToLower();
+                        b.RoutingKey = "A";
+                    }
+                );
+                
                 e.Lazy = true; // не хранит очечред пришедший на эндпойнт всю в памяти  
-                //e.AutoDelete
-                // e.BindQueue создается только эксчейндж без очерди, когда ты хочешь сам настроить байндинги в админке напмеример, не рекаменджуется 
-                // e.ConsumerPriority
-                // e.ExchangeType  тип экчейнджа / по умолчанию fanout/  обсудим позже
                 e.PrefetchCount = 20; // ОЧЕНЬ важный параметр! Сколько  можем одновременно принять сообщении.
                 e.Consumer<AccountConsumer>();
-              
             });
+            
+            cfg.ReceiveEndpoint("account-service-b", e =>
+            {
+                e.ConfigureConsumeTopology = false;
+                
+                e.Bind<IUpdateAccount>(b =>
+                    {
+                        b.ExchangeType = ExchangeType.Direct.ToString().ToLower();
+                        b.RoutingKey = "B";
+                    }
+                );
+                
+                e.Lazy = true; // не хранит очечред пришедший на эндпойнт всю в памяти  
+                e.PrefetchCount = 20; // ОЧЕНЬ важный параметр! Сколько  можем одновременно принять сообщении.
+                e.Consumer<AccountConsumer>();
+            });
+            
         });
 
 
@@ -95,7 +117,7 @@ internal class Program
             await busControl.Publish<IUpdateAccount>(new
             {
                 AccountNumber ="12345"
-            });
+            },s=>s.SetRoutingKey("B"));
             
             
             await Task.Run(() => { Console.ReadKey(); });
