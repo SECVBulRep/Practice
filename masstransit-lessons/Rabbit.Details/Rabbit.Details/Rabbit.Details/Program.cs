@@ -64,13 +64,20 @@ internal class Program
         {
             Console.WriteLine("bus started");
 
-            var endpoind = await busControl.GetSendEndpoint(new Uri("exchange:account-service"));
+            /*   var endpoind = await busControl.GetSendEndpoint(new Uri("exchange:account-service"));
 
             endpoind.Send<IUpdateAccount>(new
             {
                 AccountNumber ="12345"
             });
+            */
 
+            await busControl.Publish<IUpdateAccount>(new
+            {
+                AccountNumber ="12345"
+            });
+            
+            
             await Task.Run(() => { Console.ReadKey(); });
         }
         catch (Exception e)
