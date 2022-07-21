@@ -53,6 +53,7 @@ internal class Program
 
             cfg.ReceiveEndpoint("account-service", e =>
             {
+                e.ConfigureConsumeTopology = false;
                 //нужно рассказать про каждый параметр
                 //e.Durable true по умолчанию
                 //e.Exclusive один процесс одноврменно имеет доступ к ендпойинту
@@ -63,6 +64,7 @@ internal class Program
                 // e.ExchangeType  тип экчейнджа / по умолчанию fanout/  обсудим позже
                 e.PrefetchCount = 20; // ОЧЕНЬ важный параметр! Сколько  можем одновременно принять сообщении.
                 e.Consumer<AccountConsumer>();
+                e.Bind("account");
             });
         });
 
@@ -76,19 +78,18 @@ internal class Program
         {
             Console.WriteLine("bus started");
 
-            /*   var endpoind = await busControl.GetSendEndpoint(new Uri("exchange:account-service"));
+            var endpoind = await busControl.GetSendEndpoint(new Uri("exchange:account"));
+            await endpoind.Send<IUpdateAccount>(new
+            {
+                AccountNumber ="12345"
+            });
+           
 
-            endpoind.Send<IUpdateAccount>(new
+            /*await busControl.Publish<IUpdateAccount>(new
             {
                 AccountNumber ="12345"
             });
             */
-
-            await busControl.Publish<IUpdateAccount>(new
-            {
-                AccountNumber ="12345"
-            });
-            
             
             await Task.Run(() => { Console.ReadKey(); });
         }
