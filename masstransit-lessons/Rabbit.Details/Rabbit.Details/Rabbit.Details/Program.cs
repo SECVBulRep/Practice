@@ -1,6 +1,28 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using Components;
+using Contracts;
 using MassTransit;
+
+namespace Contracts
+{
+    public interface IUpdateAccount
+    {
+        
+    }
+}
+
+namespace Components
+{
+    public class AccountConsumer : IConsumer<IUpdateAccount>
+    {
+        public Task Consume(ConsumeContext<IUpdateAccount> context)
+        {
+            return Task.CompletedTask;
+        }
+    }
+}
+
 
 internal class Program
 {
@@ -13,6 +35,22 @@ internal class Program
                 h.Username("guest");
                 h.Password("guest");
             });
+            
+            cfg.ReceiveEndpoint("account-service", e =>
+            {
+                //нужно рассказать про каждый параметр
+                //e.Durable true по умолчанию
+                //e.Exclusive один процесс одноврменно имеет доступ к ендпойинту
+                e.Lazy = true; // не хранит очечред пришедший на эндпойнт всю в памяти  
+                //e.AutoDelete
+                // e.BindQueue создается только эксчейндж без очерди, когда ты хочешь сам настроить байндинги в админке напмеример, не рекаменджуется 
+                // e.ConsumerPriority
+                // e.ExchangeType  тип экчейнджа / по умолчанию fanout/  обсудим позже
+
+                e.PrefetchCount = 20; // ОЧЕНЬ важный параметр! Сколько  можем одновременно принять сообщении.
+                e.Consumer<AccountConsumer>();
+            });
+            
         });
 
 
