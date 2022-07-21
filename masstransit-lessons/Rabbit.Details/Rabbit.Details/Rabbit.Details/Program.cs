@@ -23,6 +23,19 @@ namespace Components
             return Task.CompletedTask;
         }
     }
+    
+    public class AnotherAccountConsumer : IConsumer<IUpdateAccount>
+    {
+        public Task Consume(ConsumeContext<IUpdateAccount> context)
+        {
+            Console.WriteLine($"Another command recived: {context.Message.AccountNumber}");
+
+            return Task.CompletedTask;
+        }
+    }
+    
+    
+    
 }
 
 
@@ -52,6 +65,23 @@ internal class Program
                 e.PrefetchCount = 20; // ОЧЕНЬ важный параметр! Сколько  можем одновременно принять сообщении.
                 e.Consumer<AccountConsumer>();
             });
+            
+            cfg.ReceiveEndpoint("another-account-service", e =>
+            {
+                //нужно рассказать про каждый параметр
+                //e.Durable true по умолчанию
+                //e.Exclusive один процесс одноврменно имеет доступ к ендпойинту
+                e.Lazy = true; // не хранит очечред пришедший на эндпойнт всю в памяти  
+                //e.AutoDelete
+                // e.BindQueue создается только эксчейндж без очерди, когда ты хочешь сам настроить байндинги в админке напмеример, не рекаменджуется 
+                // e.ConsumerPriority
+                // e.ExchangeType  тип экчейнджа / по умолчанию fanout/  обсудим позже
+
+                e.PrefetchCount = 10; // ОЧЕНЬ важный параметр! Сколько  можем одновременно принять сообщении.
+                e.Consumer<AnotherAccountConsumer>();
+            });
+            
+            
         });
 
 
