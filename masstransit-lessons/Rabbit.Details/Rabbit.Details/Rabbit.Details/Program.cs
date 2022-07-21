@@ -10,6 +10,10 @@ namespace Contracts
     {
         string AccountNumber { get; set; }
     }
+    public interface IDeleteAccount
+    {
+        string AccountNumber { get; set; }
+    }
 }
 
 namespace Components
@@ -84,6 +88,11 @@ internal class Program
                 AccountNumber ="12345"
             });
            
+            await endpoind.Send<IDeleteAccount>(new
+            {
+                AccountNumber ="2234234234"
+            });
+            
 
             /*await busControl.Publish<IUpdateAccount>(new
             {
