@@ -53,8 +53,6 @@ internal class Program
 
             cfg.ReceiveEndpoint("account-service", e =>
             {
-                e.ConfigureConsumeTopology = false;
-                
                 //нужно рассказать про каждый параметр
                 //e.Durable true по умолчанию
                 //e.Exclusive один процесс одноврменно имеет доступ к ендпойинту
@@ -63,9 +61,6 @@ internal class Program
                 // e.BindQueue создается только эксчейндж без очерди, когда ты хочешь сам настроить байндинги в админке напмеример, не рекаменджуется 
                 // e.ConsumerPriority
                 // e.ExchangeType  тип экчейнджа / по умолчанию fanout/  обсудим позже
-
-                e.Bind<IUpdateAccount>();
-                
                 e.PrefetchCount = 20; // ОЧЕНЬ важный параметр! Сколько  можем одновременно принять сообщении.
                 e.Consumer<AccountConsumer>();
             });
