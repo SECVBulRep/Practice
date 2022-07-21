@@ -3,6 +3,7 @@ using MassTransit.MongoDbIntegration.MessageData;
 using MT.SampleContracts;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MT.SampleComponents.Consumers;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +35,7 @@ builder.Services.AddMassTransit(cfg =>
             });
            // MessageDataDefaults.Threshold = 5;
             cfg.UseMessageData(new MongoDbMessageDataRepository("mongodb://127.0.0.1","msgs"));
-            
+            cfg.UsePrometheusMetrics(serviceName: "order_service");
         });
     });
 
@@ -57,10 +58,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.MapMetrics();
 app.MapControllers();
 
 app.Run();

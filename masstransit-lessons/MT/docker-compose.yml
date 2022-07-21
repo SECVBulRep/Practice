@@ -4,6 +4,22 @@ networks:
   webmoney:
 
 services:
+  prometheus:
+    image: prom/prometheus:latest
+    networks:
+      - webmoney    
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  grafana:
+    image: grafana/grafana:latest
+    networks:
+      - "webmoney"
+    ports:
+      - "3000:3000"
+    volumes:      
+      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/prometheus.yaml     
   rabbitmq:
     container_name: iq-rabbitmq
     hostname: rabbit
@@ -13,6 +29,11 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+      - "15692:15692"
+    healthcheck:
+        timeout: 5s
+        interval: 5s
+        retries: 10
   redis:
     image: redis
     networks:
