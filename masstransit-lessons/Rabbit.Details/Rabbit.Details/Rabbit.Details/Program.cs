@@ -53,6 +53,8 @@ internal class Program
 
             cfg.ReceiveEndpoint("account-service", e =>
             {
+                e.ConfigureConsumeTopology = false;
+                
                 //нужно рассказать про каждый параметр
                 //e.Durable true по умолчанию
                 //e.Exclusive один процесс одноврменно имеет доступ к ендпойинту
