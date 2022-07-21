@@ -54,6 +54,8 @@ internal class Program
                 h.Username("guest");
                 h.Password("guest");
             });
+            
+            cfg.Message<IUpdateAccount>(m=>m.SetEntityName("update-account"));
 
             cfg.ReceiveEndpoint("account-service", e =>
             {
@@ -81,7 +83,7 @@ internal class Program
         {
             Console.WriteLine("bus started");
 
-            var endpoind = await busControl.GetSendEndpoint(new Uri("exchange:account"));
+           /* var endpoind = await busControl.GetSendEndpoint(new Uri("exchange:account"));
             await endpoind.Send<IUpdateAccount>(new
             {
                 AccountNumber ="12345"
@@ -91,13 +93,13 @@ internal class Program
             {
                 AccountNumber ="2234234234"
             });
-            
+            */
 
-            /*await busControl.Publish<IUpdateAccount>(new
+            await busControl.Publish<IUpdateAccount>(new
             {
                 AccountNumber ="12345"
             });
-            */
+            
             
             await Task.Run(() => { Console.ReadKey(); });
         }
