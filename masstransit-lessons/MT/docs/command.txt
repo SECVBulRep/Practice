@@ -1,1 +1,11 @@
 docker build -t "warehouse" -f Dockerfile-warehouse .
+
+
+// проверка все ли хорошо
+ dotnet ef
+ 
+// создание миграции
+dotnet ef migrations add init
+
+// update базы(применение схем)
+dotnet ef database update init

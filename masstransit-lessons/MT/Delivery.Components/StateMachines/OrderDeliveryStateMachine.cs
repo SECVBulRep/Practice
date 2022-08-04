@@ -11,7 +11,7 @@ public class OrderDeliveryStateMachine :
         InstanceState(instance => instance.CurrentState, Requested);
 
         Event(() => OrderDeliveryRequested,
-            x => { x.CorrelateById(instance => instance.OrderId, context => context.Message.OrderId); });
+            x => { x.CorrelateById(context => context.Message.OrderId); });
 
         Initially(
             When(OrderDeliveryRequested)
