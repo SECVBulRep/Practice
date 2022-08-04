@@ -20,6 +20,10 @@ public class OrderDeliveryStateMachine :
                     x.Saga.OrderId = x.Message.OrderId;
                     x.Saga.RequestTimestamp = x.GetPayload<ConsumeContext>().SentTime ?? DateTime.UtcNow;
                 })
+                .PublishAsync(x=>x.Init<IDeliverOrder>(new
+                {
+                    x.Message.OrderId
+                }))
                 .TransitionTo(Requested));
     }
 
