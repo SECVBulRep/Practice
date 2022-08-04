@@ -12,5 +12,7 @@ public class OrderDeliverySagaDefinition :
 
     protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator, ISagaConfigurator<OrderDeliveryState> sagaConfigurator)
     {
+        endpointConfigurator.UseMessageRetry(x=>x.Intervals(500,1000,5000,30000));
+        endpointConfigurator.UseInMemoryOutbox();
     }
 }
