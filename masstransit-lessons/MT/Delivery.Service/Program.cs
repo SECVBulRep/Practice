@@ -1,7 +1,12 @@
 ﻿using System.Data;
+using System.Reflection;
+using Delivery.Components.Consumers;
+using Delivery.Components.StateMachines;
+using Delivery.Service;
 using MassTransit;
 using MassTransit.Courier.Contracts;
 using MassTransit.MongoDbIntegration.MessageData;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -18,6 +23,25 @@ await Host.CreateDefaultBuilder(args)
 
         services.AddMassTransit(cfg =>
         {
+            cfg.SetKebabCaseEndpointNameFormatter();
+            cfg.AddConsumer<DeliverOrderConsumer>();
+
+            cfg.AddSagaStateMachine<OrderDeliveryStateMachine, OrderDeliveryState, OrderDeliverySagaDefinition>()
+                .EntityFrameworkRepository(r =>
+                {
+                    r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
+
+                    r.AddDbContext<DbContext, OrderDeliveryStateDbContext>((provider, optionsBuilder) =>
+                    {
+                        optionsBuilder.UseSqlServer(hostContext.Configuration.GetConnectionString("service"), m =>
+                        {
+                            m.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
+                            m.MigrationsHistoryTable($"__{nameof(OrderDeliveryStateDbContext)}");
+                        });
+                    });
+                });
+
+
             cfg.UsingRabbitMq((context, config) =>
             {
                 config.Host("localhost", "work", h =>
