@@ -25,6 +25,16 @@ public class OrderDeliveryStateMachine :
                     x.Message.OrderId
                 }))
                 .TransitionTo(Requested));
+        
+        During(Requested,
+            When(OrderDeliveryRequested)
+                .PublishAsync(x=>x.Init<IDeliverOrder>(new
+                {
+                    x.Message.OrderId
+                }))
+            );
+        
+        
     }
 
     public State Requested { get; }
