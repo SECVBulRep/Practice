@@ -1,4 +1,5 @@
-﻿using Delivery.Contracts;
+﻿using Delivery.Components.Filters;
+using Delivery.Contracts;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -20,3 +21,12 @@ public class DeliverOrderConsumer :
         await Task.Delay(1000);
     }
 }
+
+
+public class DeliverOrderConsumerDefitnition : ConsumerDefinition<DeliverOrderConsumer>
+{
+    protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<DeliverOrderConsumer> consumerConfigurator)
+    {
+        endpointConfigurator.UseFilter(new ConsoleConsumeFilter());
+    }
+} 

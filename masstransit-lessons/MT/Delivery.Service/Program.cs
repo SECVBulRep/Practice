@@ -24,7 +24,7 @@ await Host.CreateDefaultBuilder(args)
         services.AddMassTransit(cfg =>
         {
             cfg.SetKebabCaseEndpointNameFormatter();
-            cfg.AddConsumer<DeliverOrderConsumer>();
+            cfg.AddConsumer<DeliverOrderConsumer>(typeof(DeliverOrderConsumerDefitnition));
 
             cfg.AddSagaStateMachine<OrderDeliveryStateMachine, OrderDeliveryState, OrderDeliverySagaDefinition>()
                 .EntityFrameworkRepository(r =>
