@@ -28,5 +28,6 @@ public class DeliverOrderConsumerDefitnition : ConsumerDefinition<DeliverOrderCo
     protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<DeliverOrderConsumer> consumerConfigurator)
     {
         endpointConfigurator.UseFilter(new ConsoleConsumeFilter());
+        consumerConfigurator.UseFilter(new ConsoleConsumeWithConsumerFilter<DeliverOrderConsumer>());
     }
 } 
