@@ -4,11 +4,10 @@ namespace Delivery.Components.Filters;
 
 public class ConsoleConsumeFilter : IFilter<ConsumeContext>
 {
-    public  Task Send(ConsumeContext context, IPipe<ConsumeContext> next)
+    public async  Task Send(ConsumeContext context, IPipe<ConsumeContext> next)
     {
         Console.WriteLine($"Consume: {context.MessageId}");
-        //await next.Send(context);
-        return Task.CompletedTask;
+        await next.Send(context);
     }
 
     public void Probe(ProbeContext context)

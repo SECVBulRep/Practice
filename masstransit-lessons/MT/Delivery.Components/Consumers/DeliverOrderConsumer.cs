@@ -1,6 +1,7 @@
 ﻿using Delivery.Components.Filters;
 using Delivery.Contracts;
 using MassTransit;
+using MassTransit.Middleware;
 using Microsoft.Extensions.Logging;
 
 namespace Delivery.Components.Consumers;
@@ -29,5 +30,6 @@ public class DeliverOrderConsumerDefitnition : ConsumerDefinition<DeliverOrderCo
     {
         endpointConfigurator.UseFilter(new ConsoleConsumeFilter());
         consumerConfigurator.UseFilter(new ConsoleConsumeWithConsumerFilter<DeliverOrderConsumer>());
+        consumerConfigurator.ConsumerMessage<IDeliverOrder>(m=>m.UseFilter(new ConsoleConsumeWithConsumerFilter<DeliverOrderConsumer, IDeliverOrder>()));
     }
 } 
