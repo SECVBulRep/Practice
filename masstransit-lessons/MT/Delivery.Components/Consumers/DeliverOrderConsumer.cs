@@ -28,6 +28,10 @@ public class DeliverOrderConsumerDefitnition : ConsumerDefinition<DeliverOrderCo
 {
     protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<DeliverOrderConsumer> consumerConfigurator)
     {
+
+        endpointConfigurator.ConnectConsumerConfigurationObserver(new ConsoleConsumerMessageFilterConfigurationObserver(endpointConfigurator));
+        
+        
         endpointConfigurator.UseFilter(new ConsoleConsumeFilter());
         consumerConfigurator.UseFilter(new ConsoleConsumeWithConsumerFilter<DeliverOrderConsumer>());
         consumerConfigurator.ConsumerMessage<IDeliverOrder>(m=>m.UseFilter(new ConsoleConsumeWithConsumerFilter<DeliverOrderConsumer, IDeliverOrder>()));
