@@ -65,6 +65,35 @@ Task.Run(() =>
 });
 
 
+Task.Run(() =>
+{
+    using var consumer3 = new ConsumerBuilder<Null, string>(config).Build();
+    consumer3.Subscribe("weather-topic");
+
+
+    CancellationTokenSource token = new();
+
+    try
+    {
+        while (true)
+        {
+            var response = consumer3.Consume(token.Token);
+
+            if (response.Message != null)
+            {
+                var weather = JsonConvert.DeserializeObject<Weather>(response.Message.Value);
+                Console.WriteLine($" Consumer3: {weather.State} {weather.Temperature}");
+            }
+        }
+    }
+    catch (Exception exception)
+    {
+        Console.WriteLine(exception);
+    }
+});
+
+
+
 while (Console.ReadLine() != null)
 {
     
