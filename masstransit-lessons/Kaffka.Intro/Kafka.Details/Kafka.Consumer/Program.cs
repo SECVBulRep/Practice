@@ -10,31 +10,64 @@ var config = new ConsumerConfig
 };
 
 
-using var consumer = new ConsumerBuilder<Null, string>(config).Build();
-consumer.Subscribe("weather-topic");
-
-CancellationTokenSource token = new();
-
-
-try
+Task.Run(() =>
 {
-    while (true)
-    {
-        var response = consumer.Consume(token.Token);
+    using var consumer = new ConsumerBuilder<Null, string>(config).Build();
+    consumer.Subscribe("weather-topic");
 
-        if (response.Message != null)
+    CancellationTokenSource token = new();
+
+    try
+    {
+        while (true)
         {
-            var weather = JsonConvert.DeserializeObject<Weather>(response.Message.Value);
-            
-            Console.WriteLine($"{weather.State} {weather.Temperature}");
+            var response = consumer.Consume(token.Token);
+
+            if (response.Message != null)
+            {
+                var weather = JsonConvert.DeserializeObject<Weather>(response.Message.Value);
+
+                Console.WriteLine($" Consumer1: {weather.State} {weather.Temperature}");
+            }
         }
     }
-}
-catch (Exception exception)
+    catch (Exception exception)
+    {
+        Console.WriteLine(exception);
+    }
+});
+
+Task.Run(() =>
 {
-    Console.WriteLine(exception);
+    using var consumer2 = new ConsumerBuilder<Null, string>(config).Build();
+    consumer2.Subscribe("weather-topic");
+
+
+    CancellationTokenSource token = new();
+
+    try
+    {
+        while (true)
+        {
+            var response = consumer2.Consume(token.Token);
+
+            if (response.Message != null)
+            {
+                var weather = JsonConvert.DeserializeObject<Weather>(response.Message.Value);
+                Console.WriteLine($" Consumer2: {weather.State} {weather.Temperature}");
+            }
+        }
+    }
+    catch (Exception exception)
+    {
+        Console.WriteLine(exception);
+    }
+});
+
+
+while (Console.ReadLine() != null)
+{
+    
 }
-
-
 
 public record Weather(string State, int Temperature);
