@@ -10,6 +10,15 @@ var config = new ConsumerConfig
 };
 
 
+var config2 = new ConsumerConfig
+{
+    GroupId = "weather-consumer-group2",
+    BootstrapServers = "localhost:9092",
+    AutoOffsetReset = AutoOffsetReset.Earliest
+};
+
+
+
 Task.Run(() =>
 {
     using var consumer = new ConsumerBuilder<Null, string>(config).Build();
@@ -67,7 +76,7 @@ Task.Run(() =>
 
 Task.Run(() =>
 {
-    using var consumer3 = new ConsumerBuilder<Null, string>(config).Build();
+    using var consumer3 = new ConsumerBuilder<Null, string>(config2).Build();
     consumer3.Subscribe("weather-topic");
 
 
