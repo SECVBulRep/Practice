@@ -6,9 +6,12 @@ var config = new ConsumerConfig
 {
     GroupId = "weather-consumer-group",
     BootstrapServers = "localhost:9092",
-    AutoOffsetReset = AutoOffsetReset.Earliest
+    AutoOffsetReset = AutoOffsetReset.Earliest,
+    EnableAutoCommit = false,
+    
+    
+    
 };
-
 
 var config2 = new ConsumerConfig
 {
@@ -17,15 +20,11 @@ var config2 = new ConsumerConfig
     AutoOffsetReset = AutoOffsetReset.Earliest
 };
 
-
-
 Task.Run(() =>
 {
     using var consumer = new ConsumerBuilder<Null, string>(config).Build();
     consumer.Subscribe("weather-topic");
-
     CancellationTokenSource token = new();
-
     try
     {
         while (true)
@@ -37,6 +36,7 @@ Task.Run(() =>
                 var weather = JsonConvert.DeserializeObject<Weather>(response.Message.Value);
 
                 Console.WriteLine($" Consumer1: {weather.State} {weather.Temperature}");
+                consumer.Commit(response);
             }
         }
     }
@@ -64,6 +64,7 @@ Task.Run(() =>
             {
                 var weather = JsonConvert.DeserializeObject<Weather>(response.Message.Value);
                 Console.WriteLine($" Consumer2: {weather.State} {weather.Temperature}");
+               // consumer2.Commit(response);
             }
         }
     }
