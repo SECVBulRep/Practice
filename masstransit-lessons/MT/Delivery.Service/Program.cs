@@ -10,11 +10,14 @@ using MassTransit.Courier.Contracts;
 using MassTransit.MongoDbIntegration.MessageData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using StackExchange.Redis;
+
+
 
 await Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostingConext, config) => { config.AddJsonFile("appsettings.json", true); })
@@ -28,9 +31,8 @@ await Host.CreateDefaultBuilder(args)
             cfg.SetKebabCaseEndpointNameFormatter();
             cfg.AddConsumer<DeliverOrderConsumer>(typeof(DeliverOrderConsumerDefitnition));
             cfg.AddConsumer<CurrierVisitedConsumer>();
-            
-            
-            
+
+
             cfg.AddSagaStateMachine<OrderDeliveryStateMachine, OrderDeliveryState, OrderDeliverySagaDefinition>()
                 .EntityFrameworkRepository(r =>
                 {
@@ -46,8 +48,7 @@ await Host.CreateDefaultBuilder(args)
                     });
                 });
 
-            
-            
+
             cfg.AddRider(rider =>
             {
                 rider.AddSagaStateMachine<СurrierStateMachine, СurrierState, СurrierStateDefinition>()
@@ -100,3 +101,4 @@ await Host.CreateDefaultBuilder(args)
     })
     .Build()
     .RunAsync();
+
