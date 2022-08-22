@@ -4,17 +4,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Delivery.Components.StateMachines;
 
-public class СurrierVisitedConsumer :
-    IConsumer<IСurrierVisited>
+public class CurrierVisitedConsumer :
+    IConsumer<ICurrierVisited>
 {
-    readonly ILogger<СurrierVisitedConsumer> _logger;
+    readonly ILogger<CurrierVisitedConsumer> _logger;
 
-    public СurrierVisitedConsumer(ILogger<СurrierVisitedConsumer> logger)
+    public CurrierVisitedConsumer(ILogger<CurrierVisitedConsumer> logger)
     {
         _logger = logger;
     }
 
-    public Task Consume(ConsumeContext<IСurrierVisited> context)
+    public Task Consume(ConsumeContext<ICurrierVisited> context)
     {
         _logger.LogInformation("Сurrier Visited: {СurrierId} {Entered} {Left} {Duration}", context.Message.СurrierId,
             context.Message.Entered, context.Message.Left, context.Message.Left - context.Message.Entered);

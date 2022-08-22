@@ -38,7 +38,7 @@ public sealed class СurrierStateMachine :
                 .Then(context => Console.WriteLine("Visited: {0}", context.Saga.CorrelationId))
 
                 // Publish will go to RabbitMQ, via the bus
-                .PublishAsync(context => context.Init<IСurrierVisited>(new
+                .PublishAsync(context => context.Init<ICurrierVisited>(new
                 {
                     PatronId = context.Saga.CorrelationId,
                     context.Saga.Entered,
@@ -46,7 +46,7 @@ public sealed class СurrierStateMachine :
                 }))
 
                 // Produce will go to Kafka
-                .Produce(context => context.Init<IСurrierVisited>(new
+                .Produce(context => context.Init<ICurrierVisited>(new
                 {
                     PatronId = context.Saga.CorrelationId,
                     context.Saga.Entered,

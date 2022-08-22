@@ -1,7 +1,9 @@
 ﻿using System.Data;
 using System.Reflection;
+using Confluent.Kafka;
 using Delivery.Components.Consumers;
 using Delivery.Components.StateMachines;
+using Delivery.Contracts;
 using Delivery.Service;
 using MassTransit;
 using MassTransit.Courier.Contracts;
@@ -25,7 +27,10 @@ await Host.CreateDefaultBuilder(args)
         {
             cfg.SetKebabCaseEndpointNameFormatter();
             cfg.AddConsumer<DeliverOrderConsumer>(typeof(DeliverOrderConsumerDefitnition));
-
+            cfg.AddConsumer<CurrierVisitedConsumer>();
+            
+            
+            
             cfg.AddSagaStateMachine<OrderDeliveryStateMachine, OrderDeliveryState, OrderDeliverySagaDefinition>()
                 .EntityFrameworkRepository(r =>
                 {
@@ -40,6 +45,40 @@ await Host.CreateDefaultBuilder(args)
                         });
                     });
                 });
+
+            
+            
+            cfg.AddRider(rider =>
+            {
+                rider.AddSagaStateMachine<СurrierStateMachine, СurrierState, СurrierStateDefinition>()
+                    .InMemoryRepository();
+
+                rider.AddProducer<IСurrierEntered>(nameof(IСurrierEntered));
+                rider.AddProducer<IСurrierLeft>(nameof(IСurrierLeft));
+
+                // duplicative, since it's already published to RabbitMQ, but showing how to also
+                // produce an event on Kafka from a state machine
+                rider.AddProducer<ICurrierVisited>(nameof(ICurrierVisited));
+
+                rider.UsingKafka((context, k) =>
+                {
+                    k.Host("localhost:9092");
+
+                    k.TopicEndpoint<Null, IСurrierEntered>(nameof(IСurrierEntered), nameof(Assembly.GetName), c =>
+                    {
+                        c.AutoOffsetReset = AutoOffsetReset.Earliest;
+                        c.CreateIfMissing(t => t.NumPartitions = 1);
+                        c.ConfigureSaga<СurrierState>(context);
+                    });
+
+                    k.TopicEndpoint<Null, IСurrierLeft>(nameof(IСurrierLeft), nameof(Assembly.GetName), c =>
+                    {
+                        c.AutoOffsetReset = AutoOffsetReset.Earliest;
+                        c.CreateIfMissing(t => t.NumPartitions = 1);
+                        c.ConfigureSaga<СurrierState>(context);
+                    });
+                });
+            });
 
 
             cfg.UsingRabbitMq((context, config) =>
