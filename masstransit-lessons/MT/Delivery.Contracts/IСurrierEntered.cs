@@ -2,6 +2,6 @@
 
 public interface IСurrierEntered
 {
-    Guid СurrierId { get; }
-    DateTime Timestamp { get; }
+    Guid СurrierId { get; set; }
+    DateTime Timestamp { get; set; }
 }
