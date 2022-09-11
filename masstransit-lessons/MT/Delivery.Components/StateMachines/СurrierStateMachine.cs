@@ -8,8 +8,8 @@ public sealed class СurrierStateMachine :
 {
     public СurrierStateMachine()
     {
-        Event(() => Entered, x => x.CorrelateById(m => m.Message.СurrierId));
-        Event(() => Left, x => x.CorrelateById(m => m.Message.СurrierId));
+        Event(() => Entered, x => x.CorrelateById(m => m.Message.CurrierId));
+        Event(() => Left, x => x.CorrelateById(m => m.Message.CurrierId));
 
         // state интовый, поэтому надо перечислить все. 0 - None, 1 - Initial, 2 - Final, 3 - Tracking 
         InstanceState(x => x.CurrentState, Tracking);
@@ -59,7 +59,7 @@ public sealed class СurrierStateMachine :
     }
 
     public State Tracking { get; private set; }
-    public Event<IСurrierEntered> Entered { get; private set; }
-    public Event<IСurrierLeft> Left { get; private set; }
+    public Event<ICurrierEntered> Entered { get; private set; }
+    public Event<ICurrierLeft> Left { get; private set; }
     public Event Visited { get; private set; }
 }

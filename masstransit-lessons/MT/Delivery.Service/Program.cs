@@ -1,6 +1,8 @@
 ﻿using System.Data;
 using System.Reflection;
 using Confluent.Kafka;
+using Confluent.SchemaRegistry;
+using Confluent.SchemaRegistry.Serdes;
 using Delivery.Components.Consumers;
 using Delivery.Components.StateMachines;
 using Delivery.Contracts;
@@ -54,25 +56,27 @@ await Host.CreateDefaultBuilder(args)
                 rider.AddSagaStateMachine<СurrierStateMachine, СurrierState, СurrierStateDefinition>()
                     .InMemoryRepository();
 
-                rider.AddProducer<IСurrierEntered>(nameof(IСurrierEntered));
-                rider.AddProducer<IСurrierLeft>(nameof(IСurrierLeft));
-
-                // duplicative, since it's already published to RabbitMQ, but showing how to also
-                // produce an event on Kafka from a state machine
+                rider.AddProducer<ICurrierEntered>(nameof(ICurrierEntered));
+                rider.AddProducer<ICurrierLeft>(nameof(ICurrierLeft));
                 rider.AddProducer<ICurrierVisited>(nameof(ICurrierVisited));
 
+               
+                
+                
                 rider.UsingKafka((context, k) =>
                 {
                     k.Host("localhost:9092");
 
-                    k.TopicEndpoint<Null, IСurrierEntered>(nameof(IСurrierEntered), nameof(Assembly.GetName), c =>
+                  
+                    
+                    k.TopicEndpoint<Null, ICurrierEntered>(nameof(ICurrierEntered), nameof(Assembly.GetName), c =>
                     {
                         c.AutoOffsetReset = AutoOffsetReset.Earliest;
                         c.CreateIfMissing(t => t.NumPartitions = 1);
                         c.ConfigureSaga<СurrierState>(context);
                     });
 
-                    k.TopicEndpoint<Null, IСurrierLeft>(nameof(IСurrierLeft), nameof(Assembly.GetName), c =>
+                    k.TopicEndpoint<Null, ICurrierLeft>(nameof(ICurrierLeft), nameof(Assembly.GetName), c =>
                     {
                         c.AutoOffsetReset = AutoOffsetReset.Earliest;
                         c.CreateIfMissing(t => t.NumPartitions = 1);

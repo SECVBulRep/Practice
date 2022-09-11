@@ -1,7 +1,7 @@
 ﻿namespace Delivery.Contracts;
 
-public interface IСurrierEntered
+public interface ICurrierEntered
 {
-    Guid СurrierId { get; set; }
+    Guid CurrierId { get; set; }
     DateTime Timestamp { get; set; }
 }

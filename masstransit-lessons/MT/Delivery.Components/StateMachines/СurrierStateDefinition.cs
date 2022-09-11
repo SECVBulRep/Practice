@@ -16,8 +16,8 @@ public class СurrierStateDefinition :
 
     protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator, ISagaConfigurator<СurrierState> sagaConfigurator)
     {
-        sagaConfigurator.Message<IСurrierEntered>(x => x.UsePartitioner(_partition, m => m.Message.СurrierId));
-        sagaConfigurator.Message<IСurrierLeft>(x => x.UsePartitioner(_partition, m => m.Message.СurrierId));
+        sagaConfigurator.Message<ICurrierEntered>(x => x.UsePartitioner(_partition, m => m.Message.CurrierId));
+        sagaConfigurator.Message<ICurrierLeft>(x => x.UsePartitioner(_partition, m => m.Message.CurrierId));
 
         endpointConfigurator.UseMessageRetry(r => r.Intervals(20, 50, 100, 1000, 5000));
     }
