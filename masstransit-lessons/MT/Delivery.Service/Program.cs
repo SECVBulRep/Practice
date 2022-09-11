@@ -1,6 +1,8 @@
 ﻿using System.Data;
 using System.Reflection;
 using Confluent.Kafka;
+using Confluent.Kafka.Examples.AvroSpecific;
+using Confluent.Kafka.SyncOverAsync;
 using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
 using Delivery.Components.Consumers;
@@ -8,16 +10,13 @@ using Delivery.Components.StateMachines;
 using Delivery.Contracts;
 using Delivery.Service;
 using MassTransit;
-using MassTransit.Courier.Contracts;
-using MassTransit.MongoDbIntegration.MessageData;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
-using StackExchange.Redis;
+
 
 
 
@@ -34,6 +33,13 @@ await Host.CreateDefaultBuilder(args)
             cfg.AddConsumer<DeliverOrderConsumer>(typeof(DeliverOrderConsumerDefitnition));
             cfg.AddConsumer<CurrierVisitedConsumer>();
 
+            
+            var schemaRegistryClient = new CachedSchemaRegistryClient(new Dictionary<string, string>
+            {
+                {"schema.registry.url", "localhost:8081"},
+            });
+            
+            
 
             cfg.AddSagaStateMachine<OrderDeliveryStateMachine, OrderDeliveryState, OrderDeliverySagaDefinition>()
                 .EntityFrameworkRepository(r =>
@@ -56,20 +62,32 @@ await Host.CreateDefaultBuilder(args)
                 rider.AddSagaStateMachine<СurrierStateMachine, СurrierState, СurrierStateDefinition>()
                     .InMemoryRepository();
 
-                rider.AddProducer<ICurrierEntered>(nameof(ICurrierEntered));
-                rider.AddProducer<ICurrierLeft>(nameof(ICurrierLeft));
+                //rider.AddProducer<ICurrierEntered>(nameof(ICurrierEntered));
+                //rider.AddProducer<ICurrierLeft>(nameof(ICurrierLeft));
                 rider.AddProducer<ICurrierVisited>(nameof(ICurrierVisited));
 
-               
-                
-                
+
                 rider.UsingKafka((context, k) =>
                 {
                     k.Host("localhost:9092");
 
                   
+                    k.TopicEndpoint<string, Confluent.Kafka.Examples.AvroSpecific.ICurrierEntered>(nameof(ICurrierEntered),  nameof(Assembly.GetName), c =>
+                    {
+                        c.SetKeyDeserializer(new AvroDeserializer<string>(schemaRegistryClient).AsSyncOverAsync());
+                        c.SetValueDeserializer(new AvroDeserializer<Confluent.Kafka.Examples.AvroSpecific.ICurrierEntered>(schemaRegistryClient).AsSyncOverAsync());
+                        c.AutoOffsetReset = AutoOffsetReset.Earliest;
+                        //c.ConfigureConsumer<KafkaMessageConsumer>(context);
+                        c.ConfigureSaga<СurrierState>(context);
+                        c.CreateIfMissing(m =>
+                        {
+                            m.NumPartitions = 2;
+                        });
+                    });
                     
-                    k.TopicEndpoint<Null, ICurrierEntered>(nameof(ICurrierEntered), nameof(Assembly.GetName), c =>
+                    
+                    
+                   /* k.TopicEndpoint<Null, ICurrierEntered>(nameof(ICurrierEntered), nameof(Assembly.GetName), c =>
                     {
                         c.AutoOffsetReset = AutoOffsetReset.Earliest;
                         c.CreateIfMissing(t => t.NumPartitions = 1);
@@ -81,7 +99,7 @@ await Host.CreateDefaultBuilder(args)
                         c.AutoOffsetReset = AutoOffsetReset.Earliest;
                         c.CreateIfMissing(t => t.NumPartitions = 1);
                         c.ConfigureSaga<СurrierState>(context);
-                    });
+                    });*/
                 });
             });
 

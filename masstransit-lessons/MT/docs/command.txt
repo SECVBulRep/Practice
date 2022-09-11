@@ -9,3 +9,8 @@ dotnet ef migrations add init
 
 // update базы(применение схем)
 dotnet ef database update init
+
+
+// на случай проблемы с портами
+net stop winnat
+net start winnat

@@ -1,4 +1,5 @@
-﻿using Delivery.Contracts;
+﻿using Confluent.Kafka.Examples.AvroSpecific;
+using Delivery.Contracts;
 using MassTransit;
 using MassTransit.Middleware;
 
