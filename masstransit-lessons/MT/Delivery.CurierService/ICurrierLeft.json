@@ -1,0 +1,15 @@
+﻿{
+  "namespace": "confluent.io.examples.serialization.avro",
+  "name": "ICurrierLeft",
+  "type": "record",
+  "fields": [
+    {
+      "name": "Timestamp",
+      "type": "string"
+    },
+    {
+      "name": "CurrierId",
+      "type": "string"
+    }
+  ]
+}

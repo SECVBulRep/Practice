@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Reflection;
+using confluent.io.examples.serialization.avro;
 using Confluent.Kafka;
 using Confluent.Kafka.Examples.AvroSpecific;
 using Confluent.Kafka.SyncOverAsync;
@@ -18,14 +19,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 
-
-
 await Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostingConext, config) => { config.AddJsonFile("appsettings.json", true); })
     .ConfigureServices((hostContext, services) =>
     {
         services.TryAddSingleton(KebabCaseEndpointNameFormatter
-            .Instance); // позже напиши. kebab case лучше чем snake _ kase
+            .Instance); 
 
         services.AddMassTransit(cfg =>
         {
@@ -62,48 +61,38 @@ await Host.CreateDefaultBuilder(args)
                 rider.AddSagaStateMachine<СurrierStateMachine, СurrierState, СurrierStateDefinition>()
                     .InMemoryRepository();
 
-                //rider.AddProducer<ICurrierEntered>(nameof(ICurrierEntered));
-                //rider.AddProducer<ICurrierLeft>(nameof(ICurrierLeft));
                 rider.AddProducer<ICurrierVisited>(nameof(ICurrierVisited));
-
 
                 rider.UsingKafka((context, k) =>
                 {
                     k.Host("localhost:9092");
-
-                  
-                    k.TopicEndpoint<string, Confluent.Kafka.Examples.AvroSpecific.ICurrierEntered>(nameof(ICurrierEntered),  nameof(Assembly.GetName), c =>
+                    
+                    k.TopicEndpoint<string, ICurrierEntered>(nameof(ICurrierEntered),  nameof(Assembly.GetName), c =>
                     {
                         c.SetKeyDeserializer(new AvroDeserializer<string>(schemaRegistryClient).AsSyncOverAsync());
-                        c.SetValueDeserializer(new AvroDeserializer<Confluent.Kafka.Examples.AvroSpecific.ICurrierEntered>(schemaRegistryClient).AsSyncOverAsync());
+                        c.SetValueDeserializer(new AvroDeserializer<ICurrierEntered>(schemaRegistryClient).AsSyncOverAsync());
                         c.AutoOffsetReset = AutoOffsetReset.Earliest;
-                        //c.ConfigureConsumer<KafkaMessageConsumer>(context);
                         c.ConfigureSaga<СurrierState>(context);
                         c.CreateIfMissing(m =>
                         {
-                            m.NumPartitions = 2;
+                            m.NumPartitions = 1;
                         });
                     });
                     
-                    
-                    
-                   /* k.TopicEndpoint<Null, ICurrierEntered>(nameof(ICurrierEntered), nameof(Assembly.GetName), c =>
+                    k.TopicEndpoint<string, ICurrierLeft>(nameof(ICurrierLeft),  nameof(Assembly.GetName), c =>
                     {
+                        c.SetKeyDeserializer(new AvroDeserializer<string>(schemaRegistryClient).AsSyncOverAsync());
+                        c.SetValueDeserializer(new AvroDeserializer<ICurrierLeft>(schemaRegistryClient).AsSyncOverAsync());
                         c.AutoOffsetReset = AutoOffsetReset.Earliest;
-                        c.CreateIfMissing(t => t.NumPartitions = 1);
                         c.ConfigureSaga<СurrierState>(context);
+                        c.CreateIfMissing(m =>
+                        {
+                            m.NumPartitions = 1;
+                        });
                     });
-
-                    k.TopicEndpoint<Null, ICurrierLeft>(nameof(ICurrierLeft), nameof(Assembly.GetName), c =>
-                    {
-                        c.AutoOffsetReset = AutoOffsetReset.Earliest;
-                        c.CreateIfMissing(t => t.NumPartitions = 1);
-                        c.ConfigureSaga<СurrierState>(context);
-                    });*/
                 });
             });
-
-
+            
             cfg.UsingRabbitMq((context, config) =>
             {
                 config.Host("localhost", "work", h =>

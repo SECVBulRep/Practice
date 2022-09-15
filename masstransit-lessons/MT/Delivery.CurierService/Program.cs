@@ -2,6 +2,7 @@
 
 
 using System.Net;
+using confluent.io.examples.serialization.avro;
 using Confluent.Kafka;
 using Confluent.Kafka.Examples.AvroSpecific;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,8 +32,6 @@ internal class Program
 
     static async Task Client(IServiceProvider provider)
     {
-        var logger = provider.GetRequiredService<ILogger<Program>>();
-
         var config = new ProducerConfig
         {
             BootstrapServers = "localhost:9092",
@@ -44,18 +43,10 @@ internal class Program
             Url = "localhost:8081"
         };
 
-        var jsonSerializerConfig = new JsonSerializerConfig
-        {
-            BufferBytes = 100
-        };
-
         var avroSerializerConfig = new AvroSerializerConfig
         {
-            // optional Avro serializer properties:
             BufferBytes = 100
         };
-
-
 
         while (true)
         {
@@ -67,21 +58,44 @@ internal class Program
                 break;
 
 
+            var random = new Random();
+            
             int loops = Convert.ToInt32(line);
-            string topic = nameof(ICurrierEntered);
+            string topic_ICurrierEntered = nameof(ICurrierEntered);
+            string topic_ICurrierLeft = nameof(ICurrierLeft);
 
             using (var schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryConfig))
-            using (var producer =
+            using (var producer_ICurrierEntered =
                    new ProducerBuilder<Null, ICurrierEntered>(config)
                        .SetValueSerializer(new AvroSerializer<ICurrierEntered>(schemaRegistry, avroSerializerConfig))
                        .Build())
+            using (var producer_ICurrierLeft =
+                   new ProducerBuilder<Null, ICurrierLeft>(config)
+                       .SetValueSerializer(new AvroSerializer<ICurrierLeft>(schemaRegistry, avroSerializerConfig))
+                       .Build())
             {
+                var taskList = new List<Task>();
+                
                 for (var pass = 0; pass < loops; pass++)
                 {
-                    ICurrierEntered user = new ICurrierEntered { Timestamp = DateTime.Now.ToString(), CurrierId = Guid.NewGuid().ToString() };
-                    var res = await producer
-                        .ProduceAsync(topic, new Message<Null, ICurrierEntered> { Key = null, Value = user });
+                    var curierId = Guid.NewGuid();
+                    var timestamp = DateTime.Now;
+                    
+                    ICurrierEntered currierEntered = new ICurrierEntered { Timestamp = timestamp.ToString(), CurrierId = curierId.ToString() };
+                   
+                    var taskEnter =  producer_ICurrierEntered
+                        .ProduceAsync(topic_ICurrierEntered, new Message<Null, ICurrierEntered> { Key = null, Value = currierEntered });
+                    
+                    ICurrierLeft currierLeft = new ICurrierLeft { Timestamp = timestamp.AddSeconds(random.Next(100)).ToString(), CurrierId = curierId.ToString() };
+                    
+                    var taskLeft =  producer_ICurrierLeft
+                        .ProduceAsync(topic_ICurrierLeft, new Message<Null, ICurrierLeft> { Key = null, Value = currierLeft });
+                    
+                    taskList.Add(taskEnter);
+                    taskList.Add(taskLeft);
                 }
+
+              await  Task.WhenAll(taskList);
             }
         }
     }
