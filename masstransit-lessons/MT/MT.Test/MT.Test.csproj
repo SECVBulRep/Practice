@@ -7,7 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
+      <PackageReference Include="MassTransit.Quartz" Version="8.0.6" />
       <PackageReference Include="MassTransit.StateMachineVisualizer" Version="8.0.6" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.0" />
       <PackageReference Include="NUnit" Version="3.13.3" />
       <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
@@ -16,6 +19,7 @@
     <ItemGroup>
       <ProjectReference Include="..\MT.SampleComponents\MT.SampleComponents.csproj" />
       <ProjectReference Include="..\MT.SampleContracts\MT.SampleContracts.csproj" />
+      <ProjectReference Include="..\Warehouse.Components\Warehouse.Components.csproj" />
     </ItemGroup>
 
 </Project>
