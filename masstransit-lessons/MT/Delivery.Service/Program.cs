@@ -31,6 +31,7 @@ await Host.CreateDefaultBuilder(args)
             cfg.SetKebabCaseEndpointNameFormatter();
             cfg.AddConsumer<DeliverOrderConsumer>(typeof(DeliverOrderConsumerDefitnition));
             cfg.AddConsumer<CurrierVisitedConsumer>();
+            cfg.AddConsumers(typeof(DeliverOrderConsumer).Assembly);
 
             
             var schemaRegistryClient = new CachedSchemaRegistryClient(new Dictionary<string, string>
