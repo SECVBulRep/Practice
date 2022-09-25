@@ -14,17 +14,36 @@ public class ProductStateMachine :
 
     public ProductStateMachine()
     {
-        InstanceState(x => x.CurrentState, Available);
+        InstanceState(x => x.CurrentState, Available,Reserved);
 
+        Event(() => ReservationRequested, x => x.CorrelateById(m => m.Message.ProductId));
+        
         Initially(
             When(Added)
                 .CopyDataToInstance()
                 .TransitionTo(Available));
+        
+        
+        During(Available,
+            When(ReservationRequested)
+                .TransitionTo(Reserved)
+                .PublishAsync(context=>context.Init<IProductReserved>(new
+                {
+                    context.Message.ClientId,
+                    context.Message.ReservationId,
+                    context.Message.ProductId,
+                    TimeStamp= DateTime.Now
+                }))
+        
+        );
     }
 
-    public Event<IProductAdded> Added { get; }
+   
 
+    public Event<IProductAdded> Added { get; }
+    public Event<IReservationRequested> ReservationRequested { get; }
     public State Available { get; }
+    public State Reserved { get; set; }
 }
 
 public static class ProductStateMachineExtensions

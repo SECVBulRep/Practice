@@ -53,7 +53,19 @@ public class When_a_product_reservation_is_requested_for_an_avialable_product :
         var productId = Guid.NewGuid();
         var reservationId = Guid.NewGuid();
         var ClientId = Guid.NewGuid();
+       
 
+        await TestHarness.Bus.Publish<IProductAdded>(new
+        {
+            ProductId = productId,
+            ManufacturerId = "0307969959",
+            Name = "ps 5"
+        });
+
+        var existsId = await ProductSagaHarness.Exists(productId, x => x.Available);
+        Assert.IsTrue(existsId.HasValue, "Saga did not exist");
+        
+        
         await TestHarness.Bus.Publish<IReservationRequested>(new
         {
             ProductId = productId,
@@ -62,16 +74,12 @@ public class When_a_product_reservation_is_requested_for_an_avialable_product :
             ClientId = ClientId
         });
 
-        Assert.IsTrue(await TestHarness.Consumed.Any<IReservationRequested>(), "Message not consumed");
-
+      
         Assert.IsTrue(await SagaHarness.Consumed.Any<IReservationRequested>(), "Message not consumed by saga");
-
-        Assert.That(await SagaHarness.Created.Any(x => x.CorrelationId == reservationId));
-
-        var instance = SagaHarness.Created.ContainsInState(reservationId, Machine, Machine.Requested);
-        Assert.IsNotNull(instance, "Saga instance not found");
-
-        var existsId = await SagaHarness.Exists(reservationId, x => x.Requested);
+        Assert.IsTrue(await ProductSagaHarness.Consumed.Any<IReservationRequested>(), "Message not consumed by saga");
+        
+      
+        existsId = await SagaHarness.Exists(reservationId, x => x.Requested);
         Assert.IsTrue(existsId.HasValue, "Saga did not exist");
     }
 
