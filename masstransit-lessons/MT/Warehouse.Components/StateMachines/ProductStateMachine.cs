@@ -27,7 +27,7 @@ public class ProductStateMachine :
     public State Available { get; }
 }
 
-public static class BookStateMachineExtensions
+public static class ProductStateMachineExtensions
 {
     public static EventActivityBinder<Product, IProductAdded> CopyDataToInstance(
         this EventActivityBinder<Product, IProductAdded> binder)

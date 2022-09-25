@@ -1,4 +1,6 @@
-﻿namespace MT.Test.Internals;
+﻿using MassTransit.ExtensionsDependencyInjectionIntegration;
+
+namespace MT.Test.Internals;
 using System;
 using System.Threading.Tasks;
 using MassTransit;
@@ -33,6 +35,8 @@ using Quartz;
                         .InMemoryRepository();
                     cfg.AddPublishMessageScheduler();
                     cfg.AddSagaStateMachineTestHarness<TStateMachine, TInstance>();
+                    
+                    ConfigureMasstransit(cfg);
                 });
 
             ConfigureServices(collection);
@@ -51,6 +55,11 @@ using Quartz;
             Machine = Provider.GetRequiredService<TStateMachine>();
         }
 
+        protected virtual void ConfigureMasstransit(IBusRegistrationConfigurator serviceCollectionBusConfigurator)
+        {
+        }
+        
+        
         protected virtual void ConfigureServices(IServiceCollection collection)
         {
         }

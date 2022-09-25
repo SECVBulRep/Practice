@@ -7,19 +7,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
-      <PackageReference Include="MassTransit.Quartz" Version="8.0.7-develop.580" />
-      <PackageReference Include="MassTransit.StateMachineVisualizer" Version="8.0.7-develop.580" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0-rc.1.22426.10" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0-preview-20220726-02" />
-      <PackageReference Include="NUnit" Version="3.13.3" />
-      <PackageReference Include="NUnit3TestAdapter" Version="4.3.0-alpha-net7.4" />
+        <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
+        <PackageReference Include="MassTransit.Quartz" Version="8.0.7-develop.580" />
+        <PackageReference Include="MassTransit.StateMachineVisualizer" Version="8.0.7-develop.580" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0-rc.1.22426.10" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0-preview-20220726-02" />
+        <PackageReference Include="NUnit" Version="3.13.3" />
+        <PackageReference Include="NUnit3TestAdapter" Version="4.3.0-alpha-net7.4" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MT.SampleComponents\MT.SampleComponents.csproj" />
-      <ProjectReference Include="..\MT.SampleContracts\MT.SampleContracts.csproj" />
-      <ProjectReference Include="..\Warehouse.Components\Warehouse.Components.csproj" />
+        <ProjectReference Include="..\MT.SampleComponents\MT.SampleComponents.csproj" />
+        <ProjectReference Include="..\MT.SampleContracts\MT.SampleContracts.csproj" />
+        <ProjectReference Include="..\Warehouse.Components\Warehouse.Components.csproj" />
     </ItemGroup>
 
 </Project>
