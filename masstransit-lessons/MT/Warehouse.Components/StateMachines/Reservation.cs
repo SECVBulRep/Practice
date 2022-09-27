@@ -7,6 +7,7 @@ public class Reservation : SagaStateMachineInstance
     public Guid CorrelationId { get; set; }
     public int CurrentState { get; set; }
 
+    public DateTime? Reserved { get; set; }
     public DateTime Created { get; set; }
 
     public Guid ClientId { get; set; }

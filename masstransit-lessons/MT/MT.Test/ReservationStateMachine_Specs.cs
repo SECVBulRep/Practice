@@ -77,10 +77,10 @@ public class When_a_product_reservation_is_requested_for_an_avialable_product :
       
         Assert.IsTrue(await SagaHarness.Consumed.Any<IReservationRequested>(), "Message not consumed by saga");
         Assert.IsTrue(await ProductSagaHarness.Consumed.Any<IReservationRequested>(), "Message not consumed by saga");
+       
+        var reservation =  SagaHarness.Sagas.ContainsInState(reservationId,Machine, x => x.Reserved);
         
-      
-        existsId = await SagaHarness.Exists(reservationId, x => x.Requested);
-        Assert.IsTrue(existsId.HasValue, "Saga did not exist");
+        Assert.IsNotNull(reservation, "Saga did not exist");
     }
 
     [OneTimeSetUp]
