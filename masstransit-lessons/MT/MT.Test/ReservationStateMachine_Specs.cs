@@ -48,7 +48,7 @@ public class When_a_product_reservation_is_requested_for_an_avialable_product :
     StateMachineTestFixture<ReservationStateMacine, Reservation>
 {
     [Test]
-    public async Task Should_create_a_saga_instance()
+    public async Task Should_rezerv_a_product()
     {
         var productId = Guid.NewGuid();
         var reservationId = Guid.NewGuid();
@@ -78,6 +78,9 @@ public class When_a_product_reservation_is_requested_for_an_avialable_product :
         Assert.IsTrue(await SagaHarness.Consumed.Any<IReservationRequested>(), "Message not consumed by saga");
         Assert.IsTrue(await ProductSagaHarness.Consumed.Any<IReservationRequested>(), "Message not consumed by saga");
        
+        
+        existsId = await SagaHarness.Exists(reservationId, x => x.Reserved);
+        Assert.IsTrue(existsId.HasValue, "Saga did not exist");
         var reservation =  SagaHarness.Sagas.ContainsInState(reservationId,Machine, x => x.Reserved);
         
         Assert.IsNotNull(reservation, "Saga did not exist");
