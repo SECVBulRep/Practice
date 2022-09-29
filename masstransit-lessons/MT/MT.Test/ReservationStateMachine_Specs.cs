@@ -106,3 +106,66 @@ public class When_a_product_reservation_is_requested_for_an_avialable_product :
         cfg.AddSagaStateMachineTestHarness<ProductStateMachine, Product>();
     }
 }
+
+
+public class When_a_reservation_expires :
+    StateMachineTestFixture<ReservationStateMacine, Reservation>
+{
+    [Test]
+    public async Task Should_mark_a_product_aviable()
+    {
+        var productId = Guid.NewGuid();
+        var reservationId = Guid.NewGuid();
+        var ClientId = Guid.NewGuid();
+       
+
+        await TestHarness.Bus.Publish<IProductAdded>(new
+        {
+            ProductId = productId,
+            ManufacturerId = "0307969959",
+            Name = "ps 5"
+        });
+
+        var existsId = await ProductSagaHarness.Exists(productId, x => x.Available);
+        Assert.IsTrue(existsId.HasValue, "Saga did not exist");
+        
+        
+        await TestHarness.Bus.Publish<IReservationRequested>(new
+        {
+            ProductId = productId,
+            ReservationId = reservationId,
+            TimeStamp = DateTime.Now,
+            ClientId = ClientId
+        });
+
+        existsId = await SagaHarness.Exists(reservationId, x => x.Reserved);
+        Assert.IsTrue(existsId.HasValue, "Saga did not exist");
+
+        await AdvanceSystemTime(TimeSpan.FromHours(24));
+
+
+        Guid? notExists = await ProductSagaHarness.NotExists(reservationId);
+        Assert.IsFalse(notExists.HasValue);
+
+    }
+
+    [OneTimeSetUp]
+    public void SetUp()
+    {
+        ProductSagaHarness = Provider.GetRequiredService<IStateMachineSagaTestHarness<Product, ProductStateMachine>>();
+        ProductMachine = Provider.GetRequiredService<ProductStateMachine>();
+    }
+
+    public ProductStateMachine ProductMachine { get; set; }
+
+    public IStateMachineSagaTestHarness<Product, ProductStateMachine> ProductSagaHarness { get; set; }
+
+
+    protected override void ConfigureMasstransit(IBusRegistrationConfigurator cfg)
+    {
+        cfg.AddSagaStateMachine<ProductStateMachine, Product>()
+            .InMemoryRepository();
+        cfg.AddPublishMessageScheduler();
+        cfg.AddSagaStateMachineTestHarness<ProductStateMachine, Product>();
+    }
+}
