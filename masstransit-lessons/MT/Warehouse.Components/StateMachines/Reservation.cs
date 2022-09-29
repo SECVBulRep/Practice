@@ -13,4 +13,6 @@ public class Reservation : SagaStateMachineInstance
     public Guid ClientId { get; set; }
     
     public Guid ProductId { get; set; }
+
+    public Guid? ExpirationTokenId { get; set; }
 }

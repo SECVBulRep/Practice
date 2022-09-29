@@ -15,8 +15,8 @@ public class ReservationStateMacine : MassTransitStateMachine<Reservation>
         InstanceState(x => x.CurrentState, Requested, Reserved);
         Event(() => ProductReserved, x => x.CorrelateById(m => m.Message.ReservationId));
         
-        
-        
+        Schedule(() => ExpiationSchedule, x => x.ExpirationTokenId, x => x.Delay = TimeSpan.FromHours(24));
+
         Initially(
             When(ReservationRequested)
                 .Then(context =>
@@ -35,6 +35,7 @@ public class ReservationStateMacine : MassTransitStateMachine<Reservation>
                 {
                     x.Saga.Reserved = x.Message.TimeStamp;
                 })
+                .Schedule(ExpiationSchedule,context=>context.Init<IReservationExpired>(new {context.Message.ReservationId}))
                 .TransitionTo(Reserved)
             );
         
@@ -45,6 +46,8 @@ public class ReservationStateMacine : MassTransitStateMachine<Reservation>
     public State Requested { get; }
     public State Reserved { get; }
 
+    public Schedule<Reservation, IReservationExpired> ExpiationSchedule { get; set; }
     public Event<IReservationRequested> ReservationRequested { get; set; }
     public Event<IProductReserved> ProductReserved { get; set; }
+    public Event<IReservationExpired> ReservationExpired { get; set; }
 }
