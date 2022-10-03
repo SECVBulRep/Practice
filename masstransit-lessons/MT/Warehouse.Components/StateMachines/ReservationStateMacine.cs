@@ -40,6 +40,10 @@ public class ReservationStateMacine : MassTransitStateMachine<Reservation>
 
         During(Reserved
             , When(ReservationExpired)
+                .PublishAsync(context=>context.Init<IProductReservationCanceled>(new
+                {
+                    ProductId = context.Saga.ProductId
+                }))
                 .Finalize()
         );
         

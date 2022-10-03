@@ -34,14 +34,18 @@ public class ProductStateMachine :
                     context.Message.ProductId,
                     TimeStamp= DateTime.Now
                 }))
-        
         );
+        
+        
+        During(Reserved,
+            When(ProductReservationCanceled)
+                .TransitionTo(Available));
     }
-
-   
 
     public Event<IProductAdded> Added { get; }
     public Event<IReservationRequested> ReservationRequested { get; }
+    
+    public Event<IProductReservationCanceled> ProductReservationCanceled { get; }
     public State Available { get; }
     public State Reserved { get; set; }
 }

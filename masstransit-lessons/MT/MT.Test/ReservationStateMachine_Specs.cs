@@ -139,7 +139,10 @@ public class When_a_reservation_expires :
         });
 
         existsId = await SagaHarness.Exists(reservationId, x => x.Reserved);
-        Assert.IsTrue(existsId.HasValue, "Saga did not exist");
+        Assert.IsTrue(existsId.HasValue, "Reservation was not reserved");
+        
+        existsId = await ProductSagaHarness.Exists(productId, x => x.Reserved);
+        Assert.IsTrue(existsId.HasValue, "book was not reserverd");
 
         await AdvanceSystemTime(TimeSpan.FromHours(24));
 
@@ -147,6 +150,9 @@ public class When_a_reservation_expires :
         Guid? notExists = await ProductSagaHarness.NotExists(reservationId);
         Assert.IsFalse(notExists.HasValue);
 
+        existsId = await ProductSagaHarness.Exists(productId, x => x.Available);
+        Assert.IsTrue(existsId.HasValue, "product is not Available");
+        
     }
 
     [OneTimeSetUp]
