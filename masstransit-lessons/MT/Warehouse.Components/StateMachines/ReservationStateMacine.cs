@@ -32,8 +32,11 @@ public class ReservationStateMacine : MassTransitStateMachine<Reservation>
         During(Requested,
             When(ProductReserved)
                 .Then(x => { x.Saga.Reserved = x.Message.TimeStamp; })
+                 //.Schedule(ExpiationSchedule,
+                 //   context => context.Init<IReservationExpired>(new {context.Message.ReservationId}))
                 .Schedule(ExpiationSchedule,
-                    context => context.Init<IReservationExpired>(new {context.Message.ReservationId}))
+                    context => context.Init<IReservationExpired>(new {context.Message.ReservationId}),
+                    context=>context.Message.Duration?? TimeSpan.FromDays(1))
                 .TransitionTo(Reserved)
         );
 

@@ -7,6 +7,6 @@ public interface IReservationRequested
     public Guid ClientId { get; set; }
 
     public DateTime TimeStamp { get; set; }
-
+    public TimeSpan? Duration { get; set; }
     public Guid ProductId { get; set; }
 }

@@ -32,7 +32,8 @@ public class ProductStateMachine :
                     context.Message.ClientId,
                     context.Message.ReservationId,
                     context.Message.ProductId,
-                    TimeStamp= DateTime.Now
+                    TimeStamp= DateTime.Now,
+                    context.Message.Duration
                 }))
         );
         

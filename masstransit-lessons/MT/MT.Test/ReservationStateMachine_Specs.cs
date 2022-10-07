@@ -135,7 +135,8 @@ public class When_a_reservation_expires :
             ProductId = productId,
             ReservationId = reservationId,
             TimeStamp = DateTime.Now,
-            ClientId = ClientId
+            ClientId = ClientId,
+            Duration = TimeSpan.FromDays(2)
         });
 
         existsId = await SagaHarness.Exists(reservationId, x => x.Reserved);
@@ -146,7 +147,11 @@ public class When_a_reservation_expires :
 
         await AdvanceSystemTime(TimeSpan.FromHours(24));
 
-
+        existsId = await ProductSagaHarness.Exists(productId, x => x.Reserved);
+        Assert.IsTrue(existsId.HasValue, "book was still not reserverd");
+        
+        await AdvanceSystemTime(TimeSpan.FromHours(24));
+        
         Guid? notExists = await ProductSagaHarness.NotExists(reservationId);
         Assert.IsFalse(notExists.HasValue);
 
