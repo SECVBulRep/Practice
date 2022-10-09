@@ -33,7 +33,10 @@ public class ProductStateMachine :
         
         During(Reserved,
             When(ReservationRequested)
-                .PublishProductReserved());
+                .IfElse(
+                    context => context.Saga.ReservationId.HasValue &&
+                               context.Saga.ReservationId.Value == context.Message.ReservationId,
+                    ifTrue => ifTrue.PublishProductReserved(), ifElse => ifElse));
 
         During(Reserved,
             When(ProductReservationCanceled)
