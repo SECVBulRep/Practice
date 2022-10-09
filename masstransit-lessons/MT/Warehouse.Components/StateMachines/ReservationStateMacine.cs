@@ -25,7 +25,9 @@ public class ReservationStateMacine : MassTransitStateMachine<Reservation>
                     context.Saga.ClientId = context.Message.ClientId;
                     context.Saga.ProductId = context.Message.ProductId;
                 })
-                .TransitionTo(Requested)
+                .TransitionTo(Requested),
+            When(ReservationExpired)
+                .Finalize()
         );
 
 
