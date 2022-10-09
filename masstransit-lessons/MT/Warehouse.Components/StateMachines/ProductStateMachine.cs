@@ -14,7 +14,7 @@ public class ProductStateMachine :
 
     public ProductStateMachine()
     {
-        InstanceState(x => x.CurrentState, Available,Reserved);
+        InstanceState(x => x.CurrentState, Available,Reserved,CheckedOut);
 
         Event(() => ReservationRequested, x => x.CorrelateById(m => m.Message.ProductId));
         
@@ -41,14 +41,23 @@ public class ProductStateMachine :
         During(Reserved,
             When(ProductReservationCanceled)
                 .TransitionTo(Available));
+        
+        
+        During(Available,Reserved,
+            When(ProductCheckedOut)
+                .TransitionTo(CheckedOut)
+        );
     }
 
+    public Event<IProductCheckedOut> ProductCheckedOut { get; }
     public Event<IProductAdded> Added { get; }
     public Event<IReservationRequested> ReservationRequested { get; }
     
     public Event<IProductReservationCanceled> ProductReservationCanceled { get; }
     public State Available { get; }
     public State Reserved { get; set; }
+
+    public State CheckedOut { get; }
 }
 
 public static class ProductStateMachineExtensions

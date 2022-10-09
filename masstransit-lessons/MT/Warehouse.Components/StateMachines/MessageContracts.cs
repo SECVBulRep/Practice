@@ -12,6 +12,7 @@ public static  class MessageContracts
         if(_initialized)
             return;
         
+        GlobalTopology.Send.UseCorrelationId<IProductCheckedOut>(x => x.ProductId);
         GlobalTopology.Send.UseCorrelationId<IProductAdded>(x => x.ProductId);
         GlobalTopology.Send.UseCorrelationId<IReservationCancelationRequested>(x=>x.ReservationId);
         GlobalTopology.Send.UseCorrelationId<IReservationRequested>(x=>x.ReservationId);

@@ -253,3 +253,76 @@ public class When_a_reservation_canceled :
         cfg.AddSagaStateMachineTestHarness<ProductStateMachine, Product>();
     }
 }
+
+
+public class When_a_reserved_product_is_checked_out :
+    StateMachineTestFixture<ReservationStateMacine, Reservation>
+{
+    [Test]
+    public async Task Should_remove_reservation()
+    {
+        var productId = Guid.NewGuid();
+        var reservationId = Guid.NewGuid();
+        var ClientId = Guid.NewGuid();
+       
+
+        await TestHarness.Bus.Publish<IProductAdded>(new
+        {
+            ProductId = productId,
+            ManufacturerId = "0307969959",
+            Name = "ps 5"
+        });
+
+        var existsId = await ProductSagaHarness.Exists(productId, x => x.Available);
+        Assert.IsTrue(existsId.HasValue, "Saga did not exist");
+        
+        
+        await TestHarness.Bus.Publish<IReservationRequested>(new
+        {
+            ProductId = productId,
+            ReservationId = reservationId,
+            TimeStamp = DateTime.Now,
+            ClientId = ClientId,
+            Duration = TimeSpan.FromDays(2)
+        });
+
+        existsId = await SagaHarness.Exists(reservationId, x => x.Reserved);
+        Assert.IsTrue(existsId.HasValue, "Reservation was not reserved");
+        
+        existsId = await ProductSagaHarness.Exists(productId, x => x.Reserved);
+        Assert.IsTrue(existsId.HasValue, "book was not reserverd");
+
+        await TestHarness.Bus.Publish<IProductCheckedOut>(new
+        {
+            ProductId = productId,
+            TimeStamp  = DateTime.Now
+        });
+
+        Guid? notExists = await ProductSagaHarness.NotExists(reservationId);
+        Assert.IsFalse(notExists.HasValue);
+
+        existsId = await ProductSagaHarness.Exists(productId, x => x.CheckedOut);
+        Assert.IsTrue(existsId.HasValue, "product is not CheckedOut");
+        
+    }
+
+    [OneTimeSetUp]
+    public void SetUp()
+    {
+        ProductSagaHarness = Provider.GetRequiredService<IStateMachineSagaTestHarness<Product, ProductStateMachine>>();
+        ProductMachine = Provider.GetRequiredService<ProductStateMachine>();
+    }
+
+    public ProductStateMachine ProductMachine { get; set; }
+
+    public IStateMachineSagaTestHarness<Product, ProductStateMachine> ProductSagaHarness { get; set; }
+
+
+    protected override void ConfigureMasstransit(IBusRegistrationConfigurator cfg)
+    {
+        cfg.AddSagaStateMachine<ProductStateMachine, Product>()
+            .InMemoryRepository();
+        cfg.AddPublishMessageScheduler();
+        cfg.AddSagaStateMachineTestHarness<ProductStateMachine, Product>();
+    }
+}

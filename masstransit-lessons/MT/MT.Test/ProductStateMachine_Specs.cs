@@ -34,3 +34,36 @@ public class When_a_product_is_added :
         Assert.IsTrue(existsId.HasValue, "Saga did not exist");
     }
 }
+
+
+public class When_a_product_is_checked_out :
+    StateMachineTestFixture<ProductStateMachine, Product>
+{
+    [Test]
+    public async Task Should_change_state_to_checkout()
+    {
+        var productId = Guid.NewGuid();
+
+        await TestHarness.Bus.Publish<IProductAdded>(new
+        {
+            ProductId = productId,
+            ManufacturerId = "0307969959",
+            Name = "ps 5"
+        });
+        var existsId = await SagaHarness.Exists(productId, x => x.Available);
+        Assert.IsTrue(existsId.HasValue, "Saga did not exist");
+        
+        await TestHarness.Bus.Publish<IProductCheckedOut>(new
+        {
+            ProductId = productId,
+            TimeStamp  = DateTime.Now
+        });
+        var notExistsId = await SagaHarness.Exists(productId, x => x.Available);
+        Assert.IsTrue(existsId.HasValue, "product is avialble");
+        
+        
+        existsId = await SagaHarness.Exists(productId, x => x.CheckedOut);
+        Assert.IsTrue(existsId.HasValue, "Saga did not exist");
+        
+    }
+}
