@@ -326,3 +326,84 @@ public class When_a_reserved_product_is_checked_out :
         cfg.AddSagaStateMachineTestHarness<ProductStateMachine, Product>();
     }
 }
+
+
+public class When_reservation_for_already_reserved_product_is_requested :
+    StateMachineTestFixture<ReservationStateMacine, Reservation>
+{
+    [Test]
+    public async Task Should_not_rezerv_a_product()
+    {
+        var productId = Guid.NewGuid();
+        var reservationId = Guid.NewGuid();
+        var ClientId = Guid.NewGuid();
+       
+
+        await TestHarness.Bus.Publish<IProductAdded>(new
+        {
+            ProductId = productId,
+            ManufacturerId = "0307969959",
+            Name = "ps 5"
+        });
+
+        var existsId = await ProductSagaHarness.Exists(productId, x => x.Available);
+        Assert.IsTrue(existsId.HasValue, "Saga did not exist");
+        
+        
+        await TestHarness.Bus.Publish<IReservationRequested>(new
+        {
+            ProductId = productId,
+            ReservationId = reservationId,
+            TimeStamp = DateTime.Now,
+            ClientId = ClientId
+        });
+
+      
+        Assert.IsTrue(await SagaHarness.Consumed.Any<IReservationRequested>(), "Message not consumed by saga");
+        Assert.IsTrue(await ProductSagaHarness.Consumed.Any<IReservationRequested>(), "Message not consumed by saga");
+       
+        
+        existsId = await SagaHarness.Exists(reservationId, x => x.Reserved);
+        Assert.IsTrue(existsId.HasValue, "Saga did not exist");
+        var reservation =  SagaHarness.Sagas.ContainsInState(reservationId,Machine, x => x.Reserved);
+        
+        Assert.IsNotNull(reservation, "Saga did not exist");
+
+        var secondReservationId = Guid.NewGuid();
+       
+        await TestHarness.Bus.Publish<IReservationRequested>(new
+        {
+            ProductId = productId,
+            ReservationId = secondReservationId,
+            TimeStamp = DateTime.Now,
+            ClientId = Guid.NewGuid()
+        });
+        
+        existsId = await SagaHarness.Exists(secondReservationId, x => x.Requested);
+        Assert.IsTrue(existsId.HasValue, "Saga did not exist");
+        var second_reservation =  SagaHarness.Sagas.ContainsInState(secondReservationId,Machine, x => x.Requested);
+        
+        Assert.IsNotNull(reservation, "Saga did not exist");
+        
+    }
+
+    [OneTimeSetUp]
+    public void SetUp()
+    {
+        ProductSagaHarness = Provider.GetRequiredService<IStateMachineSagaTestHarness<Product, ProductStateMachine>>();
+        ProductMachine = Provider.GetRequiredService<ProductStateMachine>();
+    }
+
+    public ProductStateMachine ProductMachine { get; set; }
+
+    public IStateMachineSagaTestHarness<Product, ProductStateMachine> ProductSagaHarness { get; set; }
+
+
+    protected override void ConfigureMasstransit(IBusRegistrationConfigurator cfg)
+    {
+        cfg.AddSagaStateMachine<ProductStateMachine, Product>()
+            .InMemoryRepository();
+        cfg.AddPublishMessageScheduler();
+        cfg.AddSagaStateMachineTestHarness<ProductStateMachine, Product>();
+    }
+}

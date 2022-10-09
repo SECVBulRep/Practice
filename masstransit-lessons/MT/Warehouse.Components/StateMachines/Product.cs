@@ -11,5 +11,7 @@ public class Product :
     public string Name { get; set; }
     public string ManufacturerId { get; set; }
     public Guid CorrelationId { get; set; }
+
+    public Guid? ReservationId { get; set; }
 }
 

@@ -26,18 +26,15 @@ public class ProductStateMachine :
         
         During(Available,
             When(ReservationRequested)
+                .Then(context=>context.Saga.ReservationId = context.Message.ReservationId)//  ниже не пишу потому что  ReservationId уже будет в этом случае.
+                .PublishProductReserved()
                 .TransitionTo(Reserved)
-                .PublishAsync(context=>context.Init<IProductReserved>(new
-                {
-                    context.Message.ClientId,
-                    context.Message.ReservationId,
-                    context.Message.ProductId,
-                    TimeStamp= DateTime.Now,
-                    context.Message.Duration
-                }))
         );
         
-        
+        During(Reserved,
+            When(ReservationRequested)
+                .PublishProductReserved());
+
         During(Reserved,
             When(ProductReservationCanceled)
                 .TransitionTo(Available));
@@ -72,4 +69,18 @@ public static class ProductStateMachineExtensions
             x.Instance.ManufacturerId = x.Data.ManufacturerId;
         });
     }
+    
+    public static EventActivityBinder<Product, IReservationRequested> PublishProductReserved(
+        this EventActivityBinder<Product, IReservationRequested> binder)
+    {
+        return binder.PublishAsync(context => context.Init<IProductReserved>(new
+        {
+            context.Message.ClientId,
+            context.Message.ReservationId,
+            context.Message.ProductId,
+            TimeStamp= DateTime.Now,
+            context.Message.Duration
+        }));
+    }
 }
+
