@@ -32,27 +32,27 @@ public class ReservationStateMacine : MassTransitStateMachine<Reservation>
         During(Requested,
             When(ProductReserved)
                 .Then(x => { x.Saga.Reserved = x.Message.TimeStamp; })
-                 //.Schedule(ExpiationSchedule,
-                 //   context => context.Init<IReservationExpired>(new {context.Message.ReservationId}))
+                //.Schedule(ExpiationSchedule,
+                //   context => context.Init<IReservationExpired>(new {context.Message.ReservationId}))
                 .Schedule(ExpiationSchedule,
                     context => context.Init<IReservationExpired>(new {context.Message.ReservationId}),
-                    context=>context.Message.Duration?? TimeSpan.FromDays(1))
+                    context => context.Message.Duration ?? TimeSpan.FromDays(1))
                 .TransitionTo(Reserved)
         );
 
 
         During(Reserved
             , When(ReservationExpired)
-                .PublishAsync(context=>context.Init<IProductReservationCanceled>(new
-                {
-                    ProductId = context.Saga.ProductId
-                }))
+                .PublishReservationCanceled()
+                .Finalize()
+            , When(ReservationCancelationRequested)
+                .PublishReservationCanceled()
+                .Unschedule(ExpiationSchedule)
                 .Finalize()
         );
-        
-        
+
+
         SetCompletedWhenFinalized();
-        
     }
 
 
@@ -61,6 +61,21 @@ public class ReservationStateMacine : MassTransitStateMachine<Reservation>
 
     public Schedule<Reservation, IReservationExpired> ExpiationSchedule { get; set; }
     public Event<IReservationRequested> ReservationRequested { get; set; }
+
+    public Event<IReservationCancelationRequested> ReservationCancelationRequested { get; set; }
     public Event<IProductReserved> ProductReserved { get; set; }
     public Event<IReservationExpired> ReservationExpired { get; set; }
+}
+
+public static class ReservationStateMachineExtensions
+{
+    public static EventActivityBinder<Reservation, T> PublishReservationCanceled<T>(
+        this EventActivityBinder<Reservation, T> binder)
+        where T : class
+    {
+        return binder.PublishAsync(context => context.Init<IProductReservationCanceled>(new
+        {
+            ProductId = context.Saga.ProductId
+        }));
+    }
 }
