@@ -14,7 +14,8 @@ public class ReservationStateMacine : MassTransitStateMachine<Reservation>
     {
         InstanceState(x => x.CurrentState, Requested, Reserved);
         Event(() => ProductReserved, x => x.CorrelateById(m => m.Message.ReservationId));
-        Event(() => ProductCheckedOut, x => x.CorrelateBy((instance, context) => instance.ProductId == context.Message.ProductId));
+        Event(() => ProductCheckedOut,
+            x => x.CorrelateBy((instance, context) => instance.ProductId == context.Message.ProductId));
 
 
         Schedule(() => ExpiationSchedule, x => x.ExpirationTokenId, x => x.Delay = TimeSpan.FromHours(24));
@@ -28,16 +29,27 @@ public class ReservationStateMacine : MassTransitStateMachine<Reservation>
                     context.Saga.ProductId = context.Message.ProductId;
                 })
                 .TransitionTo(Requested),
+            When(ProductReserved)
+                .Then(context =>
+                {
+                    context.Saga.Created = context.Message.TimeStamp;
+                    context.Saga.ClientId = context.Message.ClientId;
+                    context.Saga.ProductId = context.Message.ProductId;
+                    context.Saga.Reserved = context.Message.TimeStamp;
+                })
+                .Schedule(ExpiationSchedule,
+                    context => context.Init<IReservationExpired>(new {context.Message.ReservationId}),
+                    context => context.Message.Duration ?? TimeSpan.FromDays(1))
+                .TransitionTo(Reserved),
             When(ReservationExpired)
                 .Finalize()
         );
 
 
         During(Requested,
+            Ignore(ReservationRequested),
             When(ProductReserved)
                 .Then(x => { x.Saga.Reserved = x.Message.TimeStamp; })
-                //.Schedule(ExpiationSchedule,
-                //   context => context.Init<IReservationExpired>(new {context.Message.ReservationId}))
                 .Schedule(ExpiationSchedule,
                     context => context.Init<IReservationExpired>(new {context.Message.ReservationId}),
                     context => context.Message.Duration ?? TimeSpan.FromDays(1))
@@ -45,7 +57,12 @@ public class ReservationStateMacine : MassTransitStateMachine<Reservation>
         );
 
 
-        During(Reserved
+        During(Reserved,
+            Ignore(ReservationRequested),
+            When(ProductReserved) // можем запустить еще раз. ничего негативного не будет
+                .Schedule(ExpiationSchedule,
+                    context => context.Init<IReservationExpired>(new {context.Message.ReservationId}),
+                    context => context.Message.Duration ?? TimeSpan.FromDays(1))
             , When(ReservationExpired)
                 .PublishReservationCanceled()
                 .Finalize()
@@ -53,13 +70,11 @@ public class ReservationStateMacine : MassTransitStateMachine<Reservation>
                 .PublishReservationCanceled()
                 .Unschedule(ExpiationSchedule)
                 .Finalize()
-        );
-
-        During(Reserved,
-            When(ProductCheckedOut)
+            , When(ProductCheckedOut)
                 .Unschedule(ExpiationSchedule)
                 .Finalize()
         );
+
 
         SetCompletedWhenFinalized();
     }

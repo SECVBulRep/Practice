@@ -45,6 +45,7 @@ public class ProductStateMachine :
         
         During(Available,Reserved,
             When(ProductCheckedOut)
+                //.Then(context=>context.Saga.ReservationId = default)
                 .TransitionTo(CheckedOut)
         );
     }
