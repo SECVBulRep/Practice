@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WW.TheGame.Silo", "WW.TheGa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WW.TheGame.SiloSecond", "WW.TheGame.SiloSecond\WW.TheGame.SiloSecond.csproj", "{F10F5EB3-E84D-428C-A6D4-7D68780DD8CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WM.TheGame.Grains", "WM.TheGame.Grains\WM.TheGame.Grains.csproj", "{775C475D-2F5B-4CD2-B206-F14C609BDEDE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,10 @@ Global
 		{F10F5EB3-E84D-428C-A6D4-7D68780DD8CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F10F5EB3-E84D-428C-A6D4-7D68780DD8CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F10F5EB3-E84D-428C-A6D4-7D68780DD8CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{775C475D-2F5B-4CD2-B206-F14C609BDEDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{775C475D-2F5B-4CD2-B206-F14C609BDEDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{775C475D-2F5B-4CD2-B206-F14C609BDEDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{775C475D-2F5B-4CD2-B206-F14C609BDEDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C8F010E3-C9E7-4E38-BF3E-3246278F0281} = {9AD7439A-5044-4B14-851C-CE739616BB23}
