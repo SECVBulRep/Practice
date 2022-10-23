@@ -1,8 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+
+using System;
+using System.Threading.Tasks;
 using WM.TheGame.Infrastructure;
 
-namespace WW.TheGame.SiloSecond;
 
 internal class Program
 {

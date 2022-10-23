@@ -13,11 +13,25 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="7.0.0-rc.1.22426.10" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0-rc.1.22426.10" />
         <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="3.6.5" />
-        <PackageReference Include="Microsoft.Orleans.Core" Version="3.6.5" />
+        <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.6.5">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Orleans.Core" Version="3.6.5" />       
         <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="3.6.5" />
         <PackageReference Include="Microsoft.Orleans.Reminders.AdoNet" Version="3.6.5" />
         <PackageReference Include="Microsoft.Orleans.Server" Version="3.6.5" />
         <PackageReference Include="System.Data.SqlClient" Version="4.8.4" />
+        
+    </ItemGroup>
+
+    <ItemGroup>
+      <Orleans_CodeGenInputs Remove="Contracts\IGameGrain.cs" />
+      <Orleans_CodeGenInputs Remove="Contracts\IPlayerGrain.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\WM.TheGame.Contracts\WM.TheGame.Contracts.csproj" />
     </ItemGroup>
     
 </Project>

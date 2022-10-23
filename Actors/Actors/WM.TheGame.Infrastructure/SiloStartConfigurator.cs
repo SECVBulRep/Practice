@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
+using WM.TheGame.Contracts.Contracts;
+
 
 namespace WM.TheGame.Infrastructure;
 
@@ -30,6 +32,11 @@ public class SiloStartConfigurator
                         options.ClusterId = "WM.Cluster";
                         options.ServiceId = "Wm.Service";
                     })
+                    .ConfigureApplicationParts(part =>
+                    {
+                        part.AddApplicationPart(typeof(IGameGrain).Assembly);
+                        part.AddFromAppDomain();
+                    })
                     .UseAdoNetClustering(options =>
                     {
                         options.ConnectionString = connectionString;
@@ -40,8 +47,9 @@ public class SiloStartConfigurator
                         options.ConnectionString = connectionString;
                         options.Invariant = invariant;
                     })
+                   
                     .ConfigureEndpoints(siloPort: siloPort, gatewayPort: gatewayPort)
-                    .ConfigureLogging(builder => builder.SetMinimumLevel(LogLevel.Warning).AddConsole());
+                    .ConfigureLogging(builder => builder.SetMinimumLevel(LogLevel.Information).AddConsole());
                 
                 builder.AddAdoNetGrainStorage("Wm.GrainStorage", options =>
                 {

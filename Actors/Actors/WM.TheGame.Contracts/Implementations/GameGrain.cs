@@ -1,8 +1,9 @@
-﻿using WM.TheGame.Grains.Contracts;
+﻿using Orleans;
+using WM.TheGame.Contracts.Contracts;
 
-namespace WM.TheGame.Grains.Implementations;
+namespace WM.TheGame.Contracts.Implementations;
 
-public class GameGrain : IGameGrain
+public class GameGrain :  Grain, IGameGrain
 {
     private string _name; 
     
@@ -13,6 +14,7 @@ public class GameGrain : IGameGrain
 
     public Task SetName(string name)
     {
+        Console.WriteLine($"Name {name} was set");
         _name = name;
         return Task.CompletedTask;
     }

@@ -1,6 +1,6 @@
 ﻿using Orleans;
 
-namespace WM.TheGame.Grains.Contracts;
+namespace WM.TheGame.Contracts.Contracts;
 
 public interface IPlayerGrain : IGrainWithGuidKey
 {
