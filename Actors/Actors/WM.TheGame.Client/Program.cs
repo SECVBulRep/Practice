@@ -7,6 +7,7 @@ using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
 using WM.TheGame.Contracts.Contracts;
+using WM.TheGame.Contracts.Contracts.Game;
 
 
 internal class Program
@@ -57,9 +58,7 @@ internal class Program
             {
                 switch (key)
                 {
-                    case "start":
-                        var game =  client.GetGrain<IGameGrain>(Guid.NewGuid());
-                        await game.SetName("Doom");
+                    case "start":                       
                         break;
                 }
             }

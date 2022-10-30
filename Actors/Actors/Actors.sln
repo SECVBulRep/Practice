@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WM.TheGame.Contracts", "WM.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WM.TheGame.SiloSecond", "WM.TheGame.SiloSecond\WM.TheGame.SiloSecond.csproj", "{7448C5D5-ED56-4C44-83C0-8F7F1E371CE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WM.TheGame.WebApi", "WM.TheGame.WebApi\WM.TheGame.WebApi.csproj", "{7B333F5A-F2D2-4E9F-B58C-2215291A215A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{7448C5D5-ED56-4C44-83C0-8F7F1E371CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7448C5D5-ED56-4C44-83C0-8F7F1E371CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7448C5D5-ED56-4C44-83C0-8F7F1E371CE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B333F5A-F2D2-4E9F-B58C-2215291A215A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B333F5A-F2D2-4E9F-B58C-2215291A215A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B333F5A-F2D2-4E9F-B58C-2215291A215A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B333F5A-F2D2-4E9F-B58C-2215291A215A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C8F010E3-C9E7-4E38-BF3E-3246278F0281} = {9AD7439A-5044-4B14-851C-CE739616BB23}

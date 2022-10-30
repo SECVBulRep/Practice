@@ -5,6 +5,7 @@ using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
 using WM.TheGame.Contracts.Contracts;
+using WM.TheGame.Contracts.Contracts.Game;
 
 
 namespace WM.TheGame.Infrastructure;
@@ -26,7 +27,15 @@ public class SiloStartConfigurator
                 
                 int gatewayPort = context.Configuration.GetValue<int>(
                     "Silo:gatewayPort");
-                
+
+                string? siloName = context.Configuration.GetValue<string>(
+                    "Silo:name");
+
+                builder.Configure<SiloOptions>(options =>
+                {
+                    options.SiloName =Environment.MachineName +"_"+ siloName;
+                });
+
                 builder.Configure<ClusterOptions>(options =>
                     {
                         options.ClusterId = "WM.Cluster";
@@ -47,7 +56,8 @@ public class SiloStartConfigurator
                         options.ConnectionString = connectionString;
                         options.Invariant = invariant;
                     })
-                   
+
+
                     .ConfigureEndpoints(siloPort: siloPort, gatewayPort: gatewayPort)
                     .ConfigureLogging(builder => builder.SetMinimumLevel(LogLevel.Information).AddConsole());
                 
