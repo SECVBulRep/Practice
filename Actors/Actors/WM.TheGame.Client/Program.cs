@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
-using WM.TheGame.Contracts.Contracts;
 using WM.TheGame.Contracts.Contracts.Game;
 
+namespace WM.TheGame.Client;
 
 internal class Program
 {
@@ -35,7 +35,7 @@ internal class Program
                 options.ConnectionString = connectionString;
                 options.Invariant = "System.Data.SqlClient";
             })
-          .ConfigureApplicationParts(part =>
+            .ConfigureApplicationParts(part =>
             {
                 part.AddApplicationPart(typeof(IGameGrain).Assembly).WithReferences();
             })

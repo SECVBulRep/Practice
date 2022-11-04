@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Orleans;
+using Orleans.Runtime;
 using WM.TheGame.Contracts.Contracts;
 using WM.TheGame.Contracts.Contracts.Game;
 
@@ -23,12 +24,27 @@ public class GameController : ControllerBase
     
     [HttpPut]
     [Route("Start")]
-    public async Task<IActionResult> Post()
+    public async Task<IActionResult> Start()
     {
         var game=  _clusterClient.GetGrain<IGameGrain>("WoW");
-        await game.StartGame();
-        
+        game.InvokeOneWay(Handler);
         return Accepted();
     }
 
+    private Task Handler(IGameGrain arg)
+    {
+       return arg.StartGame();
+    }
+
+    [HttpPut]
+    [Route("Stop")]
+    public async Task<IActionResult> Stop()
+    {
+        var game=  _clusterClient.GetGrain<IGameGrain>("WoW");
+        await game.StopGame();
+        
+        return Accepted();
+    }
+    
+    
 }

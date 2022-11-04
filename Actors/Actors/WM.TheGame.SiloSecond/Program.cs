@@ -2,6 +2,8 @@
 
 using WM.TheGame.Infrastructure;
 
+namespace WM.TheGame.SiloSecond;
+
 internal class Program
 {
     static async Task Main(string[] args)

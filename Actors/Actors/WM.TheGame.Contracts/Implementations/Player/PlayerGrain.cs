@@ -1,36 +1,30 @@
 ﻿using Orleans;
 using Orleans.Concurrency;
-using WM.TheGame.Contracts.Contracts;
+using Orleans.Providers;
 using WM.TheGame.Contracts.Contracts.Game;
 using WM.TheGame.Contracts.Contracts.Player;
+using WM.TheGame.Contracts.Implementations.Game;
 
-namespace WM.TheGame.Contracts.Implementations;
+namespace WM.TheGame.Contracts.Implementations.Player;
 
-public class PlayerGrain : Grain, IPlayerGrain
+[StorageProvider(ProviderName = "Wm.GrainStorage")]
+public class PlayerGrain : Grain<PlayerState>, IPlayerGrain
 {
-    private IGameGrain _currentGame;
-    public Task<IGameGrain> GetCurrentGame()
+    public async Task JoinGame(IGameGrain game)
     {
-        return Task.FromResult(_currentGame);
-    }
-
-    public Task JoinGame(IGameGrain game)
-    {
-        _currentGame = game;
-
         Console.WriteLine(
             $"Player {IdentityString} joined game {game.GetPrimaryKey()}");
 
-        return Task.CompletedTask;
+        if (await game.ConnectPlayer(this))
+        {
+            State.CurrentGame = game.GetPrimaryKeyString();
+        }
     }
 
-    [OneWay]
     public Task LeaveGame(IGameGrain game)
     {
-        _currentGame = null;
         Console.WriteLine(
             $"Player {IdentityString} left game {game.GetPrimaryKey()}");
-
         return Task.CompletedTask;
     }
 }
