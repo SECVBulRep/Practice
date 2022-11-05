@@ -3,6 +3,7 @@ using Orleans;
 using Orleans.Concurrency;
 using Orleans.Providers;
 using Orleans.Runtime;
+using WM.TheGame.Contracts.Contracts.Chat;
 using WM.TheGame.Contracts.Contracts.Game;
 using WM.TheGame.Contracts.Contracts.Player;
 
@@ -12,12 +13,35 @@ namespace WM.TheGame.Contracts.Implementations.Game;
 public class GameGrain : Grain<GameState>, IGameGrain
 {
     private readonly ILogger<GameGrain> _logger;
-
+    
+    private readonly ObserverManager<IChat> _subsManager;
     public GameGrain(ILogger<GameGrain> logger)
     {
         _logger = logger;
+        
+        _subsManager =
+            new ObserverManager<IChat>(
+                TimeSpan.FromMinutes(5), logger, "subs");
+    }
+ 
+    public Task Subscribe(IChat observer)
+    {
+        _subsManager.Subscribe(observer, observer);
+        return Task.CompletedTask;
     }
 
+    public Task UnSubscribe(IChat observer)
+    {
+        _subsManager.Unsubscribe(observer);
+        return Task.CompletedTask;
+    }
+
+    public Task SendUpdateMessage(string message)
+    {
+        _subsManager.Notify(s => s.ReceiveMessage(message));
+        return Task.CompletedTask;
+    }
+    
     [OneWay]
     public async Task StartGame()
     {
@@ -65,4 +89,7 @@ public class GameGrain : Grain<GameState>, IGameGrain
 
         return false;
     }
+    
+  
+    
 }
