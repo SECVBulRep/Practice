@@ -12,19 +12,27 @@ public class PlayerGrain : Grain<PlayerState>, IPlayerGrain
 {
     public async Task JoinGame(IGameGrain game)
     {
+        this.State.CurrentGame = game.GetPrimaryKeyString();
+        await WriteStateAsync();
+        
         Console.WriteLine(
-            $"Player {IdentityString} joined game {game.GetPrimaryKey()}");
-
-        if (await game.ConnectPlayer(this))
-        {
-            State.CurrentGame = game.GetPrimaryKeyString();
-        }
+            $"Player {this.GetPrimaryKeyString()} joined game {game.GetPrimaryKeyString()}");
     }
 
-    public Task LeaveGame(IGameGrain game)
+    public async Task LeaveGame(IGameGrain game)
+    {
+        
+        this.State.CurrentGame = null;
+        await WriteStateAsync();
+        
+        Console.WriteLine(
+            $"Player {this.GetPrimaryKeyString()} left game {game.GetPrimaryKeyString()}");
+      
+    }
+
+    public void NotificationFromGame(string message)
     {
         Console.WriteLine(
-            $"Player {IdentityString} left game {game.GetPrimaryKey()}");
-        return Task.CompletedTask;
+            $"Player {this.GetPrimaryKeyString()} got notification from {this.State.CurrentGame}: ~{message}~ ");
     }
 }

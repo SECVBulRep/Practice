@@ -9,8 +9,8 @@ namespace WM.TheGame.Contracts.Contracts.Game
         Task StartGame();
         Task StopGame();
         Task<bool> ConnectPlayer(IPlayerGrain playerGrain);
-        Task Subscribe(IChat observer);
-        Task UnSubscribe(IChat observer);
-        Task SendUpdateMessage(string message);
+        Task SubscribeToChat(IChat observer);
+        Task UnSubscribeFromChat(IChat observer);
+        Task SendMessageToChat(string message);
     }
 }

@@ -15,6 +15,9 @@ public class GameGrain : Grain<GameState>, IGameGrain
     private readonly ILogger<GameGrain> _logger;
     
     private readonly ObserverManager<IChat> _subsManager;
+
+    private readonly ObserverManager<IPlayerGrain> _playersManager;
+    
     public GameGrain(ILogger<GameGrain> logger)
     {
         _logger = logger;
@@ -22,21 +25,25 @@ public class GameGrain : Grain<GameState>, IGameGrain
         _subsManager =
             new ObserverManager<IChat>(
                 TimeSpan.FromMinutes(5), logger, "subs");
+        
+        _playersManager =
+            new ObserverManager<IPlayerGrain>(
+                TimeSpan.FromMinutes(5), logger, "players");
     }
  
-    public Task Subscribe(IChat observer)
+    public Task SubscribeToChat(IChat observer)
     {
         _subsManager.Subscribe(observer, observer);
         return Task.CompletedTask;
     }
 
-    public Task UnSubscribe(IChat observer)
+    public Task UnSubscribeFromChat(IChat observer)
     {
         _subsManager.Unsubscribe(observer);
         return Task.CompletedTask;
     }
 
-    public Task SendUpdateMessage(string message)
+    public Task SendMessageToChat(string message)
     {
         _subsManager.Notify(s => s.ReceiveMessage(message));
         return Task.CompletedTask;
@@ -68,6 +75,7 @@ public class GameGrain : Grain<GameState>, IGameGrain
             _logger.Info($"Game is stoping ...");
             State.GameStatus = GameStatus.Stoped;
             await WriteStateAsync();
+            _playersManager.Notify(s => s.NotificationFromGame("Game is stopping ..."));
             _logger.Info($"Game is stopped ...");
         }
         else
@@ -83,6 +91,8 @@ public class GameGrain : Grain<GameState>, IGameGrain
         if (State.GameStatus == GameStatus.Started)
         {
             State.Players!.Add(playerGrain.GetPrimaryKeyString());
+            _playersManager.Subscribe(playerGrain,playerGrain);
+            await playerGrain.JoinGame(this);
             await WriteStateAsync();
             return true;
         }

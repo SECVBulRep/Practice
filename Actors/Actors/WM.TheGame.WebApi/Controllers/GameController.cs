@@ -4,6 +4,7 @@ using Orleans.Runtime;
 using WM.TheGame.Contracts.Contracts;
 using WM.TheGame.Contracts.Contracts.Chat;
 using WM.TheGame.Contracts.Contracts.Game;
+using WM.TheGame.Contracts.Implementations.Chat;
 
 namespace WM.TheGame.WebApi.Controllers;
 
@@ -13,13 +14,16 @@ public class GameController : ControllerBase
 {
     private readonly ILogger<GameController> _logger;
     private readonly IClusterClient _clusterClient;
+    private readonly Chat _chat;
 
     public GameController(ILogger<GameController> logger,
-        IClusterClient clusterClient
+        IClusterClient clusterClient,
+        Chat chat
     )
     {
         _logger = logger;
         _clusterClient = clusterClient;
+        _chat = chat;
     }
     
     
@@ -29,15 +33,6 @@ public class GameController : ControllerBase
     {
         var game=  _clusterClient.GetGrain<IGameGrain>("WoW");
         game.InvokeOneWay(Handler);
-        
-        Chat c = new Chat();
-        
-        var obj = await _clusterClient.CreateObjectReference<IChat>(c);
-        await game.Subscribe(obj);
-
-        await game.SendUpdateMessage("hi hi hi hi");
-        
-        
         return Accepted();
     }
 
@@ -52,9 +47,6 @@ public class GameController : ControllerBase
     {
         var game=  _clusterClient.GetGrain<IGameGrain>("WoW");
         await game.StopGame();
-        
-       
-        
         return Accepted();
     }
     

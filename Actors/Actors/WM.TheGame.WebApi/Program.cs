@@ -4,6 +4,8 @@ using Orleans.Hosting;
 using Polly;
 using WM.TheGame.Contracts.Contracts;
 using WM.TheGame.Contracts.Contracts.Game;
+using WM.TheGame.Contracts.Implementations.Chat;
+using WM.TheGame.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -17,6 +19,14 @@ var configurationBuilder = new ConfigurationBuilder()
 var configuration = configurationBuilder.Build();
 var connectionString = configuration.GetConnectionString("service");
 
+
+builder.Services.AddSingleton(provider =>
+{
+    Chat c = new Chat();
+    return c;
+});
+
+builder.Services.AddHostedService<GameService>();
 
 builder.Services.AddSingleton(provider  =>
 {
