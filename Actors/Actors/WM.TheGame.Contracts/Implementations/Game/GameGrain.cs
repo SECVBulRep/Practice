@@ -12,6 +12,8 @@ namespace WM.TheGame.Contracts.Implementations.Game;
 [StorageProvider(ProviderName = "Wm.GrainStorage")]
 public class GameGrain : Grain<GameState>, IGameGrain
 {
+    private IDisposable? timer;
+    
     private readonly ILogger<GameGrain> _logger;
     
     private readonly ObserverManager<IChat> _subsManager;
@@ -29,8 +31,25 @@ public class GameGrain : Grain<GameState>, IGameGrain
         _playersManager =
             new ObserverManager<IPlayerGrain>(
                 TimeSpan.FromMinutes(5), logger, "players");
+        
     }
- 
+
+    public override async Task OnActivateAsync()
+    {
+     /*   timer = RegisterTimer(state =>
+        {
+            Console.WriteLine($"Health check {DateTime.Now}");
+            return Task.CompletedTask;           
+            
+        }, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(1));
+*/
+
+        await RegisterOrUpdateReminder("GameReminder", TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(60));
+        
+        await base.OnActivateAsync();
+    }
+
+
     public Task SubscribeToChat(IChat observer)
     {
         _subsManager.Subscribe(observer, observer);
@@ -52,6 +71,7 @@ public class GameGrain : Grain<GameState>, IGameGrain
     [OneWay]
     public async Task StartGame()
     {
+        Thread.Sleep(3000);
         _logger.Info($"Game status {State.GameStatus}");
         if (State.GameStatus == GameStatus.Stoped)
         {
@@ -99,7 +119,11 @@ public class GameGrain : Grain<GameState>, IGameGrain
 
         return false;
     }
-    
-  
-    
+
+
+    public Task ReceiveReminder(string reminderName, TickStatus status)
+    {
+        Console.WriteLine("Thanks for reminding me-- I almost forgot!");
+        return Task.CompletedTask;
+    }
 }

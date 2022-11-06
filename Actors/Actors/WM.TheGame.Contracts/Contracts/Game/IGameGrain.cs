@@ -4,7 +4,7 @@ using WM.TheGame.Contracts.Contracts.Player;
 
 namespace WM.TheGame.Contracts.Contracts.Game
 {
-    public interface IGameGrain : IGrainWithStringKey
+    public interface IGameGrain : IGrainWithStringKey,IRemindable
     {
         Task StartGame();
         Task StopGame();
