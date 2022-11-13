@@ -1,5 +1,7 @@
 ﻿using Orleans;
+using Orleans.Concurrency;
 using WM.TheGame.Contracts.Contracts.Game;
+using WM.TheGame.Contracts.Implementations.Player;
 
 namespace WM.TheGame.Contracts.Contracts.Player;
 
@@ -9,5 +11,7 @@ public interface IPlayerGrain : IGrainWithStringKey,IGrainObserver
     Task LeaveGame(IGameGrain game);
     void NotificationFromGame(string message);
     Task CheckPlayer(IPlayerGrain playerGrain);
-    Task CheckProcessor();
+
+    //[AlwaysInterleave]
+    Task CheckProcessor(object data);
 }
