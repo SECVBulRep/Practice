@@ -33,8 +33,31 @@ public class PlayerController : ControllerBase
         
         await game.ConnectPlayer(gamer);
         await game.SendMessageToChat($"hi all from {playerInfo.PlayerName}");
+        return Accepted();
+    }
+    
+    [HttpPut]
+    [Route("CheckPlayers")]
+    public async Task<IActionResult> Connect(List<PlayerInfo> playersInfo)
+    {
+        List<Task> tasks = new List<Task>();
+
+        foreach (var playerInfo in playersInfo)
+        {
+            var anotherPlayers = playersInfo.Where(x => x.PlayerName != playerInfo.PlayerName).ToList();
+           
+            var callerGamer = _clusterClient.GetGrain<IPlayerGrain>(playerInfo.PlayerName); 
+            
+            foreach (var anotherPlayer in anotherPlayers)
+            {
+                var answererGamer = _clusterClient.GetGrain<IPlayerGrain>(anotherPlayer.PlayerName);
+
+                var task = callerGamer.CheckPlayer(answererGamer);
+                tasks.Add(task);
+            }
+        }
         
-        
+        Task.WaitAll(tasks.ToArray(),CancellationToken.None);
         return Accepted();
     }
     

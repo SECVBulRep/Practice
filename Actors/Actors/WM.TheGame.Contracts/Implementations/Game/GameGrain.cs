@@ -44,7 +44,7 @@ public class GameGrain : Grain<GameState>, IGameGrain
         }, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(1));
 */
 
-        await RegisterOrUpdateReminder("GameReminder", TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(60));
+       // await RegisterOrUpdateReminder("GameReminder", TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(60));
         
         await base.OnActivateAsync();
     }
