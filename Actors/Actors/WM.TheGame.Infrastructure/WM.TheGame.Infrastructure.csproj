@@ -16,6 +16,7 @@
         <PackageReference Include="Microsoft.Orleans.Reminders.AdoNet" Version="7.0.0" />
       <PackageReference Include="Microsoft.Orleans.Sdk" Version="7.0.0" />
       <PackageReference Include="Microsoft.Orleans.Server" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Orleans.Transactions" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>

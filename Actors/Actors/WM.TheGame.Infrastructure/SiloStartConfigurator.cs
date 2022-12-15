@@ -56,6 +56,7 @@ public class SiloStartConfigurator
                     options.ConnectionString = connectionString;
                 });
 
+                builder.UseTransactions();
             })
             .Build();
 
