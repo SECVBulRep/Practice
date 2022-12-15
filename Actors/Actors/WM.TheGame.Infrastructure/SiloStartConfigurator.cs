@@ -50,12 +50,14 @@ public class SiloStartConfigurator
                     .ConfigureEndpoints(siloPort: siloPort, gatewayPort: gatewayPort)
                     .ConfigureLogging(builder => builder.SetMinimumLevel(LogLevel.Information).AddConsole());
                 
-                builder.AddAdoNetGrainStorage("Wm.GrainStorage", options =>
+              /* builder.AddAdoNetGrainStorage("Wm.GrainStorage", options =>
                 {
                     options.Invariant = invariant;
                     options.ConnectionString = connectionString;
-                });
+                });*/
 
+                builder.AddMemoryGrainStorageAsDefault();
+                
                 builder.UseTransactions();
             })
             .Build();

@@ -9,7 +9,7 @@ using WM.TheGame.Contracts.Contracts.Player;
 
 namespace WM.TheGame.Contracts.Implementations.Game;
 
-[StorageProvider(ProviderName = "Wm.GrainStorage")]
+//[StorageProvider(ProviderName = "Wm.GrainStorage")]
 public class GameGrain : Grain<GameState>, IGameGrain
 {
    // private IDisposable? timer;

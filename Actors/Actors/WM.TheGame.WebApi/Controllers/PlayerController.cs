@@ -5,6 +5,7 @@ using WM.TheGame.Contracts.Contracts;
 using WM.TheGame.Contracts.Contracts.Chat;
 using WM.TheGame.Contracts.Contracts.Game;
 using WM.TheGame.Contracts.Contracts.Player;
+using WM.TheGame.Contracts.Contracts.PlayerAccount;
 using WM.TheGame.WebApi.Model;
 
 namespace WM.TheGame.WebApi.Controllers;
@@ -15,13 +16,14 @@ public class PlayerController : ControllerBase
 {
     private readonly ILogger<PlayerController> _logger;
     private readonly IClusterClient _clusterClient;
+    private readonly ITransactionClient _transactionClient;
 
     public PlayerController(ILogger<PlayerController> logger,
-        IClusterClient clusterClient
-    )
+        IClusterClient clusterClient, ITransactionClient transactionClient)
     {
         _logger = logger;
         _clusterClient = clusterClient;
+        _transactionClient = transactionClient;
     }
 
     [HttpPut]
@@ -61,5 +63,29 @@ public class PlayerController : ControllerBase
         return Task.FromResult<IActionResult>(Accepted());
     }
     
+    
+    [HttpPut]
+    [Route("DebitAccount")]
+    public async Task<IActionResult> DebitAccount(DebitAccountRequest playerInfo)
+    {
+    
+        var fromAccount = _clusterClient.GetGrain<IPlayerAccountGrain>(playerInfo.From);
+        var toAccount = _clusterClient.GetGrain<IPlayerAccountGrain>(playerInfo.To);
+        
+        await _transactionClient.RunTransaction(
+            TransactionOption.Create, 
+            async () =>
+            {
+                await fromAccount.Withdraw(playerInfo.Amount);
+                await toAccount.Deposit(playerInfo.Amount);
+            });
+
+        decimal fromBalance = await fromAccount.GetBalance();
+        var toBalance = await toAccount.GetBalance();
+
+        var response = new DebitAccountResponse(fromBalance,toBalance);
+        
+        return Accepted(response);
+    }
     
 }

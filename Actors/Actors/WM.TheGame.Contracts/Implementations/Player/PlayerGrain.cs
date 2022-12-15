@@ -15,7 +15,7 @@ namespace WM.TheGame.Contracts.Implementations.Player;
 
 //[Reentrant] 
 [MayInterleave(nameof(ArgHasInterleaveAttribute))]
-[StorageProvider(ProviderName = "Wm.GrainStorage")]
+//[StorageProvider(ProviderName = "Wm.GrainStorage")]
 public class PlayerGrain : Grain<PlayerState>, IPlayerGrain
 {
     private readonly ILogger<PlayerGrain> _logger;

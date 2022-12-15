@@ -31,7 +31,6 @@ builder.Services.AddOrleansClient(config =>
             options.Invariant = "System.Data.SqlClient";
         })
         .Configure<ConnectionOptions>(options => { options.OpenConnectionTimeout = TimeSpan.FromSeconds(60); });
-
     config.UseTransactions();
 });
 

@@ -1,5 +1,5 @@
 ﻿namespace WM.TheGame.Contracts.Implementations.Game;
-
+[GenerateSerializer]
 public class GameState
 {
     public GameStatus GameStatus { get; set; }
