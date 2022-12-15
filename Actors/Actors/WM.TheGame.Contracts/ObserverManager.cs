@@ -21,7 +21,7 @@ namespace WM.TheGame.Contracts
     /// <typeparam name="TObserver">
     /// The observer type.
     /// </typeparam>
-    public class ObserverManager<TAddress, TObserver> : IEnumerable<TObserver>
+    public class ObserverManager<TAddress, TObserver> : IEnumerable<TObserver> where TAddress : notnull
     {
         /// <summary>
         /// The log prefix.
@@ -76,7 +76,7 @@ namespace WM.TheGame.Contracts
         {
             get
             {
-                return this.observers.ToDictionary(_ => _.Key, _ => _.Value.Observer);
+                return this.observers.ToDictionary(_ => _.Key, _ => _.Value.Observer)!;
             }
         }
 
@@ -103,7 +103,7 @@ namespace WM.TheGame.Contracts
             // Add or update the subscription.
             var now = this.GetDateTime();
             ObserverEntry entry;
-            if (this.observers.TryGetValue(address, out entry))
+            if (this.observers.TryGetValue(address, out entry!))
             {
                 entry.LastSeen = now;
                 entry.Observer = observer;
@@ -146,7 +146,7 @@ namespace WM.TheGame.Contracts
         /// <returns>
         /// A <see cref="Task"/> representing the work performed.
         /// </returns>
-        public async Task Notify(Func<TObserver, Task> notification, Func<TObserver, bool> predicate = null)
+        public async Task Notify(Func<TObserver, Task> notification, Func<TObserver, bool>? predicate = null)
         {
             var now = this.GetDateTime();
             var defunct = default(List<TAddress>);
@@ -161,14 +161,14 @@ namespace WM.TheGame.Contracts
                 }
 
                 // Skip observers which don't match the provided predicate.
-                if (predicate != null && !predicate(observer.Value.Observer))
+                if (predicate != null && !predicate(observer.Value.Observer!))
                 {
                     continue;
                 }
 
                 try
                 {
-                    await notification(observer.Value.Observer);
+                    await notification(observer.Value.Observer!);
                 }
                 catch (Exception)
                 {
@@ -201,7 +201,7 @@ namespace WM.TheGame.Contracts
         /// <param name="predicate">
         /// The predicate used to select observers to notify.
         /// </param>
-        public void Notify(Action<TObserver> notification, Func<TObserver, bool> predicate = null)
+        public void Notify(Action<TObserver> notification, Func<TObserver, bool>? predicate = null)
         {
             var now = this.GetDateTime();
             var defunct = default(List<TAddress>);
@@ -216,14 +216,14 @@ namespace WM.TheGame.Contracts
                 }
 
                 // Skip observers which don't match the provided predicate.
-                if (predicate != null && !predicate(observer.Value.Observer))
+                if (predicate != null && !predicate(observer.Value.Observer!))
                 {
                     continue;
                 }
 
                 try
                 {
-                    notification(observer.Value.Observer);
+                    notification(observer.Value.Observer!);
                 }
                 catch (Exception)
                 {
@@ -267,7 +267,7 @@ namespace WM.TheGame.Contracts
             // Remove defunct observers.
             if (defunct != default(List<TAddress>) && defunct.Count > 0)
             {
-                this.log.Info(this.logPrefix + ": Removing {0} defunct observers entries.", defunct.Count);
+                this.log.LogInformation(this.logPrefix + ": Removing {0} defunct observers entries.", defunct.Count);
                 foreach (var observer in defunct)
                 {
                     this.observers.TryRemove(observer, out _);
@@ -283,7 +283,7 @@ namespace WM.TheGame.Contracts
         /// </returns>
         public IEnumerator<TObserver> GetEnumerator()
         {
-            return this.observers.Select(observer => observer.Value.Observer).GetEnumerator();
+            return this.observers.Select(observer => observer.Value.Observer).GetEnumerator()!;
         }
 
         /// <summary>
@@ -305,7 +305,7 @@ namespace WM.TheGame.Contracts
             /// <summary>
             /// Gets or sets the observer.
             /// </summary>
-            public TObserver Observer { get; set; }
+            public TObserver? Observer { get; set; }
 
             /// <summary>
             /// Gets or sets the UTC last seen time.

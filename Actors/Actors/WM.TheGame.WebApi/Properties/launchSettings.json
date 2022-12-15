@@ -4,17 +4,27 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:49003",
-      "sslPort": 44340
+      "applicationUrl": "http://localhost:44407",
+      "sslPort": 44316
     }
   },
   "profiles": {
-    "WM.TheGame.WebApi": {
+    "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7168;http://localhost:5212",
+      "applicationUrl": "http://localhost:5198",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7120;http://localhost:5198",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

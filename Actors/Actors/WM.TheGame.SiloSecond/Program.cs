@@ -2,12 +2,11 @@
 
 using WM.TheGame.Infrastructure;
 
-namespace WM.TheGame.SiloSecond;
-
 internal class Program
 {
     static async Task Main(string[] args)
     {
+
         var host = await SiloStartConfigurator.StartSiloAsync();
         Console.WriteLine("\n\n Press Enter to terminate...\n\n");
         Console.ReadLine();

@@ -24,7 +24,7 @@ public class GameService : IHostedService
     {
         var game=  _clusterClient.GetGrain<IGameGrain>("WoW");
         await game.StartGame();
-        var obj = await _clusterClient.CreateObjectReference<IChat>(_chat);
+        var obj =  _clusterClient.CreateObjectReference<IChat>(_chat);
         await game.SubscribeToChat(obj);
         await game.SendMessageToChat("Chat is started!!!");
     }

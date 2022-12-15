@@ -38,7 +38,7 @@ public class PlayerController : ControllerBase
     
     [HttpPut]
     [Route("CheckPlayers")]
-    public async Task<IActionResult> Connect(List<PlayerInfo> playersInfo)
+    public Task<IActionResult> Connect(List<PlayerInfo> playersInfo)
     {
         List<Task> tasks = new List<Task>();
 
@@ -58,7 +58,7 @@ public class PlayerController : ControllerBase
         }
         
         Task.WaitAll(tasks.ToArray(),CancellationToken.None);
-        return Accepted();
+        return Task.FromResult<IActionResult>(Accepted());
     }
     
     

@@ -6,6 +6,7 @@ using Orleans.Concurrency;
 using Orleans.Core;
 using Orleans.Providers;
 using Orleans.Runtime;
+using Orleans.Serialization.Invocation;
 using WM.TheGame.Contracts.Contracts.Game;
 using WM.TheGame.Contracts.Contracts.Player;
 using WM.TheGame.Contracts.Implementations.Game;
@@ -23,61 +24,47 @@ public class PlayerGrain : Grain<PlayerState>, IPlayerGrain
     {
         _logger = logger;
     }
-    
-    public static bool ArgHasInterleaveAttribute(InvokeMethodRequest req)
+
+    public static bool ArgHasInterleaveAttribute(IInvokable req)
     {
-        // Returning true indicates that this call should be interleaved with other calls.
-        // Returning false indicates the opposite.
-        return req.Arguments.Length == 1
-               && req.Arguments[0]?.GetType()
-                   .GetCustomAttribute<InterleaveAttribute>() != null;
+        return req.GetArgument(0)?.GetType().GetCustomAttribute<InterleaveAttribute>() != null;
     }
-    
+
     public async Task JoinGame(IGameGrain game)
     {
         this.State.CurrentGame = game.GetPrimaryKeyString();
         await WriteStateAsync();
-        
-        _logger.Info(
+
+        _logger.LogInformation(
             $"Player {this.GetPrimaryKeyString()} joined game {game.GetPrimaryKeyString()}");
     }
 
     public async Task LeaveGame(IGameGrain game)
     {
-        
         this.State.CurrentGame = null;
         await WriteStateAsync();
-        
-        _logger.Info(
+
+        _logger.LogInformation(
             $"Player {this.GetPrimaryKeyString()} left game {game.GetPrimaryKeyString()}");
-      
     }
 
     public void NotificationFromGame(string message)
     {
-        _logger.Info(
+        _logger.LogInformation(
             $"Player {this.GetPrimaryKeyString()} got notification from {this.State.CurrentGame}: ~{message}~ ");
     }
 
-    
+
     public async Task CheckPlayer(IPlayerGrain playerGrain)
     {
-        _logger.Info($"{this.GetPrimaryKeyString()} starts greet {playerGrain.GetPrimaryKeyString()}...");
+        _logger.LogInformation($"{this.GetPrimaryKeyString()} starts greet {playerGrain.GetPrimaryKeyString()}...");
         await playerGrain.CheckProcessor(new CheckRequest());
-        _logger.Info($"{this.GetPrimaryKeyString()} ends greet {playerGrain.GetPrimaryKeyString()}...");
+        _logger.LogInformation($"{this.GetPrimaryKeyString()} ends greet {playerGrain.GetPrimaryKeyString()}...");
     }
-   
-    
+
+
     public async Task CheckProcessor(object data)
     {
         await Task.Delay(TimeSpan.FromSeconds(2));
     }
-}
-
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-public sealed class InterleaveAttribute : Attribute { }
-
-[Interleave]
-public class CheckRequest
-{
 }
