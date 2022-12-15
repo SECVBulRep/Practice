@@ -14,13 +14,13 @@ public class SiloStartConfigurator
 
         var silo = new HostBuilder()
             .ConfigureAppConfiguration((hostingConext, config) => { config.AddJsonFile("appsettings.json", true); })
-            .UseOrleans((context,builder) =>
+            .UseOrleans((context, builder) =>
             {
                 string? connectionString = context.Configuration.GetConnectionString("service");
-                
+
                 int siloPort = context.Configuration.GetValue<int>(
                     "Silo:siloPort");
-                
+
                 int gatewayPort = context.Configuration.GetValue<int>(
                     "Silo:gatewayPort");
 
@@ -29,14 +29,14 @@ public class SiloStartConfigurator
 
                 builder.Configure<SiloOptions>(options =>
                 {
-                    options.SiloName =Environment.MachineName +"_"+ siloName;
+                    options.SiloName = Environment.MachineName + "_" + siloName;
                 });
 
                 builder.Configure<ClusterOptions>(options =>
-                {
-                    options.ClusterId = "WM.Cluster";
-                    options.ServiceId = "Wm.Service";
-                })
+                    {
+                        options.ClusterId = "WM.Cluster";
+                        options.ServiceId = "Wm.Service";
+                    })
                     .UseAdoNetClustering(options =>
                     {
                         options.ConnectionString = connectionString;
@@ -49,15 +49,22 @@ public class SiloStartConfigurator
                     })
                     .ConfigureEndpoints(siloPort: siloPort, gatewayPort: gatewayPort)
                     .ConfigureLogging(builder => builder.SetMinimumLevel(LogLevel.Information).AddConsole());
-                
-              /* builder.AddAdoNetGrainStorage("Wm.GrainStorage", options =>
+
+              /*  builder.AddAdoNetGrainStorage("Wm.GrainStorage", options =>
                 {
                     options.Invariant = invariant;
                     options.ConnectionString = connectionString;
                 });*/
 
-                builder.AddMemoryGrainStorageAsDefault();
+                builder.AddAdoNetGrainStorageAsDefault(options =>
+                {
+                    options.Invariant = invariant;
+                    options.ConnectionString = connectionString;
+                });
                 
+                
+                // builder.AddMemoryGrainStorageAsDefault();
+
                 builder.UseTransactions();
             })
             .Build();
@@ -66,4 +73,3 @@ public class SiloStartConfigurator
         return silo;
     }
 }
-
