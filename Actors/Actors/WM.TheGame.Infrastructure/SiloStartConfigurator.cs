@@ -47,6 +47,7 @@ public class SiloStartConfigurator
                         options.ConnectionString = connectionString;
                         options.Invariant = invariant;
                     })
+                    
                     .ConfigureEndpoints(siloPort: siloPort, gatewayPort: gatewayPort)
                     .ConfigureLogging(builder => builder.SetMinimumLevel(LogLevel.Information).AddConsole());
 
@@ -60,6 +61,18 @@ public class SiloStartConfigurator
                 {
                     options.Invariant = invariant;
                     options.ConnectionString = connectionString;
+                });
+
+
+                builder.UseDashboard(options =>
+                {
+                    options.Username = "user";
+                    options.Password = "user";
+                    options.Host = "*";
+                    options.Port = context.Configuration.GetValue<int>(
+                        "Silo:dashBoardPort");;
+                    options.HostSelf = true;
+                    options.CounterUpdateIntervalMs = 1000;
                 });
                 
                 
