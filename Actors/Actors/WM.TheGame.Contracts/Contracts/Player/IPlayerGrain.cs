@@ -12,4 +12,7 @@ public interface IPlayerGrain : IGrainWithStringKey,IGrainObserver
 
     [AlwaysInterleave]
     Task CheckProcessor(object data);
+    
+    [Transaction(TransactionOption.Create)]
+    Task Transfer(string toId, decimal amountToTransfer);
 }

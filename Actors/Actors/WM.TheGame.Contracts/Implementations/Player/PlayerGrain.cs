@@ -9,6 +9,7 @@ using Orleans.Runtime;
 using Orleans.Serialization.Invocation;
 using WM.TheGame.Contracts.Contracts.Game;
 using WM.TheGame.Contracts.Contracts.Player;
+using WM.TheGame.Contracts.Contracts.PlayerAccount;
 using WM.TheGame.Contracts.Implementations.Game;
 
 namespace WM.TheGame.Contracts.Implementations.Player;
@@ -67,4 +68,11 @@ public class PlayerGrain : Grain<PlayerState>, IPlayerGrain
     {
         await Task.Delay(TimeSpan.FromSeconds(2));
     }
+
+    public Task Transfer(
+        string toId,
+        decimal amount) =>
+        Task.WhenAll(
+            GrainFactory.GetGrain<IPlayerAccountGrain>(this.GetPrimaryKeyString()).Withdraw(amount),
+            GrainFactory.GetGrain<IPlayerAccountGrain>(toId).Deposit(amount));
 }

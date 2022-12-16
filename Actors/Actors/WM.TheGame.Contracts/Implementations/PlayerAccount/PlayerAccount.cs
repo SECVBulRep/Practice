@@ -6,14 +6,13 @@ using WM.TheGame.Contracts.Contracts.PlayerAccount;
 namespace WM.TheGame.Contracts.Implementations.PlayerAccount;
 
 [Reentrant]
-public class PlayerAccountGrainGrain : Grain, IPlayerAccountGrain
+public class PlayerAccountGrain : Grain, IPlayerAccountGrain
 {
     private readonly ITransactionalState<Balance> _balance;
-    private ILogger<PlayerAccountGrainGrain> _logger;
+    private ILogger<PlayerAccountGrain> _logger;
 
-    public PlayerAccountGrainGrain(
-        [TransactionalState(nameof(balance))]
-        ITransactionalState<Balance> balance, ILogger<PlayerAccountGrainGrain> logger)
+    public PlayerAccountGrain(
+        [TransactionalState(nameof(balance))] ITransactionalState<Balance> balance, ILogger<PlayerAccountGrain> logger)
     {
         _balance = balance ?? throw new ArgumentNullException(nameof(balance));
         _logger = logger;
@@ -25,7 +24,7 @@ public class PlayerAccountGrainGrain : Grain, IPlayerAccountGrain
 
         if (amount > 1000)
             throw new InvalidOperationException();
-        
+
         return _balance.PerformUpdate(
             balance => balance.Value += amount);
     }
@@ -35,7 +34,7 @@ public class PlayerAccountGrainGrain : Grain, IPlayerAccountGrain
         return _balance.PerformUpdate(balance =>
         {
             _logger.LogInformation($"Withdrawing {amount} credits from account ");
-            
+
             if (balance.Value < amount)
             {
                 throw new InvalidOperationException(
