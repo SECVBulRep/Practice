@@ -2,7 +2,7 @@ using Orleans.Configuration;
 using WM.TheGame.Contracts.Implementations.Chat;
 using WM.TheGame.WebApi.Services;
 
-Thread.Sleep(3000);
+Thread.Sleep(5000);
 
 var builder = WebApplication.CreateBuilder(args);
 

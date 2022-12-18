@@ -3,6 +3,7 @@ using Orleans;
 using Orleans.Runtime;
 using WM.TheGame.Contracts.Contracts;
 using WM.TheGame.Contracts.Contracts.Chat;
+using WM.TheGame.Contracts.Contracts.Coordination;
 using WM.TheGame.Contracts.Contracts.Game;
 using WM.TheGame.Contracts.Contracts.Player;
 using WM.TheGame.Contracts.Contracts.PlayerAccount;
@@ -119,4 +120,37 @@ public class PlayerController : ControllerBase
 
         return Accepted(response);
     }
+
+
+    [HttpPut]
+    [Route("MovePlayer")]
+    public async Task<IActionResult> MovePlayer(MoveRequest moveRequest)
+    {
+        var coordinationGrain = _clusterClient.GetGrain<ICoordinationGrain>(moveRequest.Player);
+
+        switch (moveRequest.Direction)
+        {
+            case Direction.East:
+                await coordinationGrain.MoveEast(moveRequest.Steps);
+                break;
+            case Direction.North:
+                await coordinationGrain.MoveNorth(moveRequest.Steps);
+                break;
+            case Direction.South:
+                await coordinationGrain.MoveSouth(moveRequest.Steps);
+                break;
+            case Direction.West:
+                await coordinationGrain.MoveWest(moveRequest.Steps);
+                break;
+        }
+        
+        var coord = await coordinationGrain.GetInfo();
+        var response = new MoveResponse(coord.Item1, coord.Item2);
+        
+        return Ok(response);
+    }
+
+
+
+
 }
