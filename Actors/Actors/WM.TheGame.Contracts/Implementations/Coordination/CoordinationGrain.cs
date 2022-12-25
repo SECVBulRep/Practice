@@ -5,6 +5,12 @@ namespace WM.TheGame.Contracts.Implementations.Coordination;
 
 public class CoordinationGrain : JournaledGrain<PlayerCoordinateState>,ICoordinationGrain
 {
+    protected override void OnStateChanged()
+    {
+        var temp = this.State;
+        base.OnStateChanged();
+    }
+
     public Task<(int,int)> GetInfo()
     {
         (int, int) ret = new (State.X,State.Y);

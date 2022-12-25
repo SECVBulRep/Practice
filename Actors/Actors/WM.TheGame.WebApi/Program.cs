@@ -4,6 +4,10 @@ using WM.TheGame.WebApi.Services;
 
 Thread.Sleep(5000);
 
+const int maxAttempts = 50;
+var attempt = 0;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 var configurationBuilder = new ConfigurationBuilder()
@@ -20,6 +24,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddOrleansClient(config =>
 {
+    config.UseConnectionRetryFilter(RetryFilter);
     config.Configure<ClusterOptions>(options =>
         {
             options.ClusterId = "WM.Cluster";
@@ -57,3 +62,16 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+async Task<bool> RetryFilter(Exception exception, CancellationToken cancellationToken)
+{
+    attempt++;
+    Console.WriteLine($"Cluster client attempt {attempt} of {maxAttempts} failed to connect to cluster.  Exception: {exception}");
+    if (attempt > maxAttempts)
+    {
+        return false;
+    }
+    await Task.Delay(TimeSpan.FromSeconds(4), cancellationToken);
+    return true;
+}

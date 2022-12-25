@@ -76,8 +76,8 @@ public class SiloStartConfigurator
                 });
 
                 builder.AddLogStorageBasedLogConsistencyProvider("StateStorage");
-
                 
+
                 // builder.AddMemoryGrainStorageAsDefault();
 
                 builder.UseTransactions();
