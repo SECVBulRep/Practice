@@ -1,24 +1,14 @@
 ﻿using Orleans.EventSourcing;
-using Orleans.Providers;
 using WM.TheGame.Contracts.Contracts.Coordination;
 
 namespace WM.TheGame.Contracts.Implementations.Coordination;
 
-[LogConsistencyProvider(ProviderName = "LogStorage")]
-public class CoordinationGrain : JournaledGrain<PlayerCoordinateState,MovedEvent>,ICoordinationGrain
+public class CoordinationGrain : JournaledGrain<PlayerCoordinateState>,ICoordinationGrain
 {
-    protected override void OnStateChanged()
+    public Task<(int,int)> GetInfo()
     {
-        base.OnStateChanged();
-    }
-
-    public async Task<(int,int)> GetInfo()
-    {
-
-        var temp = await RetrieveConfirmedEvents(0, Version);
-        
         (int, int) ret = new (State.X,State.Y);
-        return ret;
+        return Task.FromResult(ret);
     }
 
     public Task MoveNorth(int steps)

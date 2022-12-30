@@ -75,7 +75,7 @@ public class SiloStartConfigurator
                     options.CounterUpdateIntervalMs = 1000;
                 });
 
-                builder.AddLogStorageBasedLogConsistencyProvider("LogStorage");
+                builder.AddLogStorageBasedLogConsistencyProvider("StateStorage");
 
                 
                 // builder.AddMemoryGrainStorageAsDefault();
