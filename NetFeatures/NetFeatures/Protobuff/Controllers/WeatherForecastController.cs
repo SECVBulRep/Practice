@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
+using ProtoBuf;
 using StackExchange.Redis;
 
 namespace Protobuff.Controllers;
@@ -37,20 +38,31 @@ public class WeatherForecastController : ControllerBase
 
         if (string.IsNullOrEmpty(cashed))
         {
+            var temperature = Random.Shared.Next(-20, 55);
             result =  Enumerable.Range(1, 5).Select(index => new WeatherForecast
                 {
-                    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    TemperatureC = Random.Shared.Next(-20, 55),
-                    Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+                    Date = DateTime.Now.AddDays(index),
+                    TemperatureC = temperature,
+                    Summary = Summaries[Random.Shared.Next(Summaries.Length)],
+                    TemperatureF = 32 + (int) (temperature / 0.5556)
                 })
                 .ToArray();
-            await _db.StringSetAsync(key, JsonSerializer.Serialize(result));
+            await _db.StringSetAsync(key, ProtoSerializer<WeatherForecast[]>(result));
         }
         else
         {
-            result = JsonSerializer.Deserialize<WeatherForecast[]>(cashed!);
+            result = Serializer.Deserialize<WeatherForecast[]>(cashed!);
         }
 
         return result;
+    }
+
+    private static byte[] ProtoSerializer<T>(T record) where T : class
+    {
+        using (var stream = new MemoryStream())
+        {
+            Serializer.Serialize(stream,record);
+            return stream.ToArray();
+        }
     }
 }
