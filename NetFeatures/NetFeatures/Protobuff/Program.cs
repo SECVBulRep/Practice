@@ -1,5 +1,10 @@
+using System.Runtime.CompilerServices;
+using BenchmarkDotNet.Running;
+using Protobuff;
+using Protobuff.Services;
 using StackExchange.Redis;
 
+[assembly: InternalsVisibleTo("Test")]
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<IWeatherCastService, WeatherCastService>();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
     ConnectionMultiplexer.Connect(new ConfigurationOptions
@@ -32,3 +38,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
+
+
