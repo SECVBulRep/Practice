@@ -19,6 +19,7 @@
       <PackageReference Include="BenchmarkDotNet" Version="0.13.3" />
       <PackageReference Include="BenchmarkDotNet.Annotations" Version="0.13.3" />
       <PackageReference Include="Expressmapper" Version="1.9.1" />
+      <PackageReference Include="Mapster" Version="7.3.0" />    
     </ItemGroup>
 
 </Project>

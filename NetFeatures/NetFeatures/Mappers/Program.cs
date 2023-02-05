@@ -5,10 +5,9 @@ using AutoMapper;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using ExpressMapper.Extensions;
-
+using Mapster;
 
 ExpressMapper.Mapper.Register<Customer,CustomerDto>();
-
 
 
 BenchmarkRunner.Run<MapperTester>();
@@ -35,6 +34,13 @@ public class MapperTester
         cfg.CreateMap<Contact, ContactDto>();
     })).CreateMapper();
 
+    
+    [Benchmark]
+    public CustomerDto MapsterMap()
+    {
+        return Customer.Adapt<CustomerDto>();
+    }
+    
     
     
     [Benchmark]
