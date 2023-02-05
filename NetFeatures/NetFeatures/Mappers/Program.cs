@@ -35,6 +35,13 @@ public class MapperTester
     })).CreateMapper();
 
     
+  
+    [Benchmark]
+    public CustomerCodeGenDto MapsterCodeGenMap()
+    {
+      return  Customer.AdaptToCodeGenDto();
+    }
+    
     [Benchmark]
     public CustomerDto MapsterMap()
     {
@@ -81,6 +88,8 @@ public class MapperTester
 }
 
 
+
+
 public class CustomerDto
 {
     public string FirstName { get; set; }
@@ -97,7 +106,7 @@ public class ContactDto
     public string Value { get; set; }
 }
 
-
+[AdaptTo("[name]CodeGenDto"), GenerateMapper]
 public class Customer
 {
     public string FirstName { get; set; }
@@ -106,7 +115,7 @@ public class Customer
     public List<Contact> Contacts { get; set; }
 }
 
-
+[AdaptTo("[name]CodeGenDto"), GenerateMapper]
 public class Contact
 {
     public ContactType Type { get; set; }
