@@ -11,7 +11,7 @@ ExpressMapper.Mapper.Register<Customer,CustomerDto>();
 
 
 BenchmarkRunner.Run<MapperTester>();
-
+ 
 
 public class MapperTester
 {
@@ -35,7 +35,7 @@ public class MapperTester
     })).CreateMapper();
 
     
-  
+    
     [Benchmark]
     public CustomerCodeGenDto MapsterCodeGenMap()
     {
