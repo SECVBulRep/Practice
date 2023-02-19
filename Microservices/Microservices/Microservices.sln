@@ -1,8 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WeatherCasting", "WeatherCasting", "{159C28D0-97B2-43DB-ACF7-FF7F21135AB9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BookShop", "BookShop", "{159C28D0-97B2-43DB-ACF7-FF7F21135AB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication", "WebApplication\WebApplication.csproj", "{A00695CC-7318-431C-A2A3-7496D21686F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookShop.WebService", "BookShop.WebService\BookShop.WebService.csproj", "{829FF213-ED09-4103-BB12-261EA82FF7D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microservices.SeedWork", "Microservices.SeedWork\Microservices.SeedWork.csproj", "{0984DCAF-4D98-4BD3-B0C1-3BB756F47EF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,12 +12,16 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A00695CC-7318-431C-A2A3-7496D21686F2} = {159C28D0-97B2-43DB-ACF7-FF7F21135AB9}
+		{829FF213-ED09-4103-BB12-261EA82FF7D2} = {159C28D0-97B2-43DB-ACF7-FF7F21135AB9}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A00695CC-7318-431C-A2A3-7496D21686F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A00695CC-7318-431C-A2A3-7496D21686F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A00695CC-7318-431C-A2A3-7496D21686F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A00695CC-7318-431C-A2A3-7496D21686F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{829FF213-ED09-4103-BB12-261EA82FF7D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{829FF213-ED09-4103-BB12-261EA82FF7D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{829FF213-ED09-4103-BB12-261EA82FF7D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{829FF213-ED09-4103-BB12-261EA82FF7D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0984DCAF-4D98-4BD3-B0C1-3BB756F47EF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0984DCAF-4D98-4BD3-B0C1-3BB756F47EF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0984DCAF-4D98-4BD3-B0C1-3BB756F47EF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0984DCAF-4D98-4BD3-B0C1-3BB756F47EF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
