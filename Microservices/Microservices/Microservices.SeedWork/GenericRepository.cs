@@ -25,7 +25,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     }
     public TEntity FindById(int id)
     {
-        return _dbSet.Find(id);
+        return _dbSet.Find(id)!;
     }
  
     public void Create(TEntity item)

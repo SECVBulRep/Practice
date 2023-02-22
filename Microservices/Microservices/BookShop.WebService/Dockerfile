@@ -1,14 +1,11 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
-ENV ASPNETCORE_URLS=http://+:5000
-ENV ASPNETCORE_ENVIRONMENT="development"
-EXPOSE 5000
-
-
 WORKDIR /App
+EXPOSE 80
+EXPOSE 443
+
 COPY ["BookShop.WebService/.", "BookShop.WebService/"]
 COPY ["Microservices.SeedWork/.", "Microservices.SeedWork/"]
-
 
 WORKDIR BookShop.WebService
 RUN dotnet restore "BookShop.WebService.csproj"

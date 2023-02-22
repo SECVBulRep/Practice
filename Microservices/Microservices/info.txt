@@ -1,0 +1,9 @@
+
+1) docker build  -f BookShop.WebService/Dockerfile -t secvbulrep/bookservice .
+
+2) docker run -p 8080:5000 -d secvbulrep/bookservice
+
+3) docker stop fa3aaa280259
+
+4) docker push secvbulrep/bookservice
+

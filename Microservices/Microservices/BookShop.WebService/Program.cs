@@ -7,8 +7,6 @@ using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-
-
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -25,18 +23,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.ConfigureEndpointDefaults(listenOptions =>
-    {
-        // ...
-    });
-});
-
 
 WebApplication app = builder.Build();
-
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -56,14 +44,16 @@ public static class PrepData
     {
         using (var serviceScope = builder.ApplicationServices.CreateScope())
         {
+            Console.WriteLine("Seed data...");
             var authorRepository = serviceScope.ServiceProvider.GetService<IAuthorRepository>();
 
             var data = BookShopFaker.InitData();
 
             foreach (var author in data)
             {
-                authorRepository.Create(author);
+                authorRepository?.Create(author);
             }
+            Console.WriteLine("Seed data is done.");
         }
     }
 
