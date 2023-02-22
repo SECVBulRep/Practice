@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservices-depl
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: bookservice
+  template:
+    metadata:
+      labels:
+        app: bookservice
+    spec:
+      containers:
+        - name: bookservice
+          image: secvbulrep/bookservice:latest

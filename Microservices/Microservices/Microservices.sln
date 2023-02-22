@@ -6,6 +6,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookShop.WebService", "Book
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microservices.SeedWork", "Microservices.SeedWork\Microservices.SeedWork.csproj", "{0984DCAF-4D98-4BD3-B0C1-3BB756F47EF3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8S", "K8S", "{EECB8F54-52BB-4A92-81F8-945F68D9128D}"
+	ProjectSection(SolutionItems) = preProject
+		K8S\microservices-depl.yaml = K8S\microservices-depl.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

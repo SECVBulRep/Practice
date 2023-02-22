@@ -7,3 +7,8 @@
 
 4) docker push secvbulrep/bookservice
 
+
+
+применить yaml
+5)kubectl apply -f microservices-depl.yaml
+6)kubectl get deployments
