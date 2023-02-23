@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8S", "K8S", "{EECB8F54-52B
 		K8S\microservices-np-srv.yaml = K8S\microservices-np-srv.yaml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Managing", "Managing", "{B5C29580-1720-4EE6-AD79-4C5D1028946C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Managing.WebService", "Managing.WebService\Managing.WebService.csproj", "{B779BC02-CE68-4225-9D0E-1282D0241053}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +23,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{829FF213-ED09-4103-BB12-261EA82FF7D2} = {159C28D0-97B2-43DB-ACF7-FF7F21135AB9}
+		{B779BC02-CE68-4225-9D0E-1282D0241053} = {B5C29580-1720-4EE6-AD79-4C5D1028946C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{829FF213-ED09-4103-BB12-261EA82FF7D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -29,5 +34,9 @@ Global
 		{0984DCAF-4D98-4BD3-B0C1-3BB756F47EF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0984DCAF-4D98-4BD3-B0C1-3BB756F47EF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0984DCAF-4D98-4BD3-B0C1-3BB756F47EF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B779BC02-CE68-4225-9D0E-1282D0241053}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B779BC02-CE68-4225-9D0E-1282D0241053}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B779BC02-CE68-4225-9D0E-1282D0241053}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B779BC02-CE68-4225-9D0E-1282D0241053}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

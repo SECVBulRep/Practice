@@ -12,5 +12,3 @@
 применить yaml
 5)kubectl apply -f microservices-depl.yaml
 6)kubectl get deployments
-7)apply -f microservices-np-srv.yaml // запуск сервиса настроек 
-8)kubectl get service   /// просмотр запущенных сервисов 
