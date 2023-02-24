@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8S", "K8S", "{EECB8F54-52B
 	ProjectSection(SolutionItems) = preProject
 		K8S\microservices-depl.yaml = K8S\microservices-depl.yaml
 		K8S\microservices-np-srv.yaml = K8S\microservices-np-srv.yaml
+		K8S\managing-depl.yaml = K8S\managing-depl.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Managing", "Managing", "{B5C29580-1720-4EE6-AD79-4C5D1028946C}"

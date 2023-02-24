@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Bogus;
 using BookShop.WebService.Models;
 using BookShop.WebService.Repository;
+using BookShop.WebService.SyncDataServices.Http;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddScoped<DbContext, ShopContext>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddHttpClient<IManagingDataClient,HttpManagingDataClient>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -34,8 +37,10 @@ app.UseAuthorization();
 app.MapControllers();
 
 PrepData.PopulateAction(app);
-
+Console.WriteLine($"--> managing endpint {builder.Configuration["managingSystem"]}");
 app.Run();
+
+
 
 
 public static class PrepData
@@ -44,7 +49,7 @@ public static class PrepData
     {
         using (var serviceScope = builder.ApplicationServices.CreateScope())
         {
-            Console.WriteLine("Seed data...");
+            Console.WriteLine("--> Seed data...");
             var authorRepository = serviceScope.ServiceProvider.GetService<IAuthorRepository>();
 
             var data = BookShopFaker.InitData();
@@ -53,7 +58,7 @@ public static class PrepData
             {
                 authorRepository?.Create(author);
             }
-            Console.WriteLine("Seed data is done.");
+            Console.WriteLine("--> Seed data is done.");
         }
     }
 

@@ -7,8 +7,23 @@
 
 4) docker push secvbulrep/bookservice
 
+5) kubectl scale --replicas=0 deployment/<your-deployment>
+
+6) kubectl apply -f  microservices-depl.yaml
+
+7) kubectl get services
+
+для того что обновить образ из докерхаба!!!! Делать после изменнии в образе.
+8) kubectl rollout restart deployment microservices-depl
+
+
+7) docker build  -f Managing.WebService/Dockerfile -t secvbulrep/managingservice .
+
+
 
 
 применить yaml
 5)kubectl apply -f microservices-depl.yaml
 6)kubectl get deployments
+7)apply -f microservices-np-srv.yaml // запуск сервиса настроек 
+8)kubectl get service   /// просмотр запущенных сервисов 

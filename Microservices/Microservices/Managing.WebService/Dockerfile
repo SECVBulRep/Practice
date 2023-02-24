@@ -1,20 +1,17 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
-WORKDIR /app
+﻿FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+
+WORKDIR /App
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /src
-COPY ["Managing.WebService/Managing.WebService.csproj", "Managing.WebService/"]
-RUN dotnet restore "Managing.WebService/Managing.WebService.csproj"
-COPY . .
-WORKDIR "/src/Managing.WebService"
-RUN dotnet build "Managing.WebService.csproj" -c Release -o /app/build
+COPY ["Managing.WebService/.", "Managing.WebService/"]
+COPY ["Microservices.SeedWork/.", "Microservices.SeedWork/"]
 
-FROM build AS publish
-RUN dotnet publish "Managing.WebService.csproj" -c Release -o /app/publish
+WORKDIR Managing.WebService
+RUN dotnet restore "Managing.WebService.csproj"
+RUN dotnet publish -c Release -o /App/build
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+WORKDIR /App/build
+COPY --from=build /App/build .
 ENTRYPOINT ["dotnet", "Managing.WebService.dll"]

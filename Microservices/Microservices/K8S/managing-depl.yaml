@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: microservices-depl
+  name: managing-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: bookservice
+      app: managingservice
   template:
     metadata:
       labels:
-        app: bookservice
+        app: managingservice
     spec:
       containers:
-        - name: bookservice
-          image: secvbulrep/bookservice:latest
+        - name: managingservice
+          image: secvbulrep/managingservice:latest
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: microservices-clusterip-srv
+  name: managingservice-clusterip-srv
 spec:
   type: ClusterIP
   selector:
-    app: bookservice
+    app: managingservice
   ports:
     - port: 80
       protocol: TCP
-      name: bookservice
+      name: managingservice
       targetPort: 80
  
     
