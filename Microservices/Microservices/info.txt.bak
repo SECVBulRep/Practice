@@ -45,3 +45,5 @@ kubectl get namespaces
 что бы вытащить из конкретного namespaces
 
 kubectl get services --namespace=ingress-nginx
+
+16)kubectl apply -f ingress-srv.yaml

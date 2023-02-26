@@ -47,3 +47,16 @@ kubectl get namespaces
 kubectl get services --namespace=ingress-nginx
 
 16)kubectl apply -f ingress-srv.yaml
+16) kubectl apply -f local-pvc.yaml
+17)kubectl get pvc
+
+ 18)kubectl create secret generic mssql --from-literal=SA_PASSWPRD="pa55w0rd!"
+ 
+  kubectl get secrets
+  
+  19) kubectl apply -f mssqs-book-depl.yaml
+  
+  20)  kubectl apply get pods
+  
+  
+ проверь через ms sql manager
