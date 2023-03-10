@@ -12,6 +12,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WM.Microservices.Shop.Api",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WM.Microservices.Seedwork", "WM.Microservices.Seedwork\WM.Microservices.Seedwork.csproj", "{C3A59222-EE9E-4F6B-AF85-0A7811A65901}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8s", "K8s", "{BFE0BAE4-C002-44BD-8652-4D6550345F7B}"
+	ProjectSection(SolutionItems) = preProject
+		K8s\shop-ms-depl.yaml = K8s\shop-ms-depl.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

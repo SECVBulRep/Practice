@@ -1,20 +1,17 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
-WORKDIR /app
+﻿FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+
+WORKDIR /App
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /src
-COPY ["WM.Microservices.Shop.Api/WM.Microservices.Shop.Api.csproj", "WM.Microservices.Shop.Api/"]
-RUN dotnet restore "WM.Microservices.Shop.Api/WM.Microservices.Shop.Api.csproj"
-COPY . .
-WORKDIR "/src/WM.Microservices.Shop.Api"
-RUN dotnet build "WM.Microservices.Shop.Api.csproj" -c Release -o /app/build
+COPY ["WM.Microservices.Shop.Api/.", "WM.Microservices.Shop.Api/"]
+COPY ["WM.Microservices.Seedwork/.", "WM.Microservices.Seedwork/"]
 
-FROM build AS publish
-RUN dotnet publish "WM.Microservices.Shop.Api.csproj" -c Release -o /app/publish
+WORKDIR WM.Microservices.Shop.Api
+RUN dotnet restore "WM.Microservices.Shop.Api.csproj"
+RUN dotnet publish -c Release -o /App/build
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+WORKDIR /App/build
+COPY --from=build /App/build .
 ENTRYPOINT ["dotnet", "WM.Microservices.Shop.Api.dll"]

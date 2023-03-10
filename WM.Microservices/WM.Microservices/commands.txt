@@ -1,0 +1,14 @@
+ 1)
+ docker build  -f WM.Microservices.Shop.Api/Dockerfile -t secvbulrep/shop .
+ 
+ 2) 
+ docker build  -f WM.Microservices.Delivery.Api/Dockerfile -t secvbulrep/delivery .
+ 
+ 3)
+ docker run -p 8080:80 -d secvbulrep/shop
+ 
+ 4)
+ push secvbulrep/shop
+ 
+ 5) 
+ docker push secvbulrep/delivery
