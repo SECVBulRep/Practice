@@ -45,3 +45,24 @@ kubectl apply -f   delivery-ms-depl.yaml
 kubectl apply -f   shop-ms-depl.yaml
 
 kubectl rollout restart deployment shop-ms-depl
+
+13) 
+образ ингресс
+https://github.com/kubernetes/ingress-nginx
+
+уставноыка ингресс
+14) kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.6.4/deploy/static/provider/cloud/deploy.yaml 
+
+15)
+вытащить все namespace
+kubectl get namespaces
+
+по умолчанию показываются только только default 
+
+что бы вытащить из конкретного namespaces
+
+kubectl get services --namespace=ingress-nginx
+
+16) применяем настройки ingress-nginx
+
+kubectl apply -f ingress-srv.yaml
