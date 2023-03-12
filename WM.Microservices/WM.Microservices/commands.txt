@@ -26,3 +26,6 @@
  9) смотрим запущен ли это  сервис и смотрим там порт и можем делать запрос 
  
  kubectl get services
+ 
+ 10) Создали деплоймент для delivery
+ kubectl apply -f   delivery-ms-depl.yaml

@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: delivery-ms-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: delivery-microservice
+  template:
+    metadata:
+      labels:
+        app: delivery-microservice
+    spec:
+      containers:
+        - name: delivery-microservice
+          image: secvbulrep/delivery:latest
