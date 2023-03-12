@@ -70,3 +70,15 @@ kubectl apply -f ingress-srv.yaml
 17) создали pvc
 
  kubectl apply -f local-pvc.yaml
+ 
+18)
+
+kubectl create secret generic mssql --from-literal=SA_PASSWPRD="pa55w0rd!"
+
+19) kubectl get secrets
+  
+21) kubectl apply -f mssqs-shop-depl.yaml
+  
+22)  kubectl apply get pods
+
+23) Можно открыть в MS SQL MAnagere localhost,1433
