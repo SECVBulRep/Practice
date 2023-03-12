@@ -1,11 +1,11 @@
  1)
- docker build  -f WM.Microservices.Shop.Api/Dockerfile -t secvbulrep/shop .
+ docker build  -f WM.Microservices.Shop.Api/Dockerfile -t secvbulrep/shop_home .
  
  2) 
- docker build  -f WM.Microservices.Delivery.Api/Dockerfile -t secvbulrep/delivery .
+ docker build  -f WM.Microservices.Delivery.Api/Dockerfile -t secvbulrep/delivery_home .
  
  3)
- docker run -p 8080:80 -d secvbulrep/shop
+ docker run -p 8080:80 -d secvbulrep/shop_home
  
  4)
  push secvbulrep/shop
@@ -29,3 +29,12 @@
  
  10) Создали деплоймент для delivery
  kubectl apply -f   delivery-ms-depl.yaml
+ 
+ 11) добавил service ClusterIp
+
+kubectl apply -f   delivery-ms-depl.yaml 
+kubectl apply -f   shop-ms-depl.yaml
+
+и можем посмотреть что появились два сервиса
+
+kubectl get services

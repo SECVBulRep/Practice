@@ -14,4 +14,4 @@ spec:
     spec:
       containers:
         - name: delivery-microservice
-          image: secvbulrep/delivery:latest
+          image: secvbulrep/delivery_home:latest
