@@ -66,3 +66,7 @@ kubectl get services --namespace=ingress-nginx
 16) применяем настройки ingress-nginx
 
 kubectl apply -f ingress-srv.yaml
+
+17) создали pvc
+
+ kubectl apply -f local-pvc.yaml

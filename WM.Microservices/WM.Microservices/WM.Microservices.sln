@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8s", "K8s", "{BFE0BAE4-C00
 		K8s\shop-np-srv.yaml = K8s\shop-np-srv.yaml
 		K8s\delivery-ms-depl.yaml = K8s\delivery-ms-depl.yaml
 		K8s\ingress-srv.yaml = K8s\ingress-srv.yaml
+		K8s\local-pvc.yaml = K8s\local-pvc.yaml
 	EndProjectSection
 EndProject
 Global
