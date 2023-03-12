@@ -8,10 +8,10 @@
  docker run -p 8080:80 -d secvbulrep/shop_home
  
  4)
- push secvbulrep/shop
+ docker  push secvbulrep/shop_home
  
  5) 
- docker push secvbulrep/delivery
+ docker push secvbulrep/delivery_home
  
  6) 
  kubectl delete deploy mssql-depl
@@ -38,3 +38,10 @@ kubectl apply -f   shop-ms-depl.yaml
 и можем посмотреть что появились два сервиса
 
 kubectl get services
+
+12) обновляем докер образ и пушим далее обновляем deployment
+
+kubectl apply -f   delivery-ms-depl.yaml 
+kubectl apply -f   shop-ms-depl.yaml
+
+kubectl rollout restart deployment shop-ms-depl
