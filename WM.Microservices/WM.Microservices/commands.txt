@@ -82,3 +82,18 @@ kubectl create secret generic mssql --from-literal=SA_PASSWPRD="pa55w0rd!"
 22)  kubectl apply get pods
 
 23) Можно открыть в MS SQL MAnagere localhost,1433
+
+24)
+упадет!!! потому что у нас инмемори на деве. порасуждай. ну и вызови заново закментарив if dev/ НЕ забудь раскоментарить!!!!
+  dotnet ef migrations add initialmigration 
+
+25)
+ docker build  -f WM.Microservices.Shop.Api/Dockerfile -t secvbulrep/shop_home .
+
+26)
+
+ docker  push secvbulrep/shop_home
+ 
+ 27) говорим кубернетес что образ поменялся 
+ 
+ kubectl rollout restart deployment shop-ms-depl

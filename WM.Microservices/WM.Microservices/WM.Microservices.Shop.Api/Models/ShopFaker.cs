@@ -4,16 +4,31 @@ namespace WM.Microservices.Shop.Api.Models;
 
 public class ShopFaker
 {
-    public static Faker<Product> GetProductGenerator()
+    private IWebHostEnvironment _hostEnvironment;
+
+    public ShopFaker(IWebHostEnvironment hostEnvironment)
     {
-        return new Faker<Product>()
-            .RuleFor(v => v.Name, f => f.Commerce.ProductName())
-            .RuleFor(v => v.Description, f => f.Commerce.ProductDescription())
-            .RuleFor(v=>v.Price, f=>f.Random.Decimal())
-            .RuleFor(v => v.Id, f => f.IndexGlobal+1);
+        _hostEnvironment = hostEnvironment;
     }
 
-    public static List<Product> InitData()
+    public Faker<Product> GetProductGenerator()
+    {
+        if (_hostEnvironment.IsDevelopment())
+            return new Faker<Product>()
+                .RuleFor(v => v.Name, f => f.Commerce.ProductName())
+                .RuleFor(v => v.Description, f => f.Commerce.ProductDescription())
+                .RuleFor(v => v.Price, f => f.Random.Decimal())
+                .RuleFor(v => v.Id, f => f.IndexGlobal + 1);
+        else
+        {
+            return new Faker<Product>()
+                .RuleFor(v => v.Name, f => f.Commerce.ProductName())
+                .RuleFor(v => v.Description, f => f.Commerce.ProductDescription())
+                .RuleFor(v => v.Price, f => f.Random.Decimal());
+        }
+    }
+
+    public List<Product> InitData()
     {
         var bg = GetProductGenerator();
 

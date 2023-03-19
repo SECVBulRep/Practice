@@ -6,7 +6,7 @@ namespace WM.Microservices.Shop.Api.Repository;
 
 public class ProductRepository: GenericRepository<Product>, IProductRepository
 {
-    public ProductRepository(DbContext context) : base(context)
+    public ProductRepository(ShopContext context) : base(context)
     {
     }
 }

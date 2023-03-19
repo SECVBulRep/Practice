@@ -5,13 +5,9 @@ namespace WM.Microservices.Shop.Api.Repository;
 
 public class ShopContext : DbContext
 {
-    
     public DbSet<Product> Products { get; set; }
-   
-    protected override void OnConfiguring
-        (DbContextOptionsBuilder optionsBuilder)
+
+    public ShopContext(DbContextOptions options) : base(options)
     {
-        optionsBuilder.EnableSensitiveDataLogging();
-        optionsBuilder.UseInMemoryDatabase(databaseName: "ProductsDb");
     }
 }

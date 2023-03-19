@@ -16,15 +16,17 @@ public class ProductController : ControllerBase
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
     private readonly IDeliveryDataClient _deliveryDataClient;
+    private readonly ShopFaker _shopFaker;
 
 
     public ProductController(ILogger<ProductController> logger, IProductRepository productRepository, IMapper mapper,
-        IDeliveryDataClient deliveryDataClient)
+        IDeliveryDataClient deliveryDataClient,ShopFaker shopFaker)
     {
        
         _productRepository = productRepository;
         _mapper = mapper;
         _deliveryDataClient = deliveryDataClient;
+        _shopFaker = shopFaker;
     }
 
     [HttpGet(Name = "Get")]
@@ -49,7 +51,7 @@ public class ProductController : ControllerBase
     [HttpPut(Name = "Create")]
     public async Task<ActionResult<ProductReadDto>> Create(ProductCreateDto productCreateDto)
     {
-        var product = ShopFaker.GetProductGenerator().Generate();
+        var product = _shopFaker.GetProductGenerator().Generate();
         _productRepository.Create(product);
         var ret = _mapper.Map<ProductReadDto>(product);
         try
