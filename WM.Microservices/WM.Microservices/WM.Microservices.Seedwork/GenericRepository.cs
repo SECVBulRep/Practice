@@ -23,9 +23,9 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     {
         return _dbSet.AsNoTracking().Where(predicate).ToList();
     }
-    public TEntity FindById(int id)
+    public TEntity? FindById(int id)
     {
-        return _dbSet.Find(id)!;
+        return _dbSet.Find(id);
     }
  
     public void Create(TEntity item)
