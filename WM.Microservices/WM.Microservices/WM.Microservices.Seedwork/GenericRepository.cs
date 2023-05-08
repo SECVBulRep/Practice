@@ -62,4 +62,9 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
         return includeProperties
             .Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
     }
+
+    public void Commit()
+    {
+        _context.SaveChanges();
+    }
 }

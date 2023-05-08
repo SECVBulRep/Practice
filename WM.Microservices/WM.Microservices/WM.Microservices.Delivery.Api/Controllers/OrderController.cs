@@ -28,5 +28,22 @@ public class OrderController : ControllerBase
         var result = _orderRepository.Get();
         return Ok(_mapper.Map<IEnumerable<OrderReadDto>>(result));
     }
+    
+    
+    [HttpPost]
+    public ActionResult<IEnumerable<OrderReadDto>> AddProductToOrder(int orderId, int productId)
+    {
+        var order = _orderRepository.FindById(orderId);
+        var product = _productRepository.FindById(productId);
+
+        if (order == null || product == null)
+            return NotFound();
+        
+        order.Products.Add(product);
+        _orderRepository.Commit();
+
+        return CreatedAtRoute(nameof(ProductController.GetProduct), new {orderid = orderId, productId = productId});
+    }
+    
 
 }

@@ -18,4 +18,6 @@ public interface IGenericRepository<TEntity> where TEntity : class
 
 
     IQueryable<TEntity> Include(params Expression<Func<TEntity, object>>[] includeProperties);
+
+    void Commit();
 }
