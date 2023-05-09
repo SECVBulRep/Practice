@@ -12,7 +12,9 @@ namespace WM.Microservices.Shop.Api.Migrations
 {
     [DbContext(typeof(ShopContext))]
     [Migration("20230319174511_initialmigration")]
+#pragma warning disable CS8981
     partial class initialmigration
+#pragma warning restore CS8981
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

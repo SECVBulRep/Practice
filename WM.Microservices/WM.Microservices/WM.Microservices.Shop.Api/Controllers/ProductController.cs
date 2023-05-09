@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Intrinsics.X86;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using WM.Microservices.Shop.Api.AsyncDataServices;
 using WM.Microservices.Shop.Api.Dtos;
 using WM.Microservices.Shop.Api.Models;
 using WM.Microservices.Shop.Api.Repository;
@@ -12,21 +13,22 @@ namespace WM.Microservices.Shop.Api.Controllers;
 [Route("api/[controller]/[action]")]
 public class ProductController : ControllerBase
 {
-  
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
     private readonly IDeliveryDataClient _deliveryDataClient;
     private readonly ShopFaker _shopFaker;
+    private readonly IMessageBusClient _messageBusClient;
 
 
     public ProductController(ILogger<ProductController> logger, IProductRepository productRepository, IMapper mapper,
-        IDeliveryDataClient deliveryDataClient,ShopFaker shopFaker)
+        IDeliveryDataClient deliveryDataClient, ShopFaker shopFaker, IMessageBusClient messageBusClient
+    )
     {
-       
         _productRepository = productRepository;
         _mapper = mapper;
         _deliveryDataClient = deliveryDataClient;
         _shopFaker = shopFaker;
+        _messageBusClient = messageBusClient;
     }
 
     [HttpGet(Name = "Get")]
@@ -62,6 +64,20 @@ public class ProductController : ControllerBase
         {
             Console.WriteLine(e);
         }
+
+        try
+        {
+            var message = _mapper.Map<ProductPublishedDto>(ret);
+            message.Event = "Product_Published";
+            _messageBusClient.PublishNewProduct(message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            
+        }
+        
+        
         return CreatedAtRoute(nameof(Get), new {Id = product.Id}, product);
     }
 }

@@ -1,4 +1,7 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using WM.Microservices.Shop.Api.AsyncDataServices;
+using WM.Microservices.Shop.Api.Dtos;
 using WM.Microservices.Shop.Api.Models;
 using WM.Microservices.Shop.Api.Repository;
 using WM.Microservices.Shop.Api.SyncDataServices.Http;
@@ -28,6 +31,9 @@ else
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddHttpClient<IDeliveryDataClient, HttpDeliveryDataClient>();
+builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
+
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
@@ -54,6 +60,7 @@ public static class PrepareData
         using (var serviceScope = builder.ApplicationServices.CreateScope())
         {
             var dbContext = serviceScope.ServiceProvider.GetService<ShopContext>();
+            var messageBusClient = serviceScope.ServiceProvider.GetService<IMessageBusClient>();
 
             if (webHostEnvironment.IsProduction())
             {
@@ -72,14 +79,32 @@ public static class PrepareData
 
             Console.WriteLine("--> Seed data...");
             var productRepository = serviceScope.ServiceProvider.GetService<IProductRepository>();
-
             var shopFaker = serviceScope.ServiceProvider.GetService<ShopFaker>();
+            var mapper = serviceScope.ServiceProvider.GetService<IMapper>();
+            
+            
+            
 
             var data = shopFaker!.InitData();
 
             foreach (var product in data)
             {
                 productRepository?.Create(product);
+             
+                
+                try
+                {
+                    var ret = mapper!.Map<ProductReadDto>(product);
+                    var message = mapper!.Map<ProductPublishedDto>(ret);
+                    message.Event = "Product_Published";
+                    messageBusClient!.PublishNewProduct(message);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+            
+                }
+                
             }
 
             Console.WriteLine("--> Seed data is done.");
