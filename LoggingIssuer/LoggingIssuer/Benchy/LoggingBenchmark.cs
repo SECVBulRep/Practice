@@ -16,23 +16,30 @@ public class LoggingBenchmark
 
 
     private readonly ILogger<LoggingBenchmark> _logger;
+    private readonly ILoggerAdapter<LoggingBenchmark> _loggerAdapter;
 
     public LoggingBenchmark()
     {
         _logger = new Logger<LoggingBenchmark>(_loggerFactory);
+        _loggerAdapter = new LoggerAdapter<LoggingBenchmark>(_logger);
     }
 
     [Benchmark()]
     public void LogWithOutIf()
     {
-        _logger.LogInformation(LoggingMessageWithParams,1,2,3);
+        _logger.LogInformation(LoggingMessageWithParams, 1, 2, 3);
     }
-    
+
     [Benchmark()]
     public void LogWithIf()
     {
-        if(_logger.IsEnabled(LogLevel.Information))
-        _logger.LogInformation(LoggingMessageWithParams,1,2,3);
+        if (_logger.IsEnabled(LogLevel.Information))
+            _logger.LogInformation(LoggingMessageWithParams, 1, 2, 3);
     }
 
+    [Benchmark()]
+    public void LogWithAdapter()
+    {
+        _loggerAdapter.LogInFormation(LoggingMessageWithParams, 1, 2, 3);
+    }
 }
