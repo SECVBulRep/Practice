@@ -11,21 +11,18 @@ class Program
         using var loggerFactory = LoggerFactory.Create(builder =>
         {
             builder
-                .SetMinimumLevel(LogLevel.Debug)
+                .SetMinimumLevel(LogLevel.Information)
                 .AddConsole();
         });
 
 
-        int intParam = 10;
+        int intParam = 11248;
         
         ILogger logger = loggerFactory.CreateLogger<Program>();
-        logger.LogTrace("Info Trace. Param {intParam}",intParam);
+      
         logger.LogDebug("Info Debug. Param {intParam}",intParam);
-        logger.LogInformation("Info Log. Param {intParam}",intParam);
-        logger.LogWarning("Warning Log. Param {intParam}",intParam);
-        logger.LogError("Error Log. Param {intParam}",intParam);
-        logger.LogCritical("Critical Log. Param {intParam}",intParam);
+       
         
-        Console.ReadLine();
+       
     }
 }
