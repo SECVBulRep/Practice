@@ -14,14 +14,17 @@ class Program
                 .SetMinimumLevel(LogLevel.Debug)
                 .AddConsole();
         });
-      
+
+
+        int intParam = 10;
+        
         ILogger logger = loggerFactory.CreateLogger<Program>();
-        logger.LogTrace("Info Trace");
-        logger.LogDebug("Info Debug");
-        logger.LogInformation("Info Log");
-        logger.LogWarning("Warning Log");
-        logger.LogError("Error Log");
-        logger.LogCritical("Critical Log");
+        logger.LogTrace("Info Trace. Param {intParam}",intParam);
+        logger.LogDebug("Info Debug. Param {intParam}",intParam);
+        logger.LogInformation("Info Log. Param {intParam}",intParam);
+        logger.LogWarning("Warning Log. Param {intParam}",intParam);
+        logger.LogError("Error Log. Param {intParam}",intParam);
+        logger.LogCritical("Critical Log. Param {intParam}",intParam);
         
         Console.ReadLine();
     }
