@@ -43,4 +43,11 @@ public class LoggingBenchmark
     {
         _loggerAdapter.LogInFormation(LoggingMessageWithParams, 1, 2, 3);
     }
+    
+    
+    [Benchmark()]
+    public void LogWithMessageDefinition()
+    {
+        _logger.LogBenchmarkMessage(1,2,3);
+    }
 }
