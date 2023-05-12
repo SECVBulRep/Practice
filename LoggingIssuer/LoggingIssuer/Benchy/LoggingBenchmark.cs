@@ -11,7 +11,8 @@ public class LoggingBenchmark
     private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(builder =>
     {
         builder
-            .SetMinimumLevel(LogLevel.Information);
+            .AddFakeLogger()
+            .SetMinimumLevel(LogLevel.Trace);
     });
 
 
