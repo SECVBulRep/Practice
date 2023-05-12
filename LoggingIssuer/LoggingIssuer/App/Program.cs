@@ -16,6 +16,7 @@ class Program
         });
 
 
+
         int intParam = 11248;
 
         ILogger logger = loggerFactory.CreateLogger<Program>();
@@ -23,9 +24,8 @@ class Program
 
         for (int i = 0; i < 90_000_000; i++)
         {
-           // if(logger.IsEnabled(LogLevel.Debug))
-           logger.LogDebug($"Info Debug. Param {intParam}");
+            if (logger.IsEnabled(LogLevel.Debug))
+                logger.LogDebug($"Info Debug. Param {intParam}");
         }
-        
     }
 }
