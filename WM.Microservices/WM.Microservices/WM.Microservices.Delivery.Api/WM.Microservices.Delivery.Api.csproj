@@ -24,4 +24,8 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\WM.Microservices.Seedwork\WM.Microservices.Seedwork.csproj" />
+    </ItemGroup>
+
 </Project>

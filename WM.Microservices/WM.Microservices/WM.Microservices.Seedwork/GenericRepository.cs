@@ -23,9 +23,9 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     {
         return _dbSet.AsNoTracking().Where(predicate).ToList();
     }
-    public TEntity FindById(int id)
+    public TEntity? FindById(int id)
     {
-        return _dbSet.Find(id)!;
+        return _dbSet.Find(id);
     }
  
     public void Create(TEntity item)
@@ -61,5 +61,10 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
         IQueryable<TEntity> query = _dbSet.AsNoTracking();
         return includeProperties
             .Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
+    }
+
+    public void Commit()
+    {
+        _context.SaveChanges();
     }
 }
