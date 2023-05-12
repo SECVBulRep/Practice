@@ -27,5 +27,12 @@ public class LoggingBenchmark
     {
         _logger.LogInformation(LoggingMessageWithParams,1,2,3);
     }
+    
+    [Benchmark()]
+    public void LogWithIf()
+    {
+        if(_logger.IsEnabled(LogLevel.Information))
+        _logger.LogInformation(LoggingMessageWithParams,1,2,3);
+    }
 
 }

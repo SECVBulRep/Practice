@@ -17,12 +17,10 @@ class Program
 
 
         int intParam = 11248;
-        
+
         ILogger logger = loggerFactory.CreateLogger<Program>();
-      
-        logger.LogDebug("Info Debug. Param {intParam}",intParam);
-       
-        
-       
+
+        if (logger.IsEnabled(LogLevel.Debug))
+            logger.LogDebug("Info Debug. Param {intParam}", intParam);
     }
 }
