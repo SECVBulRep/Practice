@@ -13,3 +13,9 @@ public static class LogMessageDefinition
     }
 
 }
+
+public static partial class LogMessageDefinitionGen
+{
+    [LoggerMessage(EventId = 0,Level = LogLevel.Information,Message = "This is log wit params {first}{second}{third}")]
+    public static partial void LogBenchmarkMessageGen(this ILogger logger, int first, int second, int third);
+}

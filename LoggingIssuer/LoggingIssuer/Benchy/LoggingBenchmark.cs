@@ -50,4 +50,10 @@ public class LoggingBenchmark
     {
         _logger.LogBenchmarkMessage(1,2,3);
     }
+    
+    [Benchmark()]
+    public void LogWithMessageDefinitionGen()
+    {
+        _logger.LogBenchmarkMessageGen(1,2,3);
+    }
 }
