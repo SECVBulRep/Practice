@@ -23,7 +23,8 @@ class Program
 
         for (int i = 0; i < 90_000_000; i++)
         {
-            logger.LogDebug("Info Debug. Param {intParam}", intParam);
+           // if(logger.IsEnabled(LogLevel.Debug))
+           logger.LogDebug($"Info Debug. Param {intParam}");
         }
         
     }
