@@ -20,7 +20,11 @@ class Program
 
         ILogger logger = loggerFactory.CreateLogger<Program>();
 
-        if (logger.IsEnabled(LogLevel.Debug))
+
+        for (int i = 0; i < 90_000_000; i++)
+        {
             logger.LogDebug("Info Debug. Param {intParam}", intParam);
+        }
+        
     }
 }
