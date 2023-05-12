@@ -11,7 +11,7 @@ class Program
         using var loggerFactory = LoggerFactory.Create(builder =>
         {
             builder
-                .SetMinimumLevel(LogLevel.Warning)
+                .SetMinimumLevel(LogLevel.Debug)
                 .AddConsole();
         });
       
