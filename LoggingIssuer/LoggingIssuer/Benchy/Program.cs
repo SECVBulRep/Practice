@@ -2,6 +2,6 @@
 
 using BenchmarkDotNet.Running;
 using Benchy;
-
+//
 
 BenchmarkRunner.Run<LoggingBenchmark>();
