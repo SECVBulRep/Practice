@@ -26,14 +26,23 @@ public class ApiParallelBenchmark
     }
 
     [Benchmark()]
-    public  List<int> ParallelVersion()
+    public List<int> UnlimParallelVersion() => ParallelVersion(-1);
+
+    [Benchmark()]
+    public List<int> LimimtedParallelVersion() => ParallelVersion(4);
+
+
+    public List<int> ParallelVersion(int maxDegreesOfParallelism)
     {
         var list = new List<int>();
 
         var tasks = Enumerable.Range(0, 1000)
             .Select(_ => new Func<int>(() => GetRandom(_httpClient).GetAwaiter().GetResult())).ToList();
 
-        Parallel.For(0, tasks.Count, i => list.Add(tasks[i]()));
+        Parallel.For(0, tasks.Count, new ParallelOptions
+        {
+            MaxDegreeOfParallelism = maxDegreesOfParallelism
+        }, i => list.Add(tasks[i]()));
 
         return list;
     }
