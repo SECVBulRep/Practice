@@ -26,7 +26,7 @@ public class ApiParallelBenchmark
     }
 
     [Benchmark()]
-    public async Task<List<int>> ParallelVersion()
+    public  List<int> ParallelVersion()
     {
         var list = new List<int>();
 
