@@ -2,6 +2,16 @@
 
 public class Guider
 {
+    
+    private const char Equal = '=';
+    private const char Underscore = '_';
+    private const char Slash = '/';
+    private const char PLus = '+';
+    private const char Hyphen = '-';
+    
+    
+    
+    
     public static string ToStringFromGuid(Guid id)
     {
         return Convert.ToBase64String(id.ToByteArray())
@@ -20,11 +30,7 @@ public class Guider
         return new Guid(base64);
     }
 
-    private const char Equal = '=';
-    private const char Underscore = '_';
-    private const char Slash = '/';
-    private const char PLus = '+';
-    private const char Hyphen = '-';
+   
     
     
     
