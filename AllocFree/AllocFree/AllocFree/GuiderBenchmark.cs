@@ -28,4 +28,10 @@ public class GuiderBenchmark
     }
     
     
+    
+    [Benchmark()]
+    public string  FromGuidToStringOpt()
+    {
+        return Guider.ToStringFromGuidOpt(TestIdAsGuid);
+    }
 }

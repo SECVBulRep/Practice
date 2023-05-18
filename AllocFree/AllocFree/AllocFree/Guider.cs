@@ -1,4 +1,7 @@
-﻿namespace AllocFree;
+﻿using System.Buffers.Text;
+using System.Runtime.InteropServices;
+
+namespace AllocFree;
 
 public class Guider
 {
@@ -8,6 +11,35 @@ public class Guider
     private const char Slash = '/';
     private const char PLus = '+';
     private const char Hyphen = '-';
+    
+    
+    private const byte SlashByte = (byte)'/';
+    private const byte PLusByte = (byte)'+';
+    
+    public static string ToStringFromGuidOpt(Guid id)
+    {
+        Span<byte> bytes = stackalloc byte[16];
+        Span<byte> base64Byte = stackalloc byte[24];
+
+        MemoryMarshal.TryWrite(bytes, ref id);
+        Base64.EncodeToUtf8(bytes, base64Byte, out _, out _);
+        
+        Span<char> base64Char = stackalloc char[22];
+
+        for (int i = 0; i < 22; i++)
+        {
+            base64Char[i] = base64Byte[i] switch
+            {
+                SlashByte => Hyphen,
+                PLusByte => Underscore,
+                _ => (char)base64Byte[i]
+            };
+        }
+        
+        
+        return new string(base64Char);
+    }
+
     
     
     
