@@ -14,10 +14,18 @@ public class GuiderBenchmark
     {
         return Guider.ToGuidFromString(TestIdAsString);
     }
+    [Benchmark()]
+    public Guid ToGuidFromStringOpt()
+    {
+        return Guider.ToGuidFromStringOpt(TestIdAsString);
+    }
+    
     
     [Benchmark()]
     public string  FromGuidToString()
     {
         return Guider.ToStringFromGuid(TestIdAsGuid);
     }
+    
+    
 }

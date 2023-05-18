@@ -13,8 +13,10 @@ using BenchmarkDotNet.Running;
 // Console.WriteLine(urlFriendlybase64Id);
 //
 // var idAgain = Guider.ToGuidFromString(urlFriendlybase64Id);
+// var idAgainOpt = Guider.ToGuidFromStringOpt(urlFriendlybase64Id);
 // Console.WriteLine(idAgain);
+// Console.WriteLine(idAgainOpt);
 //
 //
-
-BenchmarkRunner.Run<GuiderBenchmark>();
+//
+ BenchmarkRunner.Run<GuiderBenchmark>();
