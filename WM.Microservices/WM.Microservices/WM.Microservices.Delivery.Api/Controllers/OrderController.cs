@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WM.Microservices.Delivery.Api.Dtos;
+using WM.Microservices.Delivery.Api.Models;
 using WM.Microservices.Delivery.Api.Repository;
 
 namespace WM.Microservices.Delivery.Api.Controllers;
@@ -39,7 +40,7 @@ public class OrderController : ControllerBase
         if (order == null || product == null)
             return NotFound();
         
-        order.Products.Add(product);
+        order.ProductsInOrder.Add(new ProductInOrder{OrderId = orderId,ProductId = productId});
         _orderRepository.Commit();
 
         return CreatedAtRoute(nameof(ProductController.GetProduct), new {orderid = orderId, productId = productId});

@@ -10,8 +10,7 @@ public class Product
 
     [Required]
     public string Name { get; set; } = null!;
-
-    [Required]
-    public int OrderId { get; set; }
-    public Order Order { get; set; } = null!;
+   
+    // public int OrderId { get; set; }
+    // public Order Order { get; set; } = null!;
 }

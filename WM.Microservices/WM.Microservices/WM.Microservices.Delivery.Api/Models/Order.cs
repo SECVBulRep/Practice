@@ -11,5 +11,5 @@ public class Order
     [Required]
     public string Description { get; set; } = null!;
 
-    public ICollection<Product> Products { get; set; } = new List<Product>();
+    public IList<ProductInOrder> ProductsInOrder { get; set; }
 }
