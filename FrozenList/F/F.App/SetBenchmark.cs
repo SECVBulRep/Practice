@@ -37,7 +37,7 @@ public class SetBenchmark
 
         _hashSet = _list.ToHashSet();
         _immutableHashSet = _list.ToImmutableHashSet();
-        _frozenSet = _list.ToFrozenSet();
+        _frozenSet = _list.ToFrozenSet(true);
 
         _dictionary = _list.ToDictionary(x => x, x => x.ToString());
         _immutableDictionary = _dictionary.ToImmutableDictionary();
@@ -50,10 +50,13 @@ public class SetBenchmark
     //
     // [Benchmark()]
     // public ImmutableHashSet<int> ImmutableHashSet_Init() => _list.ToImmutableHashSet();
-    //
-    // [Benchmark()]
-    // public FrozenSet<int> FrozenSet_Init() => _list.ToFrozenSet();
-    //
+    
+    [Benchmark()]
+    public FrozenSet<int> FrozenSet_Init() => _list.ToFrozenSet();
+    
+    [Benchmark()]
+    public FrozenSet<int> FrozenSet_Init_OptimizedForReading() => _list.ToFrozenSet(true);
+    
     // [Benchmark()]
     // public bool HashSet_Contains() => _hashSet.Contains(_searchItem);
     //
@@ -62,25 +65,25 @@ public class SetBenchmark
     //
     // [Benchmark()]
     // public bool FrozenSet_Contains() => _frozenSet.Contains(_searchItem);
+    
+    
+    // [Benchmark()]
+    // public bool Dictionary_ContainsKey() => _dictionary.ContainsKey(_searchItem);
     //
-    
-    [Benchmark()]
-    public bool Dictionary_ContainsKey() => _dictionary.ContainsKey(_searchItem);
-
-    [Benchmark()]
-    public bool ImmutableDictionary_ContainsKey() => _immutableDictionary.ContainsKey(_searchItem);
-    
-    [Benchmark()]
-    public bool FrozenDictionary_ContainsKey() => _frozenDictionary.ContainsKey(_searchItem);
-    
-    [Benchmark()]
-    public string Dictionary_Contains() => _dictionary[_searchItem];
-
-    [Benchmark()]
-    public string ImmutableDictionary_Contains() => _immutableDictionary[_searchItem];
-    
-    [Benchmark()]
-    public string FrozenDictionary_Contains() => _frozenDictionary[_searchItem];
+    // [Benchmark()]
+    // public bool ImmutableDictionary_ContainsKey() => _immutableDictionary.ContainsKey(_searchItem);
+    //
+    // [Benchmark()]
+    // public bool FrozenDictionary_ContainsKey() => _frozenDictionary.ContainsKey(_searchItem);
+    //
+    // [Benchmark()]
+    // public string Dictionary_Contains() => _dictionary[_searchItem];
+    //
+    // [Benchmark()]
+    // public string ImmutableDictionary_Contains() => _immutableDictionary[_searchItem];
+    //
+    // [Benchmark()]
+    // public string FrozenDictionary_Contains() => _frozenDictionary[_searchItem];
     
     
 }

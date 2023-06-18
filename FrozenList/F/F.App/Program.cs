@@ -28,24 +28,24 @@ using F.App;
 //
 // Console.WriteLine("Hello, World!");
 
-// BenchmarkRunner.Run<SetBenchmark>();
+ BenchmarkRunner.Run<SetBenchmark>();
 
 
-Dictionary<int,string> dictionary = new Dictionary<int, string>
-{
-    {1,"1"},
-    {2,"2"},
-    {3,"3"}
-};
-
-var frozenDictionary = dictionary.ToFrozenDictionary();
-
-// immutableDic[2] = 3; Нельзя ! Но можно)
-
-//frozenDictionary.GetValueRefOrNullRef(2);
-
-ref var value =ref Unsafe.AsRef(in frozenDictionary.GetValueRefOrNullRef(2));
-
-value = "100";
-
-Console.WriteLine();
+// Dictionary<int,string> dictionary = new Dictionary<int, string>
+// {
+//     {1,"1"},
+//     {2,"2"},
+//     {3,"3"}
+// };
+//
+// var frozenDictionary = dictionary.ToFrozenDictionary();
+//
+// // immutableDic[2] = 3; Нельзя ! Но можно)
+//
+// //frozenDictionary.GetValueRefOrNullRef(2);
+//
+// ref var value =ref Unsafe.AsRef(in frozenDictionary.GetValueRefOrNullRef(2));
+//
+// value = "100";
+//
+// Console.WriteLine();
