@@ -11,19 +11,14 @@ public class CompaniesContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite($"""Data Source=D:\WORK\Practice\Practice\EfVsDapper\EfVsDapper\EfVsDapper.App\Companies.db""");
+        optionsBuilder.UseSqlite($"""Data Source=C:\Projects\Practice\EfVsDapper\EfVsDapper\EfVsDapper.App\Companies.db""");
     }
 }
 public class DapperDataContext
 {
-    public DapperDataContext()
-    {
-       
-    }
-
     public async Task<IDbConnection> CreateConnection()
     {
-        var connection =  new SqliteConnection($"""Data Source=D:\WORK\Practice\Practice\EfVsDapper\EfVsDapper\EfVsDapper.App\Companies.db""");
+        var connection =  new SqliteConnection($"""Data Source=C:\Projects\Practice\EfVsDapper\EfVsDapper\EfVsDapper.App\Companies.db""");
         await connection.OpenAsync();
         return connection;
     }

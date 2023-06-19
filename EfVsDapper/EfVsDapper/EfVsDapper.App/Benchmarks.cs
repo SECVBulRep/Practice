@@ -8,7 +8,7 @@ public class Benchmarks
 {
     private CompaniesContext _companiesContext = null!;
     private IDbConnection _dbConnection = null!;
-    public Random _random = null!;
+    private Random _random = null!;
     private Company _testCompany = null!;
     private CompanyGenerator _companyGenerator = null!;
 
@@ -45,4 +45,9 @@ public class Benchmarks
              DELETE FROM COMPANIES WHERE Id= @Id
              """, _testCompany);
     }
+
+
+
+
+
 }
