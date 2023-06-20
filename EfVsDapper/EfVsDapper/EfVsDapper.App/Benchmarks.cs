@@ -16,14 +16,15 @@ public class Benchmarks
     private Random _random = null!;
     private Company _testCompany = null!;
     private CompanyGenerator _companyGenerator = null!;
+    private DapperDataContext _dapperContext;
 
     [GlobalSetup]
     public async Task Setup()
     {
         _random = new Random(420);
 
-       
-        _dbConnection = await (new DapperDataContext()).CreateConnection();
+        _dapperContext = new DapperDataContext();
+        _dbConnection = await _dapperContext.CreateConnection();
         _companiesContext = new CompaniesContext(_dbConnection);
         _companyGenerator = new CompanyGenerator(_dbConnection, _random);
 
@@ -52,32 +53,83 @@ public class Benchmarks
              """, _testCompany);
     }
 
-
+    
     [Benchmark()]
     public async Task<Company> EF_Find()
     {
-        return (await _companiesContext.Companies.FindAsync(_testCompany.Id))! ;
-    }
-
-    [Benchmark()]
-    public async Task<Company> EF_Single()
-    {
-        return  _companiesContext.Companies.AsNoTracking().SingleOrDefault(x=>x.Id==_testCompany.Id)! ;
+        return (await _companiesContext.Companies.FindAsync(_testCompany.Id))!;
     }
     
+     
     [Benchmark()]
-    public async Task<Company> EF_First()
+    public async Task<Company> Dapper_Find()
     {
-        return  _companiesContext.Companies.AsNoTracking().FirstOrDefault(x=>x.Id==_testCompany.Id)! ;
+        return await _dapperContext.Find(_testCompany.Id)!;
     }
     
     
-    [Benchmark()]
-    public async Task<Company> Dapper_GetById()
-    {
-        return  _dbConnection.QuerySingleOrDefault<Company>("SELECT * FROM COMPANIES WHERE Id=@Id LIMIT 1",new {_testCompany.Id}) ;
-    }
-
+//     [Benchmark()]
+//     public async Task<Company> EF_Single()
+//     {
+//         return _companiesContext.Companies.AsNoTracking().SingleOrDefault(x => x.Id == _testCompany.Id)!;
+//     }
+//     
+//     [Benchmark()]
+//     public async Task<Company> EF_First()
+//     {
+//         return _companiesContext.Companies.AsNoTracking().FirstOrDefault(x => x.Id == _testCompany.Id)!;
+//     }
+//     
+//     
+//     [Benchmark()]
+//     public async Task<Company> Dapper_GetById()
+//     {
+//         return _dbConnection.QuerySingleOrDefault<Company>("SELECT * FROM COMPANIES WHERE Id=@Id LIMIT 1",
+//             new { _testCompany.Id });
+//     }
+//
+//     [Benchmark()]
+//     public async Task<Company> EF_Add_Delete()
+//     {
+//         var company = new Company()
+//         {
+//             Id = 1001,
+//             Name = "WebMoney",
+//             FoundationTime = DateTime.Now.AddYears(-9)
+//         };
+//
+//         await _companiesContext.Companies.AddAsync(company);
+//         await _companiesContext.SaveChangesAsync();
+//
+//         _companiesContext.Remove(company);
+//         await _companiesContext.SaveChangesAsync();
+//         return company;
+//     }
+//
+//     [Benchmark()]
+//     public async Task<Company> Dapper_Add_Delete()
+//     {
+//         var company = new Company()
+//         {
+//             Id = 1001,
+//             Name = "WebMoney",
+//             FoundationTime = DateTime.Now.AddYears(-9)
+//         };
+//
+//
+//         await _dbConnection.ExecuteAsync("""
+// INSERT INTO Companies (Id,Name,FoundationTime)
+// VALUES (@Id,@Name,@FoundationTime)
+//
+// """, company);
+//
+//
+//         await _dbConnection.ExecuteAsync("""
+// DELETE FROM Companies WHERE Id =@Id
+// """, company);
+//
+//         return company;
+//     }
 }
 
 public class AntiVirusFriendlyConfig : ManualConfig
