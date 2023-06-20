@@ -5,6 +5,7 @@ using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 using Dapper;
 using EfVsDapper.App;
+using Microsoft.EntityFrameworkCore;
 
 [Config(typeof(AntiVirusFriendlyConfig))]
 [MemoryDiagnoser]
@@ -61,13 +62,13 @@ public class Benchmarks
     [Benchmark()]
     public async Task<Company> EF_Single()
     {
-        return  _companiesContext.Companies.SingleOrDefault(x=>x.Id==_testCompany.Id)! ;
+        return  _companiesContext.Companies.AsNoTracking().SingleOrDefault(x=>x.Id==_testCompany.Id)! ;
     }
     
     [Benchmark()]
     public async Task<Company> EF_First()
     {
-        return  _companiesContext.Companies.FirstOrDefault(x=>x.Id==_testCompany.Id)! ;
+        return  _companiesContext.Companies.AsNoTracking().FirstOrDefault(x=>x.Id==_testCompany.Id)! ;
     }
     
     
