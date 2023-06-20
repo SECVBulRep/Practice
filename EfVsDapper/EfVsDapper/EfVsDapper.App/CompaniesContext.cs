@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Data.Common;
 using Dapper;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +10,17 @@ public class CompaniesContext : DbContext
 {
     public DbSet<Company> Companies { get; set; }
 
+    private IDbConnection _dbConnection;
+
+    public CompaniesContext(IDbConnection dbConnection)
+    {
+        _dbConnection = dbConnection;
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite($"""Data Source=C:\Projects\Practice\EfVsDapper\EfVsDapper\EfVsDapper.App\Companies.db""");
+       // optionsBuilder.UseSqlite($"""Data Source=C:\Projects\Practice\EfVsDapper\EfVsDapper\EfVsDapper.App\Companies.db""");
+       optionsBuilder.UseSqlite((DbConnection)_dbConnection);
     }
 }
 public class DapperDataContext

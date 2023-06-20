@@ -21,8 +21,9 @@ public class Benchmarks
     {
         _random = new Random(420);
 
-        _companiesContext = new CompaniesContext();
+       
         _dbConnection = await (new DapperDataContext()).CreateConnection();
+        _companiesContext = new CompaniesContext(_dbConnection);
         _companyGenerator = new CompanyGenerator(_dbConnection, _random);
 
         await _companyGenerator.GenerateCompanies(100, _companiesContext);
