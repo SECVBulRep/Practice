@@ -53,20 +53,38 @@ public class Benchmarks
              """, _testCompany);
     }
 
-    // [Benchmark()]
-    // public async Task<List<Company>> EF_Filter()
-    // {
-    //     return _companiesContext.Companies.Where(x => x.Name == _testCompany.Name).ToList();
-    // }
-    //
-    // [Benchmark()]
-    // public async Task<List<Company>> Dapper_GetById()
-    // {
-    //     var result = await _dbConnection.QueryAsync<Company>("SELECT * FROM COMPANIES WHERE Name=@Name",
-    //         new {_testCompany.Name});
-    //
-    //     return result.ToList();
-    // }
+    [Benchmark()]
+    public async Task<List<Company>> EF_Filter()
+    {
+        return _companiesContext.Companies.Where(x => x.Name == _testCompany.Name).ToList();
+    }
+
+    private static readonly Func<CompaniesContext, string, IAsyncEnumerable<Company>> GetCompaniesAsync =
+        EF.CompileAsyncQuery(
+            (CompaniesContext context, string name) => context.Companies.Where(x => x.Name == name)
+        );
+
+    [Benchmark()]
+    public async Task<List<Company>> EF_Filter_Compiled()
+    {
+        var list = new List<Company>();
+
+        await foreach (var item in GetCompaniesAsync(_companiesContext, _testCompany.Name))
+        {
+            list.Add(item);
+        }
+        return list;
+    }
+
+    
+    [Benchmark()]
+    public async Task<List<Company>> Dapper_Filter()
+    {
+        var result = await _dbConnection.QueryAsync<Company>("SELECT * FROM COMPANIES WHERE Name=@Name",
+            new {_testCompany.Name});
+    
+        return result.ToList();
+    }
 
 
     //
@@ -84,45 +102,45 @@ public class Benchmarks
     // }
 
 
-     [Benchmark()]
-     public async Task<Company> EF_Single()
-     {
-         return _companiesContext.Companies.AsNoTracking().SingleOrDefault(x => x.Id == _testCompany.Id)!;
-     }
+    // [Benchmark()]
+    // public async Task<Company> EF_Single()
+    // {
+    //     return _companiesContext.Companies.AsNoTracking().SingleOrDefault(x => x.Id == _testCompany.Id)!;
+    // }
+    //
+    // private static readonly Func<CompaniesContext, int, Task<Company?>> SingleCompanyAsync =
+    //     EF.CompileAsyncQuery((CompaniesContext context, int id) => context
+    //         .Companies.SingleOrDefault(x => x.Id == id));
+    //
+    // [Benchmark()]
+    // public async Task<Company> EF_Single_Compiled()
+    // {
+    //     return (await SingleCompanyAsync(_companiesContext,_testCompany.Id))!;
+    // }
 
-     private static readonly Func<CompaniesContext, int, Task<Company?>> SingleCompanyAsync =
-         EF.CompileAsyncQuery((CompaniesContext context, int id) => context
-             .Companies.SingleOrDefault(x => x.Id == id));
+    // [Benchmark()]
+    // public async Task<Company> EF_First()
+    // {
+    //     return _companiesContext.Companies.FirstOrDefault(x => x.Id == _testCompany.Id)!;
+    // }
+    //
+    // private static readonly Func<CompaniesContext, int, Task<Company?>> FirstCompanyAsync =
+    //     EF.CompileAsyncQuery((CompaniesContext context, int id) => context
+    //         .Companies.FirstOrDefault(x => x.Id == id));
+    //
+    // [Benchmark()]
+    // public async Task<Company> EF_First_Compiled()
+    // {
+    //     return (await FirstCompanyAsync(_companiesContext,_testCompany.Id))!;
+    // }
+    //
+    // [Benchmark()]
+    // public async Task<Company> Dapper_GetById()
+    // {
+    //     return _dbConnection.QuerySingleOrDefault<Company>("SELECT * FROM COMPANIES WHERE Id=@Id LIMIT 1",
+    //         new { _testCompany.Id });
+    // }
 
-     [Benchmark()]
-     public async Task<Company> EF_Single_Compiled()
-     {
-         return (await SingleCompanyAsync(_companiesContext,_testCompany.Id))!;
-     }
-     
-     // [Benchmark()]
-     // public async Task<Company> EF_First()
-     // {
-     //     return _companiesContext.Companies.FirstOrDefault(x => x.Id == _testCompany.Id)!;
-     // }
-     //
-     // private static readonly Func<CompaniesContext, int, Task<Company?>> FirstCompanyAsync =
-     //     EF.CompileAsyncQuery((CompaniesContext context, int id) => context
-     //         .Companies.FirstOrDefault(x => x.Id == id));
-     //
-     // [Benchmark()]
-     // public async Task<Company> EF_First_Compiled()
-     // {
-     //     return (await FirstCompanyAsync(_companiesContext,_testCompany.Id))!;
-     // }
-     //
-     [Benchmark()]
-     public async Task<Company> Dapper_GetById()
-     {
-         return _dbConnection.QuerySingleOrDefault<Company>("SELECT * FROM COMPANIES WHERE Id=@Id LIMIT 1",
-             new { _testCompany.Id });
-     }
-     
 //
 //     [Benchmark()]
 //     public async Task<Company> EF_Add_Delete()
