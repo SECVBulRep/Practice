@@ -33,7 +33,7 @@ public class DapperDataContext
     {
         _connection =
             new SqliteConnection(
-                $"""Data Source=C:\Projects\Practice\EfVsDapper\EfVsDapper\EfVsDapper.App\Companies.db""");
+                $"""Data Source=D:\WORK\Practice\Practice\EfVsDapper\EfVsDapper\EfVsDapper.App\Companies.db""");
         await _connection.OpenAsync();
         return _connection;
     }

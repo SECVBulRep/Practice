@@ -53,21 +53,37 @@ public class Benchmarks
              """, _testCompany);
     }
 
-    
     [Benchmark()]
-    public async Task<Company> EF_Find()
+    public async Task<List<Company>> EF_Filter()
     {
-        return (await _companiesContext.Companies.FindAsync(_testCompany.Id))!;
+        return _companiesContext.Companies.Where(x => x.Name == _testCompany.Name).ToList();
     }
-    
-     
+
     [Benchmark()]
-    public async Task<Company> Dapper_Find()
+    public async Task<List<Company>> Dapper_GetById()
     {
-        return await _dapperContext.Find(_testCompany.Id)!;
+        var result = await _dbConnection.QueryAsync<Company>("SELECT * FROM COMPANIES WHERE Name=@Name",
+            new {_testCompany.Name});
+
+        return result.ToList();
     }
-    
-    
+
+
+    //
+    // [Benchmark()]
+    // public async Task<Company> EF_Find()
+    // {
+    //     return (await _companiesContext.Companies.FindAsync(_testCompany.Id))!;
+    // }
+    //
+    //  
+    // [Benchmark()]
+    // public async Task<Company> Dapper_Find()
+    // {
+    //     return await _dapperContext.Find(_testCompany.Id)!;
+    // }
+
+
 //     [Benchmark()]
 //     public async Task<Company> EF_Single()
 //     {
