@@ -1,9 +1,13 @@
 ﻿using System.Data;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Jobs;
+using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 using Dapper;
 using EfVsDapper.App;
 
-[MemoryDiagnoser()]
+[Config(typeof(AntiVirusFriendlyConfig))]
+[MemoryDiagnoser]
 public class Benchmarks
 {
     private CompaniesContext _companiesContext = null!;
@@ -47,7 +51,38 @@ public class Benchmarks
     }
 
 
+    [Benchmark()]
+    public async Task<Company> EF_Find()
+    {
+        return (await _companiesContext.Companies.FindAsync(_testCompany.Id))! ;
+    }
 
+    [Benchmark()]
+    public async Task<Company> EF_Single()
+    {
+        return  _companiesContext.Companies.SingleOrDefault(x=>x.Id==_testCompany.Id)! ;
+    }
+    
+    [Benchmark()]
+    public async Task<Company> EF_First()
+    {
+        return  _companiesContext.Companies.FirstOrDefault(x=>x.Id==_testCompany.Id)! ;
+    }
+    
+    
+    [Benchmark()]
+    public async Task<Company> Dapper_GetById()
+    {
+        return  _dbConnection.QuerySingleOrDefault<Company>("SELECT * FROM COMPANIES WHERE Id=@Id LIMIT 1",new {_testCompany.Id}) ;
+    }
 
+}
 
+public class AntiVirusFriendlyConfig : ManualConfig
+{
+    public AntiVirusFriendlyConfig()
+    {
+        AddJob(Job.MediumRun
+            .WithToolchain(InProcessNoEmitToolchain.Instance));
+    }
 }
