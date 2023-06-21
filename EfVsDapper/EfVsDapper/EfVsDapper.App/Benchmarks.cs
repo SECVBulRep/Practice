@@ -53,38 +53,38 @@ public class Benchmarks
              """, _testCompany);
     }
 
-    [Benchmark()]
-    public async Task<List<Company>> EF_Filter()
-    {
-        return _companiesContext.Companies.Where(x => x.Name == _testCompany.Name).ToList();
-    }
-
-    private static readonly Func<CompaniesContext, string, IAsyncEnumerable<Company>> GetCompaniesAsync =
-        EF.CompileAsyncQuery(
-            (CompaniesContext context, string name) => context.Companies.Where(x => x.Name == name)
-        );
-
-    [Benchmark()]
-    public async Task<List<Company>> EF_Filter_Compiled()
-    {
-        var list = new List<Company>();
-
-        await foreach (var item in GetCompaniesAsync(_companiesContext, _testCompany.Name))
-        {
-            list.Add(item);
-        }
-        return list;
-    }
-
-    
-    [Benchmark()]
-    public async Task<List<Company>> Dapper_Filter()
-    {
-        var result = await _dbConnection.QueryAsync<Company>("SELECT * FROM COMPANIES WHERE Name=@Name",
-            new {_testCompany.Name});
-    
-        return result.ToList();
-    }
+    // [Benchmark()]
+    // public async Task<List<Company>> EF_Filter()
+    // {
+    //     return _companiesContext.Companies.Where(x => x.Name == _testCompany.Name).ToList();
+    // }
+    //
+    // private static readonly Func<CompaniesContext, string, IAsyncEnumerable<Company>> GetCompaniesAsync =
+    //     EF.CompileAsyncQuery(
+    //         (CompaniesContext context, string name) => context.Companies.Where(x => x.Name == name)
+    //     );
+    //
+    // [Benchmark()]
+    // public async Task<List<Company>> EF_Filter_Compiled()
+    // {
+    //     var list = new List<Company>();
+    //
+    //     await foreach (var item in GetCompaniesAsync(_companiesContext, _testCompany.Name))
+    //     {
+    //         list.Add(item);
+    //     }
+    //     return list;
+    // }
+    //
+    //
+    // [Benchmark()]
+    // public async Task<List<Company>> Dapper_Filter()
+    // {
+    //     var result = await _dbConnection.QueryAsync<Company>("SELECT * FROM COMPANIES WHERE Name=@Name",
+    //         new {_testCompany.Name});
+    //
+    //     return result.ToList();
+    // }
 
 
     //
@@ -134,12 +134,23 @@ public class Benchmarks
     //     return (await FirstCompanyAsync(_companiesContext,_testCompany.Id))!;
     // }
     //
-    // [Benchmark()]
-    // public async Task<Company> Dapper_GetById()
-    // {
-    //     return _dbConnection.QuerySingleOrDefault<Company>("SELECT * FROM COMPANIES WHERE Id=@Id LIMIT 1",
-    //         new { _testCompany.Id });
-    // }
+
+
+    [Benchmark()]
+    public async Task<Company> EF_Query_GetById()
+    {
+        return await _companiesContext.Database
+            .SqlQuery<Company>($"SELECT * FROM COMPANIES WHERE Id={_testCompany.Id} LIMIT 1")
+            .SingleOrDefaultAsync();
+    }
+
+
+    [Benchmark()]
+    public async Task<Company> Dapper_GetById()
+    {
+        return _dbConnection.QuerySingleOrDefault<Company>("SELECT * FROM COMPANIES WHERE Id=@Id LIMIT 1",
+            new { _testCompany.Id });
+    }
 
 //
 //     [Benchmark()]
