@@ -8,6 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 BenchmarkRunner.Run<Benchmarks>();
 
+//var bench = new Benchmarks();
+// await bench.Setup();
+// await bench.CleanUp();
+
 //
 // CompaniesContext _companiesContext = null!;
 // IDbConnection _dbConnection = null!;
