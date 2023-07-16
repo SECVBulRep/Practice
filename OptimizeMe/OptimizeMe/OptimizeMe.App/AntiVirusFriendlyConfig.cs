@@ -10,7 +10,7 @@ public class AntiVirusFriendlyConfig : ManualConfig
 {
     public AntiVirusFriendlyConfig()
     {
-        SummaryStyle = BenchmarkDotNet.Reports.SummaryStyle.Default.WithRatioStyle(RatioStyle.Percentage);
+        SummaryStyle = BenchmarkDotNet.Reports.SummaryStyle.Default.WithRatioStyle(RatioStyle.Trend);
         
         this.AddJob(Job.MediumRun.WithToolchain(InProcessNoEmitToolchain.Instance));
     }
