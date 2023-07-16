@@ -102,6 +102,7 @@ public class Benchmarks
         {
             List<AuthorDTO> list =
                 appDbContext.Authors
+                    .Include(x=>x.Books.Where(x=>x.Published.Year < 2022))
                     .Where(x => x.Country == "Serbia" && x.Age > 26)
                     .OrderByDescending(x => x.BooksCount)
                     .Select(x => new AuthorDTO
@@ -111,7 +112,6 @@ public class Benchmarks
                         UserEmail = x.User.Email,
                         UserName = x.User.UserName,
                         AllBooks = x.Books
-                            .Where(x=>x.Published.Year < 2022)
                             .Select(y => new BookDto
                         {
                             Id = y.Id,
