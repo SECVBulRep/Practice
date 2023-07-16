@@ -3,9 +3,9 @@
 using BenchmarkDotNet.Running;
 using OptimizeMe.App;
 
-//  Benchmarks test = new Benchmarks();
-//  await test.Setup();
-//  var temp = test.GetAuthors();
+//   Benchmarks test = new Benchmarks();
+//   await test.Setup();
+//   var temp = await test.GetAuthorsOpt();
 //
 // Console.WriteLine(temp.Count);
 

@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using BenchmarkDotNet.Attributes;
 using Microsoft.EntityFrameworkCore;
 using OptimizeMe.App.DbContext;
@@ -22,8 +23,8 @@ public class Benchmarks
         _random = new Random(420);
         _appDbContext = new AppDbContext();
 
-        _generator = new CompanyGenerator(_random);
-        await _generator.Generate(500, _appDbContext);
+        // _generator = new CompanyGenerator(_random);
+        //await _generator.Generate(500, _appDbContext);
     }
 
     /// <summary>
@@ -95,41 +96,57 @@ public class Benchmarks
     }
 
 
+    private static readonly Func<AppDbContext,  IAsyncEnumerable<Author>> GetAuthorsOptAsync =
+        EF.CompileAsyncQuery(
+            (AppDbContext context) =>
+                context.Authors
+                    .Include(x=>x.User)
+                    .Include(x => x.Books.Where(x => x.Published.Year < 2022))
+                    .Where(x => x.Country == "Serbia" && x.Age > 26).OrderByDescending(x => x.BooksCount).Take(2)
+        );
+
+
     [Benchmark]
-    public List<AuthorDTO> GetAuthorsOpt()
+    [SuppressMessage("ReSharper.DPA", "DPA0006: Large number of DB commands", MessageId = "count: 15360")]
+    public async Task<List<AuthorDTO>> GetAuthorsOpt()
     {
         using (AppDbContext appDbContext = new AppDbContext())
         {
-            List<AuthorDTO> list =
-                appDbContext.Authors
-                    .Include(x=>x.Books.Where(x=>x.Published.Year < 2022))
-                    .Where(x => x.Country == "Serbia" && x.Age > 26)
-                    .OrderByDescending(x => x.BooksCount)
-                    .Select(x => new AuthorDTO
-                    {
-                        UserFirstName = x.User.FirstName,
-                        UserLastName = x.User.LastName,
-                        UserEmail = x.User.Email,
-                        UserName = x.User.UserName,
-                        AllBooks = x.Books
-                            .Select(y => new BookDto
+            // IQueryable<Author> list =
+            //     appDbContext.Authors
+            //         .Include(x => x.Books.Where(x => x.Published.Year < 2022))
+            //         .Where(x => x.Country == "Serbia" && x.Age > 26)
+            //         .OrderByDescending(x => x.BooksCount)
+            //         .Take(2);
+
+            List<AuthorDTO> ret = new List<AuthorDTO>();
+            
+            IAsyncEnumerable<Author> list =  GetAuthorsOptAsync(appDbContext);
+
+            await foreach (var x in list)
+            {
+                var item = new AuthorDTO
+                {
+                    UserFirstName = x.User.FirstName,
+                    UserLastName = x.User.LastName,
+                    UserEmail = x.User.Email,
+                    UserName = x.User.UserName,
+                    AllBooks = x.Books
+                        .Select(y => new BookDto
                         {
                             Id = y.Id,
                             Name = y.Name,
                             Published = y.Published,
-                         
                         }).ToList(),
-                        AuthorAge = x.Age,
-                        AuthorCountry = x.Country,
-                        Id = x.Id
-                    })
-                    
-                  
-                    .Take(2)
-                    .ToList();
+                    AuthorAge = x.Age,
+                    AuthorCountry = x.Country,
+                    Id = x.Id
+                };
+                
+                ret.Add(item);
+            }
 
-
-            return list;
+            return ret;
         }
     }
 
