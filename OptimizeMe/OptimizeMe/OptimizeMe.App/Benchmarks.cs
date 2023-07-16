@@ -9,7 +9,7 @@ namespace OptimizeMe.App;
 
 [Config(typeof(AntiVirusFriendlyConfig))]
 [MemoryDiagnoser]
-[HideColumns("Job",  "StdDev")]
+[HideColumns("Job", "StdDev")]
 public class Benchmarks
 {
     private AppDbContext _appDbContext;
@@ -88,8 +88,8 @@ public class Benchmarks
         }
     }
 
-    
-      [Benchmark]
+
+    [Benchmark]
     public List<AuthorDTO> GetAuthorsOpt()
     {
         using (AppDbContext appDbContext = new AppDbContext())
@@ -114,7 +114,8 @@ public class Benchmarks
                         RoleId = x.User.UserRoles
                             .FirstOrDefault(y => y.UserId == x.UserId).RoleId,
                         BooksCount = x.BooksCount,
-                        AllBooks = x.Books.Select(y => new BookDto
+                        AllBooks = x.Books
+                            .Select(y => new BookDto
                         {
                             Id = y.Id,
                             Name = y.Name,
@@ -128,8 +129,11 @@ public class Benchmarks
                         Id = x.Id
                     })
                     .Where(x => x.AuthorCountry == "Serbia" && x.AuthorAge > 26)
-                    .ToList().OrderByDescending(x => x.BooksCount)
-                    .ToList().Take(2).ToList();
+                    .OrderByDescending(x => x.BooksCount)
+                    .Take(2)
+                    .ToList();
+            
+            
             List<AuthorDTO> authors = new List<AuthorDTO>();
             foreach (AuthorDTO authorDto in list)
             {
@@ -150,6 +154,7 @@ public class Benchmarks
             return authors;
         }
     }
+
     [GlobalCleanup]
     public async Task CleanUp()
     {
