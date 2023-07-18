@@ -103,13 +103,14 @@ public class Benchmarks
                 appDbContext.Authors
                     .Include<Author, User>(x => x.User)
                     .Include(x => x.Books)
+                    .Where(x => x.Country == "Serbia" && x.Age > 26)
+                    .OrderByDescending(x => x.BooksCount)
                     .Select(x => new AuthorDTO
                     {
                         UserFirstName = x.User.FirstName,
                         UserLastName = x.User.LastName,
                         UserEmail = x.User.Email,
                         UserName = x.User.UserName,
-                        BooksCount = x.BooksCount,
                         AllBooks =
                             x.Books
                                 .Where(x => x.Published.Year < 2022)
@@ -123,9 +124,8 @@ public class Benchmarks
                         AuthorCountry = x.Country,
                         Id = x.Id
                     })
-                    .Where(x => x.AuthorCountry == "Serbia" && x.AuthorAge > 26)
-                    .OrderByDescending(x => x.BooksCount)
-                    .Take(2).ToList();
+                    .Take(2).
+                    ToList();
             return list;
         }
     }
