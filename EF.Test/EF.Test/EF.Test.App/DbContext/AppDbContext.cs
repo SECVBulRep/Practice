@@ -20,7 +20,7 @@ namespace EF.Test.App.DbContext
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             options.UseSqlite(
-                "Data Source=C:\\Projects\\Practice\\EF.Test\\EF.Test\\EF.Test.App\\main.db"); 
+                "Data Source=C:\\Projects\\Practice\\EF.Test\\EF.Test\\EF.Test.App\\main.db"); //.LogTo(Console.WriteLine,LogLevel.Information);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) => base.OnModelCreating(modelBuilder);
