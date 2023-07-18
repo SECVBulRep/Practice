@@ -1,6 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using BenchmarkDotNet.Attributes;
+using Bogus.DataSets;
+using Dapper;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using OptimizeMe.App.DbContext;
 using OptimizeMe.App.Dto;
@@ -16,6 +20,7 @@ public class Benchmarks
     private AppDbContext _appDbContext;
     private Random _random;
     private CompanyGenerator _generator;
+    private IDbConnection _dbConnection;
 
     [GlobalSetup]
     public async Task Setup()
@@ -23,8 +28,13 @@ public class Benchmarks
         _random = new Random(420);
         _appDbContext = new AppDbContext();
 
-        // _generator = new CompanyGenerator(_random);
-        //await _generator.Generate(500, _appDbContext);
+        _dbConnection =
+            new SqliteConnection(
+                $"""Data Source=C:\\Projects\\Practice\\OptimizeMe\\OptimizeMe\\OptimizeMe.App\\main.db""");
+        _dbConnection.Open();
+
+        //  _generator = new CompanyGenerator(_random);
+        // await _generator.Generate(500, _appDbContext);
     }
 
     /// <summary>
@@ -96,11 +106,11 @@ public class Benchmarks
     }
 
 
-    private static readonly Func<AppDbContext,  IAsyncEnumerable<Author>> GetAuthorsOptAsync =
+    private static readonly Func<AppDbContext, IAsyncEnumerable<Author>> GetAuthorsOptAsync =
         EF.CompileAsyncQuery(
             (AppDbContext context) =>
                 context.Authors
-                    .Include(x=>x.User)
+                    .Include(x => x.User)
                     .Include(x => x.Books.Where(x => x.Published.Year < 2022))
                     .Where(x => x.Country == "Serbia" && x.Age > 26).OrderByDescending(x => x.BooksCount).Take(2)
         );
@@ -120,8 +130,8 @@ public class Benchmarks
             //         .Take(2);
 
             List<AuthorDTO> ret = new List<AuthorDTO>();
-            
-            IAsyncEnumerable<Author> list =  GetAuthorsOptAsync(appDbContext);
+
+            IAsyncEnumerable<Author> list = GetAuthorsOptAsync(appDbContext);
 
             await foreach (var x in list)
             {
@@ -142,7 +152,7 @@ public class Benchmarks
                     AuthorCountry = x.Country,
                     Id = x.Id
                 };
-                
+
                 ret.Add(item);
             }
 
@@ -150,9 +160,55 @@ public class Benchmarks
         }
     }
 
+    [Benchmark()]
+    public async Task<List<AuthorDTO>> EF_Query_Filter()
+    {
+        var sql = $"""
+     SELECT 
+     "t"."Id",  
+     "u"."Email" as UserEmail,   
+     "u"."FirstName" as UserFirstName,   
+     "u"."LastName" as UserLastName,   
+     "t0"."AuthorId", 
+     "t0"."Name",
+     "t0"."Published"     
+      FROM (
+          SELECT "a"."Id", "a"."Age", "a"."BooksCount", "a"."Country", "a"."NickName", "a"."UserId"
+          FROM "Authors" AS "a"
+          WHERE "a"."Country" = 'Serbia' AND "a"."Age" > 26
+          ORDER BY "a"."BooksCount" DESC
+          LIMIT 2
+      ) AS "t"
+      INNER JOIN "Users" AS "u" ON "t"."UserId" = "u"."Id"
+      LEFT JOIN (
+          SELECT "b"."Id", "b"."AuthorId", "b"."ISBN", "b"."Name", "b"."Published", "b"."PublisherId"
+          FROM "Books" AS "b"
+          WHERE CAST(strftime('%Y', "b"."Published") AS INTEGER) < 2022
+      ) AS "t0" ON "t"."Id" = "t0"."AuthorId"
+      ORDER BY "t"."BooksCount" DESC, "t"."Id", "u"."Id"
+ """;
+        var products = await _dbConnection.QueryAsync<AuthorDTO, BookDto, AuthorDTO>(sql, (auth, book) =>
+            {
+                auth.AllBooks ??= new List<BookDto>();
+                auth.AllBooks.Add(book);
+                return auth;
+            },
+            splitOn: "AuthorId");
+        var te = products.GroupBy(x => x.Id).Select(g =>
+        {
+            var order = g.First();
+            order.AllBooks = g.SelectMany(x => x.AllBooks).ToList();
+            return order;
+        }).ToList();
+
+        return te;
+    }
+
+
     [GlobalCleanup]
     public async Task CleanUp()
     {
-        await _generator.GlobalCleanup(_appDbContext);
+        _dbConnection.Close();
+        // await _generator.GlobalCleanup(_appDbContext);
     }
 }

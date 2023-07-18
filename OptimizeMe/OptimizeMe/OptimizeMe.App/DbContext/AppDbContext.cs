@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OptimizeMe.App.Entities;
 
 namespace OptimizeMe.App.DbContext;
@@ -20,7 +21,7 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         options.UseSqlite(
-            "Data Source=C:\\Projects\\Practice\\OptimizeMe\\OptimizeMe\\OptimizeMe.App\\main.db");
+            "Data Source=C:\\Projects\\Practice\\OptimizeMe\\OptimizeMe\\OptimizeMe.App\\main.db"); //.LogTo(Console.WriteLine,LogLevel.Information);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) => base.OnModelCreating(modelBuilder);
