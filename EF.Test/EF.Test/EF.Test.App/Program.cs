@@ -1,13 +1,14 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using BenchmarkDotNet.Running;
-using OptimizeMe.App;
+using EF.Test.App;
 
 Console.WriteLine("Hello, World!");
 
-// Benchmarks test = new Benchmarks();
-// await test.Setup();
-// var temp =  await test.GetAuthorsOpt();
-//Console.WriteLine(temp.Count);
+//  Benchmarks test = new Benchmarks();
+//  await test.Setup();
+//  var temp =   test.GetAuthors();
+// var temp2 =   test.GetAuthorsOptimized();
+// Console.WriteLine(temp.Count);
 
-BenchmarkRunner.Run<Benchmarks>();
+ BenchmarkRunner.Run<Benchmarks>();
