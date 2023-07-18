@@ -102,22 +102,13 @@ public class Benchmarks
             List<AuthorDTO> list =
                 appDbContext.Authors
                     .Include<Author, User>(x => x.User)
-                    .ThenInclude(x => x.UserRoles)
-                    .ThenInclude(x => x.Role)
                     .Include(x => x.Books)
-                    .ThenInclude(x => x.Publisher)
                     .Select(x => new AuthorDTO
                     {
-                        UserCreated = x.User.Created,
-                        UserEmailConfirmed = x.User.EmailConfirmed,
                         UserFirstName = x.User.FirstName,
-                        UserLastActivity = x.User.LastActivity,
                         UserLastName = x.User.LastName,
                         UserEmail = x.User.Email,
                         UserName = x.User.UserName,
-                        UserId = x.User.Id,
-                        RoleId = x.User.UserRoles
-                            .FirstOrDefault(y => y.UserId == x.UserId).RoleId,
                         BooksCount = x.BooksCount,
                         AllBooks =
                             x.Books
@@ -126,13 +117,10 @@ public class Benchmarks
                                 {
                                     Id = y.Id,
                                     Name = y.Name,
-                                    Published = y.Published,
-                                    ISBN = y.ISBN,
-                                    PublisherName = y.Publisher.Name
+                                    Published = y.Published
                                 }).ToList(),
                         AuthorAge = x.Age,
                         AuthorCountry = x.Country,
-                        AuthorNickName = x.NickName,
                         Id = x.Id
                     })
                     .Where(x => x.AuthorCountry == "Serbia" && x.AuthorAge > 26)
