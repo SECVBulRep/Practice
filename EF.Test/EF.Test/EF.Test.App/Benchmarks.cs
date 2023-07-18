@@ -94,45 +94,89 @@ public class Benchmarks
         }
     }
 
+    // [Benchmark]
+    // public List<AuthorDTO> GetAuthorsOptimized()
+    // {
+    //     using (AppDbContext appDbContext = new AppDbContext())
+    //     {
+    //         List<AuthorDTO> list =
+    //             appDbContext.Authors
+    //                 .Include<Author, User>(x => x.User)
+    //                 .Include(x => x.Books.Where(x => x.Published.Year < 2022))
+    //                 .Where(x => x.Country == "Serbia" && x.Age > 26)
+    //                 .OrderByDescending(x => x.BooksCount)
+    //                 .Select(x => new AuthorDTO
+    //                 {
+    //                     UserFirstName = x.User.FirstName,
+    //                     UserLastName = x.User.LastName,
+    //                     UserEmail = x.User.Email,
+    //                     UserName = x.User.UserName,
+    //                     AllBooks =
+    //                         x.Books
+    //                             .Select(y => new BookDto
+    //                             {
+    //                                 Id = y.Id,
+    //                                 Name = y.Name,
+    //                                 Published = y.Published
+    //                             }).ToList(),
+    //                     AuthorAge = x.Age,
+    //                     AuthorCountry = x.Country,
+    //                     Id = x.Id
+    //                 })
+    //                 .Take(2).ToList();
+    //         return list;
+    //     }
+    // }
+
+
+    private static readonly Func<AppDbContext, IAsyncEnumerable<Author>> GetAuthorsOptAsync =
+        Microsoft.EntityFrameworkCore.EF.CompileAsyncQuery(
+            (AppDbContext context) =>
+                context.Authors
+                    .Include<Author, User>(x => x.User)
+                    .Include(x => x.Books.Where(x => x.Published.Year < 2022))
+                    .Where(x => x.Country == "Serbia" && x.Age > 26)
+                    .OrderByDescending(x => x.BooksCount).Take(2)
+        );
+
     [Benchmark]
-    public List<AuthorDTO> GetAuthorsOptimized()
+    public async Task<List<AuthorDTO>> GetAuthorsOptimizedCompiled()
     {
         using (AppDbContext appDbContext = new AppDbContext())
         {
-            List<AuthorDTO> list =
-                appDbContext.Authors
-                    .Include<Author, User>(x => x.User)
-                    .Include(x=>x.Books.Where(x=>x.Published.Year < 2022))
-                    .Where(x => x.Country == "Serbia" && x.Age > 26)
-                    .OrderByDescending(x => x.BooksCount)
-                    .Select(x => new AuthorDTO
-                    {
-                        UserFirstName = x.User.FirstName,
-                        UserLastName = x.User.LastName,
-                        UserEmail = x.User.Email,
-                        UserName = x.User.UserName,
-                        AllBooks =
-                            x.Books
-                                .Select(y => new BookDto
-                                {
-                                    Id = y.Id,
-                                    Name = y.Name,
-                                    Published = y.Published
-                                }).ToList(),
-                        AuthorAge = x.Age,
-                        AuthorCountry = x.Country,
-                        Id = x.Id
-                    })
-                    .Take(2).
-                    ToList();
-            return list;
+            var list = GetAuthorsOptAsync(appDbContext);
+
+            List<AuthorDTO> ret = new List<AuthorDTO>();
+
+            await foreach (var x in list)
+            {
+                var item = new AuthorDTO
+                {
+                    UserFirstName = x.User.FirstName,
+                    UserLastName = x.User.LastName,
+                    UserEmail = x.User.Email,
+                    UserName = x.User.UserName,
+                    AllBooks = x.Books
+                        .Select(y => new BookDto
+                        {
+                            Id = y.Id,
+                            Name = y.Name,
+                            Published = y.Published,
+                        }).ToList(),
+                    AuthorAge = x.Age,
+                    AuthorCountry = x.Country,
+                    Id = x.Id
+                };
+                ret.Add(item);
+            }
+            return ret;
         }
     }
 
 
     [GlobalCleanup]
-    public async Task CleanUp()
-    {
-        // await _generator.GlobalCleanup(_appDbContext);
+        public async Task CleanUp()
+        {
+            // await _generator.GlobalCleanup(_appDbContext);
+        }
     }
-}
