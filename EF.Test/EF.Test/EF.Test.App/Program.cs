@@ -4,13 +4,14 @@ using BenchmarkDotNet.Running;
 using EF.Test.App;
 
 Console.WriteLine("Hello, World!");
-
- //  Benchmarks test = new Benchmarks();
- // await test.Setup();
- // var temp =   test.GetAuthors();
-// var temp2 =   test.GetAuthorsOptimized();
-//  var temp3=   await  test.GetAuthorsOptimizedCompiled();
-//var temp3=   await  test.EF_Query_Filter();
+//
+//   Benchmarks test = new Benchmarks();
+//   await test.Setup();
+//  var temp =   test.GetAuthors();
+//  var temp2 =   test.GetAuthorsOptimized();
+//   var temp3=   await  test.GetAuthorsOptimizedCompiled();
+// var temp3=   await  test.EF_Query_Filter();
+//  var temp3=   await  test.EF_Query();
 
  // Console.WriteLine(temp.Count);
 

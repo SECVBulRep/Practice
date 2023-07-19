@@ -5,6 +5,7 @@ using EF.Test.App.DbContext;
 using EF.Test.App.Dto;
 using EF.Test.App.Entities;
 using Microsoft.Data.Sqlite;
+using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsWPF;
 using Microsoft.EntityFrameworkCore;
 
 namespace EF.Test.App;
@@ -181,8 +182,11 @@ public class Benchmarks
     //     }
     // }
 
+    
+
+
     [Benchmark()]
-    public async Task<List<AuthorDTO>> EF_Query_Filter()
+    public async Task<List<AuthorDTO>> EF_Dapper_Query()
     {
         var sql = $"""
      SELECT 
@@ -225,7 +229,72 @@ public class Benchmarks
         return te;
     }
 
+    [Benchmark()]
+    public async Task<List<AuthorDTO>> EF_Query()
+    {
+        FormattableString sql = $"""
+     SELECT 
+     "t"."Id",  
+     "u"."Email" as UserEmail,   
+     "u"."FirstName" as UserFirstName,   
+     "u"."LastName" as UserLastName,   
+     "t0"."AuthorId", 
+     "t0"."Name",
+     "t0"."Published"     
+      FROM (
+          SELECT "a"."Id", "a"."Age", "a"."BooksCount", "a"."Country", "a"."NickName", "a"."UserId"
+          FROM "Authors" AS "a"
+          WHERE "a"."Country" = 'Serbia' AND "a"."Age" > 26
+          ORDER BY "a"."BooksCount" DESC
+          LIMIT 2
+      ) AS "t"
+      INNER JOIN "Users" AS "u" ON "t"."UserId" = "u"."Id"
+      LEFT JOIN (
+          SELECT "b"."Id", "b"."AuthorId", "b"."ISBN", "b"."Name", "b"."Published", "b"."PublisherId"
+          FROM "Books" AS "b"
+          WHERE CAST(strftime('%Y', "b"."Published") AS INTEGER) < 2022
+      ) AS "t0" ON "t"."Id" = "t0"."AuthorId"
+      ORDER BY "t"."BooksCount" DESC, "t"."Id", "u"."Id"
+ """;
+       
+        using (AppDbContext appDbContext = new AppDbContext())
+        {
+            var tem= appDbContext.Database.SqlQuery<GroupedInfo>(sql).ToList();
 
+           List<AuthorDTO> list =  tem.GroupBy(x => x.Id).Select(x =>
+            {
+                var t = new AuthorDTO();
+
+                var order = x.First();
+
+                t.Id = order.Id;
+                t.UserFirstName = order.UserFirstName;
+                t.UserLastName = order.UserLastName;
+                t.UserEmail = order.UserEmail;
+
+                t.AllBooks = new List<BookDto>();
+
+               // var books = x.Where(b => b.Id==t.Id).ToList();
+
+                foreach (var book in x)
+                {
+                    t.AllBooks.Add(new BookDto
+                    {
+                        Published = book.Published,
+                        Name = book.Name
+                    });
+                }
+
+                return t;
+            }).ToList();
+           
+           
+
+           return list;
+        }
+    }
+    
+    
     [GlobalCleanup]
     public async Task CleanUp()
     {

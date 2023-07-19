@@ -14,4 +14,19 @@
 
         public string ISBN { get; set; }
     }
+    
+  
+  
+
+    public class GroupedInfo
+    {
+        public int Id { get; set; }
+        public string UserEmail { get; set; }
+        public string UserFirstName { get; set; }
+        public string UserLastName { get; set; }
+        public int AuthorId { get; set; }
+        public DateTime Published { get; set; }
+        
+        public string Name { get; set; }
+    }
 }
