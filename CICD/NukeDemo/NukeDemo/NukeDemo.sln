@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NukeApp", "NukeApp\NukeApp.csproj", "{89B7CF66-2038-4EF3-9AD1-4EFB7256BE0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuke.WebApplication", "Nuke.WebApplication\Nuke.WebApplication.csproj", "{6D2C178E-0476-418F-9CFC-E49D5CCC7D22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +8,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{89B7CF66-2038-4EF3-9AD1-4EFB7256BE0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{89B7CF66-2038-4EF3-9AD1-4EFB7256BE0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{89B7CF66-2038-4EF3-9AD1-4EFB7256BE0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{89B7CF66-2038-4EF3-9AD1-4EFB7256BE0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D2C178E-0476-418F-9CFC-E49D5CCC7D22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D2C178E-0476-418F-9CFC-E49D5CCC7D22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D2C178E-0476-418F-9CFC-E49D5CCC7D22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D2C178E-0476-418F-9CFC-E49D5CCC7D22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
