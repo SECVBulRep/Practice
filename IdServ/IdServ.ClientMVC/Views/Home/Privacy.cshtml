@@ -1,6 +1,44 @@
-﻿@{
+﻿@using Newtonsoft.Json
+@model IdServ.ClientMVC.Controllers.AuthInfo
+@{
     ViewData["Title"] = "Privacy Policy";
 }
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div>
+    <h4>UserClaims</h4>
+    <table>
+        @foreach (var c in Model.UserInfo)
+        {
+            <tr>
+                <th>@c.Type</th>
+                <th>@c.Value</th>
+            </tr>
+        }
+    </table>
+
+
+    <h4>AccessTokenClaims</h4>
+    <table>
+        @foreach (var c in Model.AccessToken.Claims)
+        {
+            <tr>
+                <th>@c.Type</th>
+                <th>@c.Value</th>
+            </tr>
+        }
+    </table>
+
+
+    <h4>IdTokenClaims</h4>
+    <table>
+        @foreach (var c in Model.IdToken.Claims)
+        {
+            <tr>
+                <th>@c.Type</th>
+                <th>@c.Value</th>
+            </tr>
+        }
+    </table>
+
+</div>
