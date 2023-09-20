@@ -1,6 +1,8 @@
 using System.Net.Mime;
+using IdentityServer4.AspNetIdentity;
 using IdServ.IdentityServer;
 using IdServ.IdentityServer.Data;
+using IdServ.IdentityServer.Infrasctructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +31,7 @@ builder.Services.AddIdentityServer(config => { config.UserInteraction.LoginUrl =
     .AddInMemoryClients(Configuration.GetClients())
     .AddInMemoryApiResources(Configuration.GetApiResources())
     .AddInMemoryApiScopes(Configuration.GetApiScopes())
+    .AddProfileService<ProfileService>()
     .AddDeveloperSigningCredential();
 
 
