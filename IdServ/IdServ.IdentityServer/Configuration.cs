@@ -27,7 +27,7 @@ public static class Configuration
                 IdentityServerConstants.StandardScopes.Profile,
             },
             RedirectUris = { "https://localhost:5048/signin-oidc" },
-            AlwaysIncludeUserClaimsInIdToken = true
+            //AlwaysIncludeUserClaimsInIdToken = true
         }
     };
 

@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Mvc;
 using IdServ.ClientMVC.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -11,10 +13,12 @@ namespace IdServ.ClientMVC.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    private IHttpClientFactory _httpClientFactory;
+    
+    public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
     {
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
     }
 
     public IActionResult Index()
@@ -28,12 +32,28 @@ public class HomeController : Controller
         var id_token = await HttpContext.GetTokenAsync("id_token");
         var access_token = await HttpContext.GetTokenAsync("access_token");
       
+       
         var handler = new JwtSecurityTokenHandler();
         
         var userInfo = new AuthInfo();
         userInfo.IdToken =  handler.ReadJwtToken(id_token);
         userInfo.AccessToken = handler.ReadJwtToken(access_token);
         userInfo.UserInfo = User.Claims;
+
+        var ordersClient = _httpClientFactory.CreateClient();
+
+        var result = "noinfo";
+        try
+        {
+            ordersClient.SetBearerToken(access_token!);
+            result = await ordersClient.GetStringAsync($"https://localhost:5072/Site/GetSecrets");
+        }
+        catch (Exception e)
+        {
+        }
+
+        ViewBag.Message = result;
+        
         return View(userInfo);
     }
 

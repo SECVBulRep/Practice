@@ -6,6 +6,12 @@
 <h1>@ViewData["Title"]</h1>
 
 <div>
+    <h2>ViewBag.Message</h2>
+    @ViewBag.Message
+
+</div>
+
+<div>
     <h4>UserClaims</h4>
     <table>
         @foreach (var c in Model.UserInfo)

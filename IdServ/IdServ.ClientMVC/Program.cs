@@ -14,7 +14,6 @@ builder.Services.AddAuthentication(config =>
     {
         config.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         config.DefaultChallengeScheme = "oidc";
-         
     })
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddOpenIdConnect("oidc", config =>
@@ -25,9 +24,14 @@ builder.Services.AddAuthentication(config =>
         config.ResponseType = OpenIdConnectResponseType.Code;
         config.Scope.Add("openid");
         config.Scope.Add("profile");
+        config.Scope.Add("OrdersAPI");
         config.SaveTokens = true;
         config.RequireHttpsMetadata = false;
+        config.GetClaimsFromUserInfoEndpoint = true;
+        
     });
+
+builder.Services.AddHttpClient();
 
 
 var app = builder.Build();
