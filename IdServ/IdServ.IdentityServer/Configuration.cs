@@ -1,4 +1,5 @@
 ﻿using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
 
 namespace IdServ.IdentityServer;
@@ -13,25 +14,37 @@ public static class Configuration
             ClientSecrets = { new Secret("client_secret".ToSha256()) },
             AllowedGrantTypes = GrantTypes.ClientCredentials,
             AllowedScopes = { "OrdersAPI" },
+        },
+        new Client
+        {
+            ClientId = "client_id_mvc",
+            ClientSecrets = { new Secret("client_secret_mvc".ToSha256()) },
+            AllowedGrantTypes = GrantTypes.Code,
+            AllowedScopes =
+            {
+                "OrdersAPI",
+                IdentityServerConstants.StandardScopes.OpenId,
+                IdentityServerConstants.StandardScopes.Profile,
+            },
+            RedirectUris = { "http://localhost:5048/signin-oidc" }
         }
     };
 
 
     public static IEnumerable<ApiResource> GetApiResources() => new List<ApiResource>
     {
+        new ApiResource
         {
-            new ApiResource
-            {
-                Name = "OrdersAPI",
-                Scopes = { "OrdersAPI" }
-            }
+            Name = "OrdersAPI",
+            Scopes = { "OrdersAPI" }
         }
     };
 
 
     public static IEnumerable<IdentityResource> GetIdentityResources() => new List<IdentityResource>
     {
-        { new IdentityResources.OpenId() }
+        new IdentityResources.OpenId(),
+        new IdentityResources.Profile()
     };
 
     public static IEnumerable<ApiScope> GetApiScopes() => new List<ApiScope>
