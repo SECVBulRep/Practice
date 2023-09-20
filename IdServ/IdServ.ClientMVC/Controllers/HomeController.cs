@@ -57,6 +57,38 @@ public class HomeController : Controller
         return View(userInfo);
     }
 
+    [Authorize(Policy = "HasDateOfBirth")]
+    public async Task<IActionResult> Privacy2()
+    {
+        var id_token = await HttpContext.GetTokenAsync("id_token");
+        var access_token = await HttpContext.GetTokenAsync("access_token");
+      
+       
+        var handler = new JwtSecurityTokenHandler();
+        
+        var userInfo = new AuthInfo();
+        userInfo.IdToken =  handler.ReadJwtToken(id_token);
+        userInfo.AccessToken = handler.ReadJwtToken(access_token);
+        userInfo.UserInfo = User.Claims;
+
+        var ordersClient = _httpClientFactory.CreateClient();
+
+        var result = "noinfo";
+        try
+        {
+            ordersClient.SetBearerToken(access_token!);
+            result = await ordersClient.GetStringAsync($"https://localhost:5072/Site/GetSecrets");
+        }
+        catch (Exception e)
+        {
+        }
+
+        ViewBag.Message = result;
+        
+        return View(userInfo);
+    }
+    
+    
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

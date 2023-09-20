@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -25,13 +27,23 @@ builder.Services.AddAuthentication(config =>
         config.Scope.Add("openid");
         config.Scope.Add("profile");
         config.Scope.Add("OrdersAPI");
+
+
         config.SaveTokens = true;
         config.RequireHttpsMetadata = false;
         config.GetClaimsFromUserInfoEndpoint = true;
-        
+
+
+        // config.ClaimActions.MapAll(); плохой вариант
+        config.ClaimActions.MapJsonKey(ClaimTypes.DateOfBirth, ClaimTypes.DateOfBirth);
     });
 
 builder.Services.AddHttpClient();
+
+builder.Services.AddAuthorization(config =>
+{
+    config.AddPolicy("HasDateOfBirth", builder => { builder.RequireClaim(ClaimTypes.DateOfBirth); });
+});
 
 
 var app = builder.Build();
