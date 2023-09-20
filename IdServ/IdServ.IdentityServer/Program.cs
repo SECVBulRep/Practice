@@ -1,18 +1,36 @@
+using System.Net.Mime;
 using IdServ.IdentityServer;
+using IdServ.IdentityServer.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddIdentityServer(config =>
+
+
+builder.Services
+    .AddDbContext<ApplicationDbContext>(config => { config.UseInMemoryDatabase("Memory"); })
+    .AddIdentity<IdentityUser, IdentityRole>(config =>
     {
-        config.UserInteraction.LoginUrl = "/Auth/Login";
+        config.Password.RequireDigit = false;
+        config.Password.RequireLowercase = false;
+        config.Password.RequireNonAlphanumeric = false;
+        config.Password.RequireUppercase = false;
+        config.Password.RequiredLength = 2;
     })
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddIdentityServer(config => { config.UserInteraction.LoginUrl = "/Auth/Login"; })
+    .AddAspNetIdentity<IdentityUser>()
     .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
     .AddInMemoryClients(Configuration.GetClients())
     .AddInMemoryApiResources(Configuration.GetApiResources())
     .AddInMemoryApiScopes(Configuration.GetApiScopes())
     .AddDeveloperSigningCredential();
+
 
 var app = builder.Build();
 
@@ -26,16 +44,19 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
 
 app.UseIdentityServer();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+using (var scope = app.Services.CreateScope())
+{
+    DatabaseInitializer.Init(scope.ServiceProvider);
+}
 
 app.Run();

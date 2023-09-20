@@ -1,8 +1,5 @@
-﻿using System.Diagnostics;
-using IdentityModel;
-using IdentityModel.Client;
+﻿using IdentityModel.Client;
 using Microsoft.AspNetCore.Mvc;
-using IdServ.Users.Api.Models;
 
 namespace IdServ.Users.Api.Controllers;
 
@@ -26,7 +23,7 @@ public class HomeController : Controller
     public async Task<IActionResult> GetOrder()
     {
         var identityClient = _clientFactory.CreateClient();
-        var discoveryDocument = await identityClient.GetDiscoveryDocumentAsync("http://localhost:5008");
+        var discoveryDocument = await identityClient.GetDiscoveryDocumentAsync("https://localhost:5008");
 
 
         var tokenResponse = await identityClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
@@ -45,7 +42,7 @@ public class HomeController : Controller
         try
         {
              ordersClient.SetBearerToken(tokenResponse.AccessToken!);
-             result = await ordersClient.GetStringAsync($"http://localhost:5072/Site/GetSecrets");
+             result = await ordersClient.GetStringAsync($"https://localhost:5072/Site/GetSecrets");
         }
         catch (Exception e)
         {

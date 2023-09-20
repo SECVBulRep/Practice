@@ -19,14 +19,7 @@ builder.Services.AddAuthentication(config =>
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddOpenIdConnect("oidc", config =>
     {
-        // config.Authority = "http://localhost:5008";
-        // config.ClientId = "client_id_mvc";
-        // config.ClientSecret = "client_secret_mvc";
-        // config.SaveTokens = true;
-        // config.ResponseType = OpenIdConnectResponseType.Code;
-        // config.RequireHttpsMetadata = false;
-        
-        config.Authority = "http://localhost:5008";
+        config.Authority = "https://localhost:5008";
         config.ClientId = "client_id_mvc";
         config.ClientSecret = "client_secret_mvc";
         config.ResponseType = OpenIdConnectResponseType.Code;
@@ -43,6 +36,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+//app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
 
 app.MapControllerRoute(
     name: "default",

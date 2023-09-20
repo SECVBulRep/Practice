@@ -26,7 +26,7 @@ public static class Configuration
                 IdentityServerConstants.StandardScopes.OpenId,
                 IdentityServerConstants.StandardScopes.Profile,
             },
-            RedirectUris = { "http://localhost:5048/signin-oidc" }
+            RedirectUris = { "https://localhost:5048/signin-oidc" },
         }
     };
 

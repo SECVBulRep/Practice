@@ -11,7 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "http://localhost:5008";
+        options.Authority = "https://localhost:5008";
         options.RequireHttpsMetadata = false;
         options.Audience = "OrdersAPI";
         options.TokenValidationParameters = new TokenValidationParameters
