@@ -31,7 +31,20 @@ public static class Configuration
             //AlwaysIncludeUserClaimsInIdToken = true
             AccessTokenLifetime = 5,
             AllowOfflineAccess = true
-        }
+        },
+        new Client
+        {
+            ClientId = "client_id_swagger",
+            ClientSecrets = { new Secret("client_secret_swagger".ToSha256()) },
+            AllowedGrantTypes = GrantTypes.ResourceOwnerPassword, // swagger не умеет по CODE
+            AllowedCorsOrigins = { "https://localhost:7293" },
+            AllowedScopes =
+            {
+                "SwaggerAPI",
+                IdentityServerConstants.StandardScopes.OpenId,
+                IdentityServerConstants.StandardScopes.Profile
+            }
+        },
     };
 
 
@@ -41,6 +54,11 @@ public static class Configuration
         {
             Name = "OrdersAPI",
             Scopes = { "OrdersAPI" }
+        },
+        new ApiResource
+        {
+            Name = "SwaggerAPI",
+            Scopes = { "SwaggerAPI" }
         }
     };
 
@@ -56,6 +74,10 @@ public static class Configuration
         new ApiScope
         {
             Name = "OrdersAPI"
+        },
+        new ApiScope
+        {
+            Name = "SwaggerAPI"
         }
     };
 }
