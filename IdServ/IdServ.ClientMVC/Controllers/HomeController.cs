@@ -6,6 +6,7 @@ using IdentityModel.Client;
 using Microsoft.AspNetCore.Mvc;
 using IdServ.ClientMVC.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 
 namespace IdServ.ClientMVC.Controllers;
@@ -49,15 +50,43 @@ public class HomeController : Controller
             ordersClient.SetBearerToken(access_token!);
             result = await ordersClient.GetStringAsync($"https://localhost:5072/Site/GetSecrets");
         }
-        catch (Exception e)
+        catch (HttpRequestException e)
         {
+            await RefreshToken(refresh_token);
+            return await getAuthInfo();
         }
 
         ViewBag.Message = result;
         return userInfo;
     }
 
+    private async Task RefreshToken(string refreshToken)
+    {
+        var refreshClient = _httpClientFactory.CreateClient();
+        var resultRefreshTokenAsync = await refreshClient.RequestRefreshTokenAsync(new RefreshTokenRequest
+        {
+            Address = "https://localhost:5008/connect/token",
+            ClientId = "client_id_mvc",
+            ClientSecret = "client_secret_mvc",
+            RefreshToken = refreshToken,
+            Scope = "openid OrdersAPI offline_access"
+        });
 
+        await UpdateAuthContextAsync(resultRefreshTokenAsync.AccessToken, resultRefreshTokenAsync.RefreshToken);
+    }
+    
+    private async Task UpdateAuthContextAsync(string accessTokenNew, string refreshTokenNew)
+    {
+        var authenticate = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        authenticate.Properties.UpdateTokenValue("access_token", accessTokenNew);
+        authenticate.Properties.UpdateTokenValue("refresh_token", refreshTokenNew);
+
+        await HttpContext.SignInAsync(authenticate.Principal, authenticate.Properties);
+    }
+    
+    
+    
     [Authorize]
     public async Task<IActionResult> Privacy()
     {
