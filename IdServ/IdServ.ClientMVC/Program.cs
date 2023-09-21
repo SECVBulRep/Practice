@@ -30,7 +30,9 @@ builder.Services.AddAuthentication(config =>
         config.Scope.Add("openid");
         config.Scope.Add("profile");
         config.Scope.Add("OrdersAPI");
+        config.Scope.Add("offline_access");
 
+        
 
         config.SaveTokens = true;
         config.RequireHttpsMetadata = false;

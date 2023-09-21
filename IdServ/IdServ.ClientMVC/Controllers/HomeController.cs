@@ -38,7 +38,7 @@ public class HomeController : Controller
         userInfo.IdToken =  handler.ReadJwtToken(id_token);
         userInfo.AccessToken = handler.ReadJwtToken(access_token);
         if(refresh_token!=null)
-        userInfo.RefreshToken = handler.ReadJwtToken(refresh_token);
+        userInfo.RefreshToken = refresh_token;
         userInfo.UserInfo = User.Claims;
 
         var ordersClient = _httpClientFactory.CreateClient();
@@ -95,5 +95,5 @@ public class AuthInfo
     public JwtSecurityToken AccessToken { get; set; }
 
     public IEnumerable<Claim> UserInfo { get; set; }
-    public JwtSecurityToken RefreshToken { get; set; }
+    public string RefreshToken { get; set; }
 }

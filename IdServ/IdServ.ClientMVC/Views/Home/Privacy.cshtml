@@ -8,7 +8,6 @@
 <div>
     <h2>ViewBag.Message</h2>
     @ViewBag.Message
-
 </div>
 
 <div >
@@ -48,18 +47,15 @@
     </table>
 
     
-     <h4>RefreshTokenClaims</h4>
-    <table  style="color: yellow">
-        @if (Model.RefreshToken != null && Model.RefreshToken.Claims != null)
-        {
-            @foreach (var c in Model.RefreshToken.Claims)
-            {
+     <h4>RefreshToken</h4>
+    <table  style="color: red">
+        
+          
                 <tr>
-                    <th>@c.Type</th>
-                    <th>@c.Value</th>
+                    <th>Token</th>
+                    <th>@Model.RefreshToken</th>
                 </tr>
-            }
-        }
+        
     </table>
     
 </div>

@@ -28,7 +28,8 @@ public static class Configuration
             },
             RedirectUris = { "https://localhost:5048/signin-oidc" },
             //AlwaysIncludeUserClaimsInIdToken = true
-            AccessTokenLifetime = 5
+            AccessTokenLifetime = 5,
+            AllowOfflineAccess = true
         }
     };
 
