@@ -39,6 +39,7 @@ builder.Services.AddAuthentication(config =>
 
         // config.ClaimActions.MapAll(); плохой вариант
         config.ClaimActions.MapJsonKey(ClaimTypes.DateOfBirth, ClaimTypes.DateOfBirth);
+        
     });
 
 builder.Services.AddHttpClient();
@@ -46,7 +47,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddAuthorization(config =>
 {
     config.AddPolicy("HasDateOfBirth", builder => { builder.RequireClaim(ClaimTypes.DateOfBirth); });
-    
+
     // config.AddPolicy("OlderThan", builder =>
     // {
     //     builder.AddRequirements(new OlderThanRequirement(10));
@@ -55,7 +56,7 @@ builder.Services.AddAuthorization(config =>
 
 builder.Services.AddSingleton<IAuthorizationHandler, OlderThanRequirementHandler>();
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, CustomAuthorizationPolicyProvider>();
-    
+
 var app = builder.Build();
 
 app.UseRouting();
@@ -82,7 +83,7 @@ public class CustomAuthorizationPolicyProvider : DefaultAuthorizationPolicyProvi
 
     public override async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {
-        var policyExist =  await base.GetPolicyAsync(policyName);
+        var policyExist = await base.GetPolicyAsync(policyName);
 
         if (policyExist == null)
         {
@@ -107,8 +108,8 @@ public class OlderThanRequirement : IAuthorizationRequirement
 
 public class OlderThanRequirementHandler : AuthorizationHandler<OlderThanRequirement>
 {
-   
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, OlderThanRequirement requirement)
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        OlderThanRequirement requirement)
     {
         var hasClaim = context.User.HasClaim(x => x.Type == ClaimTypes.DateOfBirth);
         if (!hasClaim)
@@ -123,7 +124,7 @@ public class OlderThanRequirementHandler : AuthorizationHandler<OlderThanRequire
         {
             context.Succeed(requirement);
         }
-        return Task.CompletedTask;
 
+        return Task.CompletedTask;
     }
 }

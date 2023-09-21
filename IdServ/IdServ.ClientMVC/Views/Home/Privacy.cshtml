@@ -11,9 +11,9 @@
 
 </div>
 
-<div>
+<div >
     <h4>UserClaims</h4>
-    <table>
+    <table style="color: #3dd5f3">
         @foreach (var c in Model.UserInfo)
         {
             <tr>
@@ -25,7 +25,7 @@
 
 
     <h4>AccessTokenClaims</h4>
-    <table>
+    <table  style="color:  darkseagreen">
         @foreach (var c in Model.AccessToken.Claims)
         {
             <tr>
@@ -37,7 +37,7 @@
 
 
     <h4>IdTokenClaims</h4>
-    <table>
+    <table  style="color: palevioletred"> 
         @foreach (var c in Model.IdToken.Claims)
         {
             <tr>
@@ -47,4 +47,19 @@
         }
     </table>
 
+    
+     <h4>RefreshTokenClaims</h4>
+    <table  style="color: yellow">
+        @if (Model.RefreshToken != null && Model.RefreshToken.Claims != null)
+        {
+            @foreach (var c in Model.RefreshToken.Claims)
+            {
+                <tr>
+                    <th>@c.Type</th>
+                    <th>@c.Value</th>
+                </tr>
+            }
+        }
+    </table>
+    
 </div>

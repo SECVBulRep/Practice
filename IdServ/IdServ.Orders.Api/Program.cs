@@ -18,6 +18,10 @@ builder.Services.AddAuthentication("Bearer")
         {
              ValidateAudience = true,
         };
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ClockSkew = TimeSpan.FromSeconds(5)
+        };
     });
 
 
