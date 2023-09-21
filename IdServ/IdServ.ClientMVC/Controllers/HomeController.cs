@@ -26,8 +26,7 @@ public class HomeController : Controller
         return View();
     }
 
-    [Authorize]
-    public async Task<IActionResult> Privacy()
+    async Task<AuthInfo> getAuthInfo()
     {
         var id_token = await HttpContext.GetTokenAsync("id_token");
         var access_token = await HttpContext.GetTokenAsync("access_token");
@@ -53,71 +52,30 @@ public class HomeController : Controller
         }
 
         ViewBag.Message = result;
-        
-        return View(userInfo);
+        return userInfo;
+    }
+
+
+    [Authorize]
+    public async Task<IActionResult> Privacy()
+    {
+        ViewBag.PageInfo = "Privacy 1111111111111111";
+        return View("Privacy",await getAuthInfo());
     }
 
     [Authorize(Policy = "HasDateOfBirth")]
     public async Task<IActionResult> Privacy2()
     {
-        var id_token = await HttpContext.GetTokenAsync("id_token");
-        var access_token = await HttpContext.GetTokenAsync("access_token");
-      
-       
-        var handler = new JwtSecurityTokenHandler();
-        
-        var userInfo = new AuthInfo();
-        userInfo.IdToken =  handler.ReadJwtToken(id_token);
-        userInfo.AccessToken = handler.ReadJwtToken(access_token);
-        userInfo.UserInfo = User.Claims;
-
-        var ordersClient = _httpClientFactory.CreateClient();
-
-        var result = "noinfo";
-        try
-        {
-            ordersClient.SetBearerToken(access_token!);
-            result = await ordersClient.GetStringAsync($"https://localhost:5072/Site/GetSecrets");
-        }
-        catch (Exception e)
-        {
-        }
-
-        ViewBag.Message = result;
-        
-        return View(userInfo);
+        ViewBag.PageInfo = "Privacy 2222222222222222";
+        return View("Privacy",await getAuthInfo());
     }
     
     
     [Authorize(Policy = "OlderThan")]
     public async Task<IActionResult> Privacy3()
     {
-        var id_token = await HttpContext.GetTokenAsync("id_token");
-        var access_token = await HttpContext.GetTokenAsync("access_token");
-      
-       
-        var handler = new JwtSecurityTokenHandler();
-        
-        var userInfo = new AuthInfo();
-        userInfo.IdToken =  handler.ReadJwtToken(id_token);
-        userInfo.AccessToken = handler.ReadJwtToken(access_token);
-        userInfo.UserInfo = User.Claims;
-
-        var ordersClient = _httpClientFactory.CreateClient();
-
-        var result = "noinfo";
-        try
-        {
-            ordersClient.SetBearerToken(access_token!);
-            result = await ordersClient.GetStringAsync($"https://localhost:5072/Site/GetSecrets");
-        }
-        catch (Exception e)
-        {
-        }
-
-        ViewBag.Message = result;
-        
-        return View(userInfo);
+        ViewBag.PageInfo = "Privacy 3333333333333333";
+        return View("Privacy",await getAuthInfo());
     }
     
     
