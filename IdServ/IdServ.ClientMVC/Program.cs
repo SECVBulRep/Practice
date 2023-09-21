@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
@@ -46,13 +47,14 @@ builder.Services.AddAuthorization(config =>
 {
     config.AddPolicy("HasDateOfBirth", builder => { builder.RequireClaim(ClaimTypes.DateOfBirth); });
     
-    config.AddPolicy("OlderThan", builder =>
-    {
-        builder.AddRequirements(new OlderThanRequirement(10));
-    });
+    // config.AddPolicy("OlderThan", builder =>
+    // {
+    //     builder.AddRequirements(new OlderThanRequirement(10));
+    // });
 });
 
 builder.Services.AddSingleton<IAuthorizationHandler, OlderThanRequirementHandler>();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, CustomAuthorizationPolicyProvider>();
     
 var app = builder.Build();
 
@@ -68,6 +70,29 @@ app.MapControllerRoute(
 
 app.Run();
 
+
+public class CustomAuthorizationPolicyProvider : DefaultAuthorizationPolicyProvider
+{
+    private readonly AuthorizationOptions _options;
+
+    public CustomAuthorizationPolicyProvider(IOptions<AuthorizationOptions> options) : base(options)
+    {
+        _options = options.Value;
+    }
+
+    public override async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
+    {
+        var policyExist =  await base.GetPolicyAsync(policyName);
+
+        if (policyExist == null)
+        {
+            policyExist = new AuthorizationPolicyBuilder().AddRequirements(new OlderThanRequirement(10)).Build();
+            _options.AddPolicy(policyName, policyExist);
+        }
+
+        return policyExist;
+    }
+}
 
 
 public class OlderThanRequirement : IAuthorizationRequirement
