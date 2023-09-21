@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using System.Reflection;
 using IdentityServer4.AspNetIdentity;
 using IdServ.IdentityServer;
 using IdServ.IdentityServer.Data;
@@ -12,9 +13,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+var conString = builder.Configuration.GetConnectionString(nameof(ApplicationDbContext));
 
 builder.Services
-    .AddDbContext<ApplicationDbContext>(config => { config.UseInMemoryDatabase("Memory"); })
+    .AddDbContext<ApplicationDbContext>(config =>
+    {
+        //config.UseInMemoryDatabase("Memory");
+        //dotnet ef migrations add InitialCreate
+        //dotnet ef database update
+        config.UseSqlServer(conString);
+    })
     .AddIdentity<IdentityUser, IdentityRole>(config =>
     {
         config.Password.RequireDigit = false;
@@ -33,15 +41,30 @@ builder.Services.ConfigureApplicationCookie(config =>
     config.Cookie.Name = "IdentityServer.Cookies";
 });
 
+var migrationsAssembly = typeof(IdentityServerConfiguration).GetTypeInfo().Assembly.GetName().Name;
+
 builder.Services.AddIdentityServer(config =>
     {
         //config.UserInteraction.LoginUrl = "/Auth/Login";
     })
     .AddAspNetIdentity<IdentityUser>()
-    .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
-    .AddInMemoryClients(Configuration.GetClients())
-    .AddInMemoryApiResources(Configuration.GetApiResources())
-    .AddInMemoryApiScopes(Configuration.GetApiScopes())
+    //.AddInMemoryIdentityResources(IdentityServerConfiguration.GetIdentityResources())
+    //.AddInMemoryClients(IdentityServerConfiguration.GetClients())
+    //.AddInMemoryApiResources(IdentityServerConfiguration.GetApiResources())
+    //.AddInMemoryApiScopes(IdentityServerConfiguration.GetApiScopes())
+    // dotnet ef database drop --context ApplicationDbContext
+    //dotnet ef migrations add InitialCreate --context ApplicationDbContext -o Data/ApplicationDb
+    //dotnet ef database update --context ApplicationDbContext
+    .AddConfigurationStore(options =>
+    {
+        options.ConfigureDbContext = b => b.UseSqlServer(conString,
+            sql => sql.MigrationsAssembly(migrationsAssembly));
+    })
+    .AddOperationalStore(options =>
+    {
+        options.ConfigureDbContext = b => b.UseSqlServer(conString,
+            sql => sql.MigrationsAssembly(migrationsAssembly));
+    })
     .AddProfileService<ProfileService>()
     .AddDeveloperSigningCredential();
 
