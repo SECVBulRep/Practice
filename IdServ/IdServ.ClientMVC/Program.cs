@@ -1,6 +1,8 @@
+using System.Globalization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
@@ -43,9 +45,15 @@ builder.Services.AddHttpClient();
 builder.Services.AddAuthorization(config =>
 {
     config.AddPolicy("HasDateOfBirth", builder => { builder.RequireClaim(ClaimTypes.DateOfBirth); });
+    
+    config.AddPolicy("OlderThan", builder =>
+    {
+        builder.AddRequirements(new OlderThanRequirement(10));
+    });
 });
 
-
+builder.Services.AddSingleton<IAuthorizationHandler, OlderThanRequirementHandler>();
+    
 var app = builder.Build();
 
 app.UseRouting();
@@ -59,3 +67,38 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+
+
+public class OlderThanRequirement : IAuthorizationRequirement
+{
+    public OlderThanRequirement(int years)
+    {
+        Years = years;
+    }
+
+    public int Years { get; }
+}
+
+public class OlderThanRequirementHandler : AuthorizationHandler<OlderThanRequirement>
+{
+   
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, OlderThanRequirement requirement)
+    {
+        var hasClaim = context.User.HasClaim(x => x.Type == ClaimTypes.DateOfBirth);
+        if (!hasClaim)
+        {
+            return Task.CompletedTask;
+        }
+
+        var dateOfBirth = context.User.FindFirst(x => x.Type == ClaimTypes.DateOfBirth).Value;
+        var date = DateTime.Parse(dateOfBirth, new CultureInfo("ru-RU"));
+        var canEnterDiff = DateTime.Now.Year - date.Year;
+        if (canEnterDiff >= requirement.Years)
+        {
+            context.Succeed(requirement);
+        }
+        return Task.CompletedTask;
+
+    }
+}
