@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using IdServ.ClientMVC.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 
 namespace IdServ.ClientMVC.Controllers;
@@ -15,7 +16,7 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private IHttpClientFactory _httpClientFactory;
-    
+
     public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
     {
         _logger = logger;
@@ -32,14 +33,14 @@ public class HomeController : Controller
         var id_token = await HttpContext.GetTokenAsync("id_token");
         var access_token = await HttpContext.GetTokenAsync("access_token");
         var refresh_token = await HttpContext.GetTokenAsync("refresh_token");
-       
+
         var handler = new JwtSecurityTokenHandler();
-        
+
         var userInfo = new AuthInfo();
-        userInfo.IdToken =  handler.ReadJwtToken(id_token);
+        userInfo.IdToken = handler.ReadJwtToken(id_token);
         userInfo.AccessToken = handler.ReadJwtToken(access_token);
-        if(refresh_token!=null)
-        userInfo.RefreshToken = refresh_token;
+        if (refresh_token != null)
+            userInfo.RefreshToken = refresh_token;
         userInfo.UserInfo = User.Claims;
 
         var ordersClient = _httpClientFactory.CreateClient();
@@ -52,8 +53,11 @@ public class HomeController : Controller
         }
         catch (HttpRequestException e)
         {
-            await RefreshToken(refresh_token);
-            return await getAuthInfo();
+            if (refresh_token != null)
+            {
+                await RefreshToken(refresh_token);
+                return await getAuthInfo();
+            }
         }
 
         ViewBag.Message = result;
@@ -74,7 +78,7 @@ public class HomeController : Controller
 
         await UpdateAuthContextAsync(resultRefreshTokenAsync.AccessToken, resultRefreshTokenAsync.RefreshToken);
     }
-    
+
     private async Task UpdateAuthContextAsync(string accessTokenNew, string refreshTokenNew)
     {
         var authenticate = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -84,36 +88,40 @@ public class HomeController : Controller
 
         await HttpContext.SignInAsync(authenticate.Principal, authenticate.Properties);
     }
-    
-    
-    
+
+
     [Authorize]
     public async Task<IActionResult> Privacy()
     {
         ViewBag.PageInfo = "Privacy 1111111111111111";
-        return View("Privacy",await getAuthInfo());
+        return View("Privacy", await getAuthInfo());
     }
 
     [Authorize(Policy = "HasDateOfBirth")]
     public async Task<IActionResult> Privacy2()
     {
         ViewBag.PageInfo = "Privacy 2222222222222222";
-        return View("Privacy",await getAuthInfo());
+        return View("Privacy", await getAuthInfo());
     }
-    
-    
+
+
     [Authorize(Policy = "OlderThan")]
     public async Task<IActionResult> Privacy3()
     {
         ViewBag.PageInfo = "Privacy 3333333333333333";
-        return View("Privacy",await getAuthInfo());
+        return View("Privacy", await getAuthInfo());
     }
-    
-    
+
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    public IActionResult Logout()
+    {
+        return SignOut(CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
     }
 }
 

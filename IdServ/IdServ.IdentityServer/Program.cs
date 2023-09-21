@@ -25,7 +25,18 @@ builder.Services
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddIdentityServer(config => { config.UserInteraction.LoginUrl = "/Auth/Login"; })
+
+builder.Services.ConfigureApplicationCookie(config =>
+{
+    config.LoginPath = "/Auth/Login";
+    config.LogoutPath = "/Auth/Logout";
+    config.Cookie.Name = "IdentityServer.Cookies";
+});
+
+builder.Services.AddIdentityServer(config =>
+    {
+        //config.UserInteraction.LoginUrl = "/Auth/Login";
+    })
     .AddAspNetIdentity<IdentityUser>()
     .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
     .AddInMemoryClients(Configuration.GetClients())

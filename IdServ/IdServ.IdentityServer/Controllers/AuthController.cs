@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
 using IdServ.IdentityServer.Models;
 using Microsoft.AspNetCore.Identity;
@@ -12,13 +13,15 @@ public class AuthController : Controller
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
 
+    private IIdentityServerInteractionService _identityServerInteractionService;
     public AuthController(ILogger<HomeController> logger,
         UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager)
+        SignInManager<IdentityUser> signInManager, IIdentityServerInteractionService identityServerInteractionService)
     {
         _logger = logger;
         _userManager = userManager;
         _signInManager = signInManager;
+        _identityServerInteractionService = identityServerInteractionService;
     }
 
     [HttpGet]
@@ -50,7 +53,14 @@ public class AuthController : Controller
         
         return View();
     }
- 
+
+
+    public async Task<IActionResult> Logout(string logoutid)
+    {
+        await _signInManager.SignOutAsync();
+        var logoutResult = await _identityServerInteractionService.GetLogoutContextAsync(logoutid);
+        return Redirect(logoutResult.PostLogoutRedirectUri);
+    }
 }
 
 public class LoginViewModel

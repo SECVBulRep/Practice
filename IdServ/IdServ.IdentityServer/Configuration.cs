@@ -27,6 +27,7 @@ public static class Configuration
                 IdentityServerConstants.StandardScopes.Profile,
             },
             RedirectUris = { "https://localhost:5048/signin-oidc" },
+            PostLogoutRedirectUris = { "https://localhost:5048/signout-callback-oidc" },
             //AlwaysIncludeUserClaimsInIdToken = true
             AccessTokenLifetime = 5,
             AllowOfflineAccess = true

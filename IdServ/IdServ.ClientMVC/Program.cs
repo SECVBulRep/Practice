@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -18,10 +19,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(config =>
     {
         config.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        config.DefaultChallengeScheme = "oidc";
+        config.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
     })
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddOpenIdConnect("oidc", config =>
+    .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, config =>
     {
         config.Authority = "https://localhost:5008";
         config.ClientId = "client_id_mvc";
