@@ -1,6 +1,11 @@
 using System.Security.Claims;
 using IdentityModel;
+using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Entities;
+using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace IdServ.IdentityServer.Data;
 
@@ -20,6 +25,14 @@ public static class DatabaseInitializer
         {
             userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Administrator")).GetAwaiter().GetResult();
             
+        }
+        
+        using (var serviceScope = scopeServiceProvider.GetService<IServiceScopeFactory>().CreateScope())
+        {
+            serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
+
+            var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+            context.Database.Migrate();
         }
     }
 }

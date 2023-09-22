@@ -1,2 +1,18 @@
 dotnet ef migrations add InitialCreate
 dotnet ef database update
+
+см отсюда https://identityserver4.readthedocs.io/en/latest/quickstarts/5_entityframework.html?highlight=EntityFramework%20
+
+/*dotnet ef migrations add InitialIdentityServerPersistedGrantDbMigration -c PersistedGrantDbContext -o Data/Migrations/IdentityServer/PersistedGrantDb
+dotnet ef migrations add InitialIdentityServerConfigurationDbMigration -c ConfigurationDbContext -o Data/Migrations/IdentityServer/ConfigurationDb*/
+
+dotnet ef migrations add InitialIdentityServerPersistedGrantDbMigration  --context PersistedGrantDbContext -o Data/PersistedGrantDb
+dotnet ef migrations add InitialIdentityServerConfigurationDbMigration  --context ConfigurationDbContext -o Data/ConfigurationDb
+
+
+dotnet ef database update --context ConfigurationDbContext
+dotnet ef database update --context PersistedGrantDbContext
+
+
+/*ui*/
+dotnet new -i identityserver4.templates
