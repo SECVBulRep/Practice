@@ -38,8 +38,7 @@ builder.Services.AddAuthentication(config =>
         config.SaveTokens = true;
         config.RequireHttpsMetadata = false;
         config.GetClaimsFromUserInfoEndpoint = true;
-
-
+        
         // config.ClaimActions.MapAll(); плохой вариант
         config.ClaimActions.MapJsonKey(ClaimTypes.DateOfBirth, ClaimTypes.DateOfBirth);
         

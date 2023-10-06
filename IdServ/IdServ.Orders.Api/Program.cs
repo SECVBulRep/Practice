@@ -24,10 +24,23 @@ builder.Services.AddAuthentication("Bearer")
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    // this defines a CORS policy called "default"
+    options.AddPolicy("default", policy =>
+    {
+        policy.WithOrigins("https://localhost:7064")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 
 var app = builder.Build();
 
 app.UseRouting();
+
+app.UseCors("default");
 
 app.UseAuthentication();
 app.UseAuthorization();

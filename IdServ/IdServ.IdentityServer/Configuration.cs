@@ -45,6 +45,26 @@ public static class Configuration
                 IdentityServerConstants.StandardScopes.Profile
             }
         },
+        
+        new Client
+        {
+            ClientId = "js",
+            ClientName = "JavaScript Client",
+            AllowedGrantTypes = GrantTypes.Code,
+            RequireClientSecret = false,
+    
+            RedirectUris =           { "https://localhost:7064/home/callback" },
+            PostLogoutRedirectUris = { "https://localhost:7064/index.html" },
+            AllowedCorsOrigins =     { "https://localhost:7064" },
+
+            AllowedScopes = 
+            {
+                IdentityServerConstants.StandardScopes.OpenId,
+                IdentityServerConstants.StandardScopes.Profile,
+                "OrdersAPI"
+            }
+        }
+        
     };
 
 

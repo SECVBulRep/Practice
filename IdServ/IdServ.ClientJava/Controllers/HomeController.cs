@@ -18,6 +18,13 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult Callback()
+    {
+        var html = System.IO.File.ReadAllText(@"./callback.html");
+        
+        return base.Content(html, "text/html");
+    }
+
     public IActionResult Privacy()
     {
         return View();
